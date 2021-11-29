@@ -69,6 +69,7 @@ function addTimeLine()
     timeline.id = "timeline";
     timeline.setAttribute("src", "https://cdn.knightlab.com/libs/timeline3/latest/embed/index.html?source=1xuY4upIooEeszZ_lCmeNx24eSFWe0rHe9ZdqH2xqVNk&font=Default&lang=en&initial_zoom=2&height=100%");
     timeline.style.width = "100%";
+    timeline.style.height = "600px";
     document.body.append(timeline);
 }
 
@@ -104,4 +105,13 @@ function parsePress(event) {
     if (event.keyCode == 13) {
         reqForParse();
     }
+}
+
+// Выпадающий чеклист
+var checkList = document.getElementById('list1');
+checkList.getElementsByClassName('anchor')[0].onclick = function(evt) {
+  if (checkList.classList.contains('visible'))
+    checkList.classList.remove('visible');
+  else
+    checkList.classList.add('visible');
 }
