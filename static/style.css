@@ -1,6 +1,5 @@
 body {
   background: #d6eaf8;
-  margin:40px;
 }
 * {
   box-sizing: border-box;
@@ -46,17 +45,6 @@ input {
 }
 
 .request-block { 
-  display : inline-flex;
-}
-
-header {
-  text-align: center;
-  background: #39b54a;
-  color: white;
-  font-size: 15px;
-}
-
-.header-block {
   display : inline-flex;
 }
 
@@ -143,10 +131,14 @@ header {
  }
 
  #header {
-  position: fixed;
+  position: relative;
   left: 0; top: 0;
   padding: 10px;
   background: #39b54a;
   color: #fff;
   width: 100%;
  }
+
+.main-block {
+  position: relative;
+}

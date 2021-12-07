@@ -8,50 +8,78 @@
     <link rel="stylesheet" href="../static/style.css" type="text/css"/>
 </head>
 <body>
+    
     <!--Header Page-->
-    <header class="page-header">
+    <header>
+        <div id="header">
             <text>Digital professional me</text>
-            <div class="header-block">
+            <div>
                 <button class="header-button">Home</button>
                 <button class="header-button">About</button>
-                <button class="header-button">Login</button>
-                <button class="header-button">Logout</button>
+                <form action="http://127.0.0.1/logout" style="display: inline-block;">
+                    <button class="header-button" type="submit">Logout</button>
+                </form>
             </div>
+        </div> 
     </header>
+     
     <!---->
 
-   <!-- Change word block -->
-    <div class = "edit-block">
-        <input type="text" id = "change-word" onkeypress="chengeWordPress(event)" value = "" class="input-box" size="60%"/>
-        <button href="" id="newWordButt" class="gradient-button" onclick="loadNewWord()">Change</button>
-    </div>
-    <!---->
+    <div class="main-block">
+        <!-- Change word block -->
 
-    <!-- Req block-->
-    <div class = "request-block">
-        <input type="url" id = "input-url" value = "" onkeypress="parsePress(event)" class="input-box" size="60%"/>
-        <button class="gradient-button" onclick = "reqForParse()">Send</button>
-        <div id = "frame"></div>
-    </div>
-    <!---->
+        <datalist id="languages">
+            <option value="HTML">
+            <option value="CSS">
+            <option value="JavaScript">
+            <option value="Java">
+            <option value="Ruby">
+            <option value="PHP">
+            <option value="Go">
+            <option value="Erlang">
+            <option value="Python">
+            <option value="C">
+            <option value="C#">
+            <option value="C++">
+            </datalist>
+        <div class = "edit-block">
 
-    <!-- Options block -->
-    <div>
-        <div id="list1" class="dropdown-check-list" tabindex="100">
-            <span class="anchor" style="width: 250px;">Options</span>
-            <ul class="items">
-                <li><input type="checkbox"/>JSON in console</li>
-                <li><input type="checkbox" />Show HH page</li>
-            </ul>
+            <input type="text" id = "change-word" onkeypress="chengeWordPress(event)"  list="languages" value = "" class="input-box" size="60%"/>
+            <button href="" id="newWordButt" class="gradient-button" onclick="loadNewWord()">Change</button>
         </div>
+        <!---->
+
+        <!-- Req block-->
+        <datalist id="resumes-links"></datalist>
+
+
+        <div class = "request-block">
+            <input type="url" id = "input-url" value = "" onkeypress="parsePress(event)" list="resumes-links" class="input-box" size="60%"/>
+            <button class="gradient-button" onclick = "reqForParse()">Send</button>
+            <div id = "frame"></div>
+        </div>
+        <!---->
+
+        <!-- Options block -->
+        <div>
+            <div id="list1" class="dropdown-check-list" tabindex="100">
+                <span class="anchor" style="width: 250px;">Options</span>
+                <ul class="items">
+                    <li><input type="checkbox" id="showJSON" checked/>JSON in console</li>
+                    <li><input type="checkbox" id="showIframe" checked/>Show HH page</li>
+                    <li><input type="checkbox" id="showTimeline" checked/>Show Timeline</li>
+                </ul>
+            </div>
+        </div>
+        <!---->
     </div>
-    <!---->
+   
     
     <!-- Footer Page -->
-    <div id="footer">
+    <!-- <div id="footer">
         &copy; Digital professional me
-    </div>
-    <!---->
+    </div> -->
+    <!-- -->
     
     <!-- JS -->
     <script src="../static/script.js"></script>

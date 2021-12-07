@@ -1,38 +1,72 @@
 // Заполнение текстовых полей при запуске
+let findWord = "1";
+let jsonRespons;
+
+// Действия при открытии страницы
 window.onload = function() {
+    // Полчение поискового слова
+    getWord();
+
+    // Получение 20 ссылок по ключевому слову
+    loadURLs();
+}
+
+// Выгразка 20 ссылок по поисковому слову
+function loadURLs()
+{
+    // Удаление дочерних элементов
+    let linksBlock = document.getElementById("resumes-links");
+    while (linksBlock.firstChild)
+    {
+        linksBlock.removeChild(linksBlock.firstChild);
+    }
+
+
+    document.getElementById("input-url").value = "";
+
     let getUrl = new XMLHttpRequest();
-    getUrl.open("GET", "http://127.0.0.1/getPageForParse", true);
+    getUrl.open("GET", "http://127.0.0.1/getPageForParse/" + findWord, true);
+    getUrl.responseType = 'json';
     getUrl.onload = function ()
     {
-        document.getElementById('input-url').value = getUrl.responseText;
-    }
-    getUrl.send(null);
+        jsonRespons = getUrl.response;
 
-    getWord(); 
+        var options = '';
+        for(let i = 0; i < getUrl.response["Links"].length; i++)
+        {
+            options += "<option value=https://hh.ru" +  getUrl.response["Links"][i] + " />"
+        }
+        document.getElementById('resumes-links').innerHTML = options;
+    }
+    getUrl.send(null); 
 }
 
 // Выгрузка поискового слова
 function getWord() {
     let getFindWord = new XMLHttpRequest();
-    getFindWord.open("GET", "http://127.0.0.1/getFindWord", true);
+    getFindWord.open("GET", "http://127.0.0.1/getFindWord", false);
     getFindWord.onload = function ()
     {
-        document.getElementById('change-word').placeholder  = "Current search phrase: " + getFindWord.responseText;
+        document.getElementById('change-word').placeholder = "Current search phrase: " + getFindWord.responseText;
         document.getElementById('change-word').value = "";
+        findWord = getFindWord.responseText;
     }
 
     getFindWord.send(null);
 }
 
+
 // Заргузка нового поискового слова
 function loadNewWord() {
     let newWord = document.getElementById('change-word').value;
     let loadFindWord = new XMLHttpRequest();
-    loadFindWord.open("GET", "http://127.0.0.1/newFindWord/" + newWord, true);
+    loadFindWord.open("GET", "http://127.0.0.1/newFindWord/" + newWord, false);
     loadFindWord.onload = function ()
     {
         console.log("new word loaded");
         getWord();
+
+        loadURLs();
     }
     
     loadFindWord.send(null);
@@ -73,8 +107,18 @@ function addTimeLine()
     document.body.append(timeline);
 }
 
+// Вывод тестового JSON в консоль
+function jsonToConsole()
+{
+    console.log(jsonRespons);
+}
+
 // Запрос обработки резюме по ссылке
 function reqForParse() {
+    let showFrame = document.getElementById("showIframe").checked;
+    let showTimeline = document.getElementById("showTimeline").checked;
+    let showJSON = document.getElementById("showJSON").checked;
+
     let url = document.getElementById('input-url').value;
     let id = url.split('/')[4]
 
@@ -85,8 +129,38 @@ function reqForParse() {
     reqPage.open("GET", "http://127.0.0.1/reqForParse/" + id.toString(), true);
     reqPage.onload = function ()
     {
-        addFrame(id);
-        addTimeLine();
+        if(showFrame)
+        {
+            addFrame(id);
+        }
+        else
+        {
+            try {
+                document.getElementById("frame-id").remove();
+             }
+             catch (e) {
+                console.log("Frame ещё не создан");
+             }
+        }
+        
+        if(showTimeline)
+        {
+            addTimeLine();
+        }
+        else 
+        {
+            try {
+                document.getElementById("timeline").remove();
+            }
+             catch (e) {
+                console.log("timeline ещё не создан");
+            }
+        }
+
+        if(showJSON)
+        {
+            jsonToConsole()
+        }
     }
 
     reqPage.send(null);

@@ -1,21 +1,41 @@
+import sys
 from bs4 import BeautifulSoup
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 from urllib.error import HTTPError
-import urllib.parse
+import random
+import re
 import json
+import requests
+import urllib.parse
 from main import *
 
+
 # Открытие веб-страницы
+#def openHTML(url):
+#    url = url.encode('ascii', 'ignore').decode('ascii')
+#    try:
+#        html = urlopen(url)
+#        bsObj = BeautifulSoup(html.read(), "html.parser")
+#        return bsObj
+#    except HTTPError as e:
+#        print("Page not found")
+
+
 def openHTML(url):
     url = url.encode('ascii', 'ignore').decode('ascii')
+    bsObj = ""
     try:
-        html = urlopen(url)
+        req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        html = urlopen(req)
         bsObj = BeautifulSoup(html.read(), "html.parser")
-        return bsObj
+        print(bsObj)
     except HTTPError as e:
         print("Page not found")
+    return bsObj
+
 
 dict = {}
+
 
 # Получение названия профессии
 def getTitle(bsObj):
@@ -23,11 +43,13 @@ def getTitle(bsObj):
     title = title.find('span', class_='resume-block__title-text')
     dict['Title'] = title.get_text()
 
+
 # Получение ключевых навыков
 def getSkills(bsObj):
     skillsBlock = bsObj.findAll('div', {'class': 'bloko-tag-list'})
     skills = skillsBlock[0].get_text(',').split(',')
     dict['Skills'] = skills
+
 
 # Получение образования
 def getEdu(bsObj):
@@ -39,7 +61,8 @@ def getEdu(bsObj):
     orgs = []
     specs = []
     for i in range(len(eduBlock)):
-        year = eduBlock[i].find('div', class_='bloko-column bloko-column_xs-4 bloko-column_s-2 bloko-column_m-2 bloko-column_l-2')
+        year = eduBlock[i].find('div',
+                                class_='bloko-column bloko-column_xs-4 bloko-column_s-2 bloko-column_m-2 bloko-column_l-2')
         year = year.get_text().split('\n')
         years.append(year)
 
@@ -50,6 +73,7 @@ def getEdu(bsObj):
         specs.append(spec)
     dict['Education'] = [{'Year': years}, {'Organization': orgs}, {'Specialization': specs}]
 
+
 # Получение компетенций
 def getComptenece(bsObj):
     competenceBlock = bsObj.find('div', {'data-qa': 'resume-block-position'})
@@ -58,11 +82,13 @@ def getComptenece(bsObj):
     comp = competenceBlock.get_text(' ')
     dict['Competence'] = comp
 
+
 # Получение опыта работы
 def getExperience(bsObj):
     # Получение общего времени работы
     totalTimeBlock = bsObj.find('div', {'data-qa': 'resume-block-experience'})
-    totalTimeBlock = totalTimeBlock.find('div', class_='bloko-column bloko-column_xs-4 bloko-column_s-8 bloko-column_m-9 bloko-column_l-12')
+    totalTimeBlock = totalTimeBlock.find('div',
+                                         class_='bloko-column bloko-column_xs-4 bloko-column_s-8 bloko-column_m-9 bloko-column_l-12')
     totalTimeBlock = totalTimeBlock.find('span', class_='resume-block__title-text resume-block__title-text_sub')
     totalTime = totalTimeBlock.get_text('').replace('Опыт работы ', '')
 
@@ -80,7 +106,8 @@ def getExperience(bsObj):
     posDescs = []
 
     for i in range(len(expBlock)):
-        expBlockDates = expBlock[i].find('div', class_='bloko-column bloko-column_xs-4 bloko-column_s-2 bloko-column_m-2 bloko-column_l-2')
+        expBlockDates = expBlock[i].find('div',
+                                         class_='bloko-column bloko-column_xs-4 bloko-column_s-2 bloko-column_m-2 bloko-column_l-2')
         totalOne = expBlockDates.find('div', class_='bloko-text bloko-text_tertiary').get_text()
         totalOnes.append(totalOne)
 
@@ -100,11 +127,14 @@ def getExperience(bsObj):
         positions.append(position)
 
         posDesc = expBlock[i].find('div', class_='resume-block-container')
-        posDesc = posDesc.find('div', {'data-qa': 'resume-block-experience-description'}).get_text(' ').replace('\n', ' ')
+        posDesc = posDesc.find('div', {'data-qa': 'resume-block-experience-description'}).get_text(' ').replace('\n',
+                                                                                                                ' ')
         posDescs.append(posDesc)
-    dict['Work Experience'] = [{'Begin': begins}, {'End': ends}, {'Total Work-Time on the organization': totalOnes},
+    dict['Work Experience'] = [{'start_date': begins}, {'end_date': ends},
+                               {'Total Work-Time on the organization': totalOnes},
                                {'Organization': orgs}, {'Position': positions}, {'Position Describe': posDescs},
                                {'Total Experience': totalTime}]
+
 
 # Получение информации "обо мне"
 def getInfAbout(bsObj):
@@ -114,7 +144,8 @@ def getInfAbout(bsObj):
 
 
 def parseList(findWord):
-    resumes = "https://hh.ru/search/resume?area=76&isDefaultArea=true&exp_period=all_time&logic=normal&pos=full_text&fromSearchLine=true&clusters=True&ored_clusters=True&order_by=relevance&text=" + urllib.parse.quote_plus(findWord)
+    resumes = "https://hh.ru/search/resume?area=76&isDefaultArea=true&exp_period=all_time&logic=normal&pos=full_text&fromSearchLine=true&clusters=True&ored_clusters=True&order_by=relevance&text=" + urllib.parse.quote_plus(
+        findWord)
     bsObjResumesList = openHTML(resumes)
 
     resumeBlock = bsObjResumesList.find('div', class_='resume-serp')
@@ -144,5 +175,7 @@ def dictFromUrl(id):
 
     return dict
 
+
 if __name__ == "__main__":
     pass
+    #dictFromUrl("f176b5f600061272f10047b466656f47506741")
