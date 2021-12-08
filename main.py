@@ -1,16 +1,24 @@
 import sqlite3
 import os
+import flask
 from flask import Flask, jsonify, request, send_from_directory, render_template, abort, json, make_response, flash, \
     session, redirect, url_for, g
 from flask_cors import CORS, cross_origin
 import codecs
 from ParseModulesHH import *
+from ParseModulesLeaderId import *
 from FDataBase import FDataBase
 from LoadModules import loadPage
 from Logger import log
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from UserLogin import UserLogin
+from urllib.request import urlopen
+from selenium import webdriver
+from selenium.webdriver import ActionChains, Keys
+from bs4 import BeautifulSoup
+import codecs
+import time
 
 
 # Конфигурация
@@ -33,6 +41,26 @@ login_manager.login_message_category = 'success'
 dbase = None
 
 
+def parseLeaderId():
+  driver = webdriver.Chrome('chromedriver')
+  driver.get("https://leader-id.ru/users/318159")
+
+  driver.find_elements_by_class_name('login-button')[0].click()
+
+  driver.find_elements_by_class_name('app-input__inner')[1].send_keys("rasmygens@gmail.com")
+  driver.find_elements_by_class_name('app-input__inner')[2].send_keys("qbU-9kR-eZe-Ve6")
+
+  driver.find_elements_by_class_name('app-input__inner')[2].send_keys(Keys.ENTER)
+
+  time.sleep(1)
+  driver.get("https://leader-id.ru/users/318159")
+
+  saveHtml = codecs.open("leader.html", 'w', "utf-8-sig")
+  saveHtml.write(driver.page_source)
+  saveHtml.close()
+  driver.quit()
+
+
 @login_manager.user_loader
 def load_user(user_id):
     print("load_user")
@@ -51,7 +79,7 @@ def before_request():
 @app.route('/templates/<id>')
 def pageFormHH(id):
     filename = id + ".html"
-    #print(filename)
+    print(filename)
     return render_template(filename)
 
 
@@ -125,7 +153,7 @@ def reqForParse(id):
         f.write(webContent)
         f.close()
 
-        return "https://hh.ru/resume/" + id + " загружено"
+        return "https://hh.ru/resume/" + id + "uploaded"
 
 
 # Выдача иконки
@@ -141,6 +169,13 @@ def favicon():
 def jsonData(id):
     if request.method == 'GET':
         return jsonify(dictFromUrl(id))
+
+
+# Получение данных с Leader Id
+@app.route('/ParseLeader/<id>', methods=['GET'])
+def ParseLeader(id):
+    if request.method == 'GET':
+        return jsonify(LIDParse(id))
 
 
 # Обработка несуществующих страниц
@@ -188,12 +223,12 @@ def register():
             hash = generate_password_hash(request.form['password'])
             res = dbase.addUser(request.form['name'], request.form['email'], hash)
             if res:
-                flash("Вы успешно зарегистрировались", category='success')
+                flash("You have successfully registered", category='success')
                 return redirect(url_for('login'))
             else:
-                flash("Ошибка добавления в БД", category='error')
+                flash("Error adding to the database", category='error')
         else:
-            flash("Неверно заполнены поля", category='error')
+            flash("The fields are filled in incorrectly", category='error')
 
     return render_template('register.html', title='Registration')
 
@@ -212,7 +247,7 @@ def login():
             login_user(userlogin, remember=rm)
             return redirect(request.args.get('next') or url_for('profile'))
 
-        flash("Неверная пара логин/пароль", 'error')
+        flash("Wrong password or login", 'error')
 
     return render_template('login.html', title='Authorization')
 
@@ -222,7 +257,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash("Вы вышли из аккаунта", 'success')
+    flash("You logged out of the profile", 'success')
     return redirect(url_for('login'))
 
 
@@ -230,29 +265,11 @@ def logout():
 @app.route('/profile')
 @login_required
 def profile():
-    return f"""<p><a href = "{url_for('logout')}"> Выйти из профиля</a> <p> user info: {current_user.get_id()} <p><a href="http://127.0.0.1/">Тестирование</a></p>"""
-
-
-# Авторизация
-# @app.route('/login')
-# def login():
-#    log = ""
-#    if request.cookies.get('logged'):
-#        log = request.cookies.get('logged')
-#    res = make_response(f"<h1>Форма авторизации</h1><p>logged: {log}")
-#    res.set_cookie('logged', 'yes', 30 * 24 * 3600)
-#    return res
-
-
-# Дезавторизация
-# @app.route('/logout')
-# def logout():
-#    res = make_response('<p> Вы больше не авторизованы!</p>')
-#    res.set_cookie('logged', "", 0)
-#    return res
+    return f"""<p><a href = "{url_for('logout')}"> Logout</a> <p> user info: {current_user.get_id()}"""
+            
 
 # create_db()
 
 
 if __name__ == '__main__':
-    app.run(debug=False, port=80)
+    app.run(debug=True, port=80)

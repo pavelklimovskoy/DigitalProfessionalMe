@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline</title>
+    <link rel="stylesheet" href="../static/style.css" type="text/css"/>
+</head>
+<body>
+    
+    <!--Header Page-->
+    <header>
+        <div id="header">
+            <text>Digital professional me</text>
+            <div>
+                <button class="header-button">Home</button>
+                <button class="header-button">About</button>
+                <form action="http://127.0.0.1/logout" style="display: inline-block;">
+                    <button class="header-button" type="submit">Logout</button>
+                </form>
+            </div>
+        </div> 
+    </header>
+    <!---->
+
+    <!-- Main block-->
+    <div class="main-block">
+        <!-- Last Find Word-->
+        <datalist id="languages">
+            <option value="HTML">
+            <option value="CSS">
+            <option value="JavaScript">
+            <option value="Java">
+            <option value="Ruby">
+            <option value="PHP">
+            <option value="Go">
+            <option value="Erlang">
+            <option value="Python">
+            <option value="C">
+            <option value="C#">
+            <option value="C++">
+        </datalist>
+        <!---->
+
+        <!-- Change word block -->
+        <div class = "edit-block">
+            <input type="text" id = "change-word" onkeypress="chengeWordPress(event)"  list="languages" value = "" class="input-box" size="60%"/>
+            <button href="" id="newWordButt" class="gradient-button" onclick="loadNewWord()">Change</button>
+        </div>
+        <!---->
+
+        
+        <!-- Urls list-->
+        <datalist id="resumes-links"></datalist>
+        <!---->
+
+        <!-- Req block-->
+        <div class = "request-block">
+            <input type="url" id = "input-url" value = "" onkeypress="parsePress(event)" list="resumes-links" class="input-box" size="60%"/>
+            <button class="gradient-button" onclick = "reqForParse()">Send</button>
+            <div id = "frame"></div>
+        </div>
+        <!---->
+
+        <!-- Options block -->
+        <div>
+            <div id="list1" class="dropdown-check-list" tabindex="100">
+                <span class="anchor" style="width: 250px;">Options</span>
+                <ul class="items">
+                    <li><input type="checkbox" id="showJSON" checked/>JSON in console</li>
+                    <li><input type="checkbox" id="showIframe" checked/>Show HH page</li>
+                    <li><input type="checkbox" id="showTimeline" checked/>Show Timeline</li>
+                </ul>
+            </div>
+        </div>
+        <!-- End Options Block-->
+    </div>
+    <!-- End Main BLock-->
+
+    <!-- Skills blick-->
+    <div id="skills-block" class="edit-block">
+        <p>Работа</p>
+        <p>Работа</p>
+    </div>
+
+    <!-- Iframe container-->
+    <div id="iframe-cont"></div>
+    <!---->
+
+    <!-- Timeline container-->
+    <div id="timeline-cont"></div>
+    <!---->
+
+    <!-- Footer Page -->
+    <!-- <div id="footer">
+        &copy; Digital professional me
+    </div> -->
+    <!-- -->
+    
+    <!-- JS -->
+    <script src="../static/script.js"></script>
+</body>
+</html>
