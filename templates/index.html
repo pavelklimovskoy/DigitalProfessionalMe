@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Digital Professional Me</title>
+
+  <meta charset="utf-8">
+  <meta name="description" content="DPM - Choose Your Career Paths">
+  <meta name="viewport" content="width=device-width, height=device-height initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <link rel="stylesheet" href="../static/css/style.css" media="screen">
+  <link rel="stylesheet" href="../static/css/style-particles.css" media="screen">
+  <link rel ="stylesheet" href="../static/css/bootstrap.min.css">
+
+  <!-- Timeline Js and CSS -->
+  <script type="text/javascript" src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
+  <link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="../static/css/timeline-vis.css">
+  <!---->
+
+  <link rel="stylesheet" href="../static/css/skill-tooltip.css">
+  <link rel="stylesheet" href="../static/css/skill-boxes.css">
+
+  <!-- Add icon library -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <!-- PopUp Tutorial CSS-->
+  <link rel="stylesheet" href="../static/css/popup-tutorial.css">
+</head>
+<body>
+
+  <!-- Canvas with main content -->
+  <div class="mainBlock">
+
+    <!-- Header -->
+    <header id="header" class="rounded">
+      <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#2C0585;">
+        <div class="container">
+          
+          <a href="#" class="navbar-brand">Digital Professional Me™</a>
+          
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navContent"
+            aria-controls="navContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          
+          <div clas=".float-right">
+            <div class="collapse navbar-collapse" id="navContent">
+              <ul class="navbar-nav mr-auto mb-3 mb-lg-0">
+
+                <!-- <li class="nav-item">
+                  <a href="#" class="nav-link">Home</a>
+                </li>
+                
+                <li class="nav-item">
+                  <a href="#" class="nav-link">Me</a>
+                </li> -->
+                
+                <li class="nav-item">
+                  <a href="{{url_for('about_us')}}" class="nav-link">About us</a>
+                </li>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <!---->
+
+    <div class="container-fluid">
+
+      <!-- Data/Person row -->
+      <div class="row align-items-start">
+        
+        <!-- Person Column -->
+        <div class="col-md-6">
+          <div class="d-flex justify-content-center">
+            <div class="container">   
+              <div>
+                <div id="chartid" class="chart"></div>
+                <div class="row" id="Name">
+                  <p class="text-center">Alexey Tselykh</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!---->
+
+        <!-- Data Column -->
+        <div class="col-md-6">
+          <div class="d-flex justify-content-center">
+            <div class="container">
+              <div class="row" id="callToAction">
+                <a href="#" id="ParseCV" class="floating-button">Parse/Import Your Résumé</a>
+                <a href="#" id="ParseEvidence" class="floating-button">Add Evidence</a>
+              </div>
+              <div class="skillsBlock" id="skillsBlock">
+                <p class="text-center">Skills <button class="btn" onclick="addSkiilButton()" style="padding-left: 80px">Add Skill <i class="fa fa-plus"></i> </button></p>
+                  <!-- JS request and append-->
+              </div>
+            </div>
+          </div>
+        </div>
+        <!---->
+
+      </div>
+      
+      <div class="row align-items-start">
+        <!-- Container for Timeline-->
+        <div id="visualization"></div>
+        <!---->
+      </div>
+  </div>
+
+
+  <!-- Debug form for Timeline-->
+  <div  id="debugTimeline"></div>
+  <!---->
+
+
+  <!-- Drag'n'Drop -->
+  <div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      
+      <!-- <div id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+        <p>Drag your CV to this Drop Zone</p>
+      </div> -->
+    
+<!--      <form action="" method="post" enctype="multipart/form-data">-->
+<!--        <label>Файл PDF или DOCX:</label>-->
+<!--        <input type="file" name="file" id="file" accept=".pdf,.docx,.PDF,.DOCX">-->
+<!--      </form>-->
+
+       <form action="http://digitalprofessional.me:5000/uploader" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <input type = "submit"/>
+      </form>
+
+      <!-- <button id="accept" onclick="alerted();">Submit</button> -->
+    </div>
+  </div>  
+</div>
+    
+
+<!-- PopUp Tutorial -->
+<!-- <div class="popup">
+  <button id="close">&times;</button>
+  <h2>Call to Action</h2>
+  <p> Рассказываем немного о том как с нами работать</p>
+  <a  id="close" href="#">Let's Go</a>
+</div> -->
+<!---->
+<script type="text/javascript">
+  window.addEventListener("load", function(){
+      setTimeout(
+          function open(event){
+              document.querySelector(".popup").style.display = "block";
+          },
+          2000 
+      )
+  });
+</script>
+
+  <!-- particles.js container -->
+  <div id="particles-js"></div>
+  
+  <!-- Scripts -->
+  <!-- Diagram Scripts -->
+  <script src="../static/js/diagram/anychart-core.min.js"></script>
+  <script src="../static/js/diagram/anychart-data-adapter.min.js"></script>
+  <script src="../static/js/diagram/anychart-sunburst.min.js"></script>
+  <script src="../static/js/diagram/chart.js"></script>
+
+  <!-- Self Scripts -->
+  <script src="../static/js/main-page/on-page-load.js" type="text/javascript"></script>
+  <script src="../static/js/main-page/load-skills.js" type="text/javascript"></script>
+  <script src="../static/js/script.js" type="text/javascript"></script>
+
+  <!-- Particles Scripts & Bootstrap -->
+  <script src="../static/js/particles.js" type="text/javascript"></script>
+  <script src="../static/js/app.js" type="text/javascript"></script>
+  <script src="../static/js/bootstrap.bundle.min.js" type="text/javascript"></script>  
+
+  <!-- Self Scripts -->
+  <script src="../static/js/main-page/on-page-load.js" type="text/javascript"></script>
+  <script src="../static/js/script.js" type="text/javascript"></script>
+
+  <!-- Timeline actions-->
+  <script src="../static/js/main-page/timeline-actions.js" type="text/javascript"></script>
+
+  <!-- DragNDrop form -->
+  <script src="../static/js/inputForm.js"></script>
+</body>
+</html>

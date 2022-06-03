@@ -1,0 +1,230 @@
+[
+  {
+    "name": "Me",
+    "children": [
+      {
+        "name": "Management of Companies and Enterprises",
+        "id": "OperationalSkill",
+        "fill": "#3272B5",
+        "children": [
+          {
+            "name": "Managers, All Other",
+            "id": "SoftSkill",
+            "value": "1",
+            "fill": "#D99632",
+            "children": [
+              {
+                "name": "Examination",
+                "id": "SoftSkill",
+                "value": "1",
+                "fill": "#FFB240"
+              },
+              {
+                "name": "Manage Project Team",
+                "id": "SoftSkill",
+                "value": "1",
+                "fill": "#FFB240"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Administrative and Support and Waste Management and Remediation Services",
+        "id": "OperationalSkill",
+        "fill": "#3272B5",
+        "children": [
+          {
+            "name": "Production, Planning, and Expediting Clerks",
+            "id": "SoftSkill",
+            "value": "1",
+            "fill": "#FFB240",
+            "children": [
+              {
+                "name": "Scheduling Process",
+                "id": "SoftSkill",
+                "value": "1",
+                "fill": "#FFB240"
+              }
+            ]
+          },
+          {
+            "name": "Computer Operators",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Documentation",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Construction",
+        "id": "OperationalSkill",
+        "fill": "#3272B5",
+        "children": [
+          {
+            "name": "Construction and Building Inspectors",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Construction Supervision",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          },
+          {
+            "name": "All Other Specialty Trade Contractors",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Tender Document",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          },
+          {
+            "name": "Mechanical Drafters",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Hvac System Design",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Information",
+        "id": "OperationalSkill",
+        "fill": "#4188D2",
+        "children": [
+          {
+            "name": "All Other Information Services",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Project Documentation",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Finance and Insurance",
+        "id": "OperationalSkill",
+        "fill": "#3272B5",
+        "children": [
+          {
+            "name": "Human Resources Specialists",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Recruitment",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          },
+          {
+            "name": "Logisticians",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Logistics",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Installation, Maintenance, and Repair Occupations",
+        "id": "OperationalSkill",
+        "fill": "#4188D2",
+        "children": [
+          {
+            "name": "Heating, Air Conditioning, and Refrigeration Mechanics and Installers",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Maintain Air Conditioning",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Arts, Entertainment, and Recreation",
+        "id": "OperationalSkill",
+        "fill": "#3272B5",
+        "children": [
+          {
+            "name": "Writers and Editors",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Writing",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          },
+          {
+            "name": "Designers",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Design",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
