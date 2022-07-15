@@ -47,16 +47,16 @@
             <div class="collapse navbar-collapse" id="navContent">
               <ul class="navbar-nav mr-auto mb-3 mb-lg-0">
 
-                <!-- <li class="nav-item">
+                <li class="nav-item">
                   <a href="#" class="nav-link">Home</a>
                 </li>
                 
                 <li class="nav-item">
                   <a href="#" class="nav-link">Me</a>
-                </li> -->
+                </li>
                 
                 <li class="nav-item">
-                  <a href="{{url_for('about_us')}}" class="nav-link">About us</a>
+                  <a href="aboutus.html" class="nav-link">About us</a>
                 </li>
 
               </ul>
@@ -78,8 +78,16 @@
             <div class="container">   
               <div>
                 <div id="chartid" class="chart"></div>
+                
                 <div class="row" id="Name">
-                  <p class="text-center">Alexey Tselykh</p>
+                  <p class="text-center">{{userName}}</p>
+                </div>
+                
+                <div>
+                  <form action="http://digitalprofessional.me:5000/upload_avatar" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="avatar">            
+                    <input type = "submit"/>
+                  </form>
                 </div>
               </div>
             </div>
@@ -137,6 +145,10 @@
 
        <form action="http://digitalprofessional.me:5000/uploader" method="POST" enctype="multipart/form-data">
         <input type="file" name="file">
+
+        <p class="text-center">OR <br> Enter the link (hh.ru): </p>
+        <input type="text" name="link">
+
         <input type = "submit"/>
       </form>
 
@@ -147,13 +159,15 @@
     
 
 <!-- PopUp Tutorial -->
-<!-- <div class="popup">
+<div class="popup">
   <button id="close">&times;</button>
   <h2>Call to Action</h2>
   <p> Рассказываем немного о том как с нами работать</p>
   <a  id="close" href="#">Let's Go</a>
-</div> -->
+</div>
 <!---->
+
+  <!---
 <script type="text/javascript">
   window.addEventListener("load", function(){
       setTimeout(
@@ -164,6 +178,8 @@
       )
   });
 </script>
+
+--->
 
   <!-- particles.js container -->
   <div id="particles-js"></div>

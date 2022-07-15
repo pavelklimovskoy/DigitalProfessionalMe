@@ -18,7 +18,7 @@ function alerted() {
       txt = "Select one or more files.";
     }
   
-    alert(txt);
+    //alert(txt);
   }
   
   

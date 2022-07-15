@@ -1,5 +1,6 @@
 let skillId = 0;
 
+// Удаление скиллов
 function deleteSkill(skillId)
 {
     let elem = document.getElementById(skillId);
@@ -21,8 +22,12 @@ function loadSkills()
     let skillList = new Map();
 
     let jsonWithSkills = null;
+    
 
-    fetch("http://digitalprofessional.me:5000/getJson")
+    let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '';
+    let urlRequest = 'http://digitalprofessional.me:5000/getRchilliJson?id='+cookieId;
+
+    fetch(urlRequest)
     .then((response) => {
         return response.json();
     })
@@ -82,6 +87,14 @@ function loadSkills()
             let delButton = document.createElement("button");
             delButton.className = "btn";
             delButton.id = skillId;
+            delButton.addEventListener("mouseover", function( event ) {
+                event.currentTarget.setAttribute("style", "background-color:red");
+              }, false);
+
+            delButton.addEventListener("mouseout", function( event ) {
+                event.currentTarget.setAttribute("style", "");
+              }, false);
+
 
             // Удаление по клику по кнопке
             delButton.onclick = () => deleteSkill("skills-" + delButton.id);
@@ -103,6 +116,7 @@ function loadSkills()
 
 }
 
+// Добавления скиллов
 function addSkiilButton()
 {
     let skillName = prompt("Enter skill name", "Python");

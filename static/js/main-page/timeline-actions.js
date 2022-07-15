@@ -26,7 +26,12 @@ function createTimeline()
    let arr_items = [];
 
    let itemId = 0;
-   fetch("http://digitalprofessional.me:5000/getJson")
+
+   let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '';
+   let urlRequest = 'http://digitalprofessional.me:5000/getRchilliJson?id='+cookieId;
+
+
+   fetch(urlRequest)
     .then((response) => {
         return response.json();
     })
@@ -50,8 +55,12 @@ function createTimeline()
        // Обработка образования
        data["ResumeParserData"]["SegregatedQualification"].forEach(study => {
 
+        let itemIcon = '<div><img id="111"src="../static/data/img/university.png"></div>';
+
         let period = study["FormattedDegreePeriod"];
-        let place = study["Institution"]["Name"];
+        //let place = study["Institution"]["Name"] + itemIcon;
+        //let place = "<span>&#127891; </span>" + study["Institution"]["Name"];
+        let place = "<div>" + study["Institution"]["Name"] + "</div>" +itemIcon;
 
         if(period.includes("to") == true) {
           period = period.replace(/\s/g, '');
@@ -64,8 +73,10 @@ function createTimeline()
         else{
           period = period.split('/').reverse().join('-');
 
-          arr_items.push({id: itemId, content: place, editable: false, start: new Date(period), group: 3});
+          arr_items.push({id: itemId, content: place, editable: false,  start: new Date(period), group: 3});
         }
+
+      
 
         itemId++;
     });
@@ -76,15 +87,15 @@ function createTimeline()
       let groups = [
         {
           id: 1,
-          content: 'Experience'
+          content: "<b>Experience</b>"
         },
         {
           id: 2,
-          content: 'Courses'
+          content: '<b>Courses</b>'
         },
         {
           id: 3,
-          content: 'Education'
+          content: '<b>Education</b><span> &#127891;</span>'
         }
       ]
 

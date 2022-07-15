@@ -14,16 +14,141 @@
             "fill": "#D99632",
             "children": [
               {
-                "name": "Examination",
+                "name": "Communication",
                 "id": "SoftSkill",
                 "value": "1",
                 "fill": "#FFB240"
               },
               {
-                "name": "Manage Project Team",
+                "name": "Examination",
                 "id": "SoftSkill",
                 "value": "1",
                 "fill": "#FFB240"
+              }
+            ]
+          },
+          {
+            "name": "Computer and Information Systems Managers",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Methodology",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Health Care and Social Assistance",
+        "id": "OperationalSkill",
+        "fill": "#144679",
+        "children": [
+          {
+            "name": "Medical and Clinical Laboratory Technicians",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Laboratory Testing",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          },
+          {
+            "name": "Medical Assistants",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#3272B5",
+            "children": [
+              {
+                "name": "Giving Injections",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              },
+              {
+                "name": "Patient Scheduling",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          },
+          {
+            "name": "Healthcare Support Workers, All Other",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Diagnose and Treat Human Injuries",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          },
+          {
+            "name": "Medical Records and Health Information Technicians",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Patient Records Management",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          },
+          {
+            "name": "HMO Medical Centers",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Catheterization",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          },
+          {
+            "name": "Phlebotomists",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Phlebotomy",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          },
+          {
+            "name": "Prosthodontists",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Dentistry",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
               }
             ]
           }
@@ -35,97 +160,19 @@
         "fill": "#3272B5",
         "children": [
           {
-            "name": "Production, Planning, and Expediting Clerks",
-            "id": "SoftSkill",
-            "value": "1",
-            "fill": "#FFB240",
-            "children": [
-              {
-                "name": "Scheduling Process",
-                "id": "SoftSkill",
-                "value": "1",
-                "fill": "#FFB240"
-              }
-            ]
-          },
-          {
-            "name": "Computer Operators",
+            "name": "Medical Secretaries",
             "id": "OperationalSkill",
             "value": "1",
-            "fill": "#4188D2",
+            "fill": "#3272B5",
             "children": [
               {
-                "name": "Documentation",
+                "name": "Physical Examination",
                 "id": "OperationalSkill",
                 "value": "1",
                 "fill": "#4188D2"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Construction",
-        "id": "OperationalSkill",
-        "fill": "#3272B5",
-        "children": [
-          {
-            "name": "Construction and Building Inspectors",
-            "id": "OperationalSkill",
-            "value": "1",
-            "fill": "#4188D2",
-            "children": [
+              },
               {
-                "name": "Construction Supervision",
-                "id": "OperationalSkill",
-                "value": "1",
-                "fill": "#4188D2"
-              }
-            ]
-          },
-          {
-            "name": "All Other Specialty Trade Contractors",
-            "id": "OperationalSkill",
-            "value": "1",
-            "fill": "#4188D2",
-            "children": [
-              {
-                "name": "Tender Document",
-                "id": "OperationalSkill",
-                "value": "1",
-                "fill": "#4188D2"
-              }
-            ]
-          },
-          {
-            "name": "Mechanical Drafters",
-            "id": "OperationalSkill",
-            "value": "1",
-            "fill": "#4188D2",
-            "children": [
-              {
-                "name": "Hvac System Design",
-                "id": "OperationalSkill",
-                "value": "1",
-                "fill": "#4188D2"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Information",
-        "id": "OperationalSkill",
-        "fill": "#4188D2",
-        "children": [
-          {
-            "name": "All Other Information Services",
-            "id": "OperationalSkill",
-            "value": "1",
-            "fill": "#4188D2",
-            "children": [
-              {
-                "name": "Project Documentation",
+                "name": "Medical Translation",
                 "id": "OperationalSkill",
                 "value": "1",
                 "fill": "#4188D2"
@@ -140,13 +187,13 @@
         "fill": "#3272B5",
         "children": [
           {
-            "name": "Human Resources Specialists",
+            "name": "Market Research Analysts and Marketing Specialists",
             "id": "OperationalSkill",
             "value": "1",
             "fill": "#4188D2",
             "children": [
               {
-                "name": "Recruitment",
+                "name": "Market Research",
                 "id": "OperationalSkill",
                 "value": "1",
                 "fill": "#4188D2"
@@ -154,34 +201,13 @@
             ]
           },
           {
-            "name": "Logisticians",
+            "name": "Accountants and Auditors",
             "id": "OperationalSkill",
             "value": "1",
             "fill": "#4188D2",
             "children": [
               {
-                "name": "Logistics",
-                "id": "OperationalSkill",
-                "value": "1",
-                "fill": "#4188D2"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Installation, Maintenance, and Repair Occupations",
-        "id": "OperationalSkill",
-        "fill": "#4188D2",
-        "children": [
-          {
-            "name": "Heating, Air Conditioning, and Refrigeration Mechanics and Installers",
-            "id": "OperationalSkill",
-            "value": "1",
-            "fill": "#4188D2",
-            "children": [
-              {
-                "name": "Maintain Air Conditioning",
+                "name": "Billing",
                 "id": "OperationalSkill",
                 "value": "1",
                 "fill": "#4188D2"
@@ -193,30 +219,79 @@
       {
         "name": "Arts, Entertainment, and Recreation",
         "id": "OperationalSkill",
-        "fill": "#3272B5",
+        "fill": "#4188D2",
         "children": [
           {
-            "name": "Writers and Editors",
+            "name": "Biochemists and Biophysicists",
             "id": "OperationalSkill",
             "value": "1",
             "fill": "#4188D2",
             "children": [
               {
-                "name": "Writing",
+                "name": "Clinical Research",
                 "id": "OperationalSkill",
                 "value": "1",
                 "fill": "#4188D2"
               }
             ]
-          },
+          }
+        ]
+      },
+      {
+        "name": "Wholesale Trade",
+        "id": "OperationalSkill",
+        "fill": "#4188D2",
+        "children": [
           {
-            "name": "Designers",
+            "name": "Insurance Sales Agents",
             "id": "OperationalSkill",
             "value": "1",
             "fill": "#4188D2",
             "children": [
               {
-                "name": "Design",
+                "name": "Insurance",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Professional, Scientific, and Technical Services",
+        "id": "OperationalSkill",
+        "fill": "#4188D2",
+        "children": [
+          {
+            "name": "All Other Professional, Scientific, and Technical Services",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Science",
+                "id": "OperationalSkill",
+                "value": "1",
+                "fill": "#4188D2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Information",
+        "id": "OperationalSkill",
+        "fill": "#4188D2",
+        "children": [
+          {
+            "name": "Software Developers and Programmers",
+            "id": "OperationalSkill",
+            "value": "1",
+            "fill": "#4188D2",
+            "children": [
+              {
+                "name": "Programming Language",
                 "id": "OperationalSkill",
                 "value": "1",
                 "fill": "#4188D2"

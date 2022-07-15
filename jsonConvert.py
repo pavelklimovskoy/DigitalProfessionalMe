@@ -33,12 +33,11 @@ def color_calc(check, skillType):
 
 
 # Конвертация Json
-def json_convert(fname):
-    #jsonName = './static/data/cv/' + fname.split('.')[0] + '.json'
-    jsonName = './static/data/cv/' + 'rchilli.json'
+def json_convert(data):
+    #jsonName = './static/data/cv/' + 'rchilli.json'
 
-    with open(jsonName, encoding='utf-8') as rchilliJson:
-        data = json.load(rchilliJson)
+    #with open(jsonName, encoding='utf-8') as rchilliJson:
+    #    data = json.load(rchilliJson)
 
     # Массив названий навыков для удаления дублей
     skillsArray = []
@@ -125,8 +124,7 @@ def json_convert(fname):
     mainArray.append(mainDict)
 
     # Запись нового Json файла
-    with open('./static/data/cv/sunburstDataUpdated.json', 'w') as chartJson:
-        json.dump(mainArray, chartJson, sort_keys=False, indent=2)
+    #with open('./static/data/cv/sunburstDataUpdated.json', 'w') as chartJson:
+    #    json.dump(mainArray, chartJson, sort_keys=False, indent=2)
 
-    # return mainArray
-    # print(mainDict)
+    return mainArray

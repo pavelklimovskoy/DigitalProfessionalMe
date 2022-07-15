@@ -1,123 +1,261 @@
 import os
-from flask import Flask, jsonify, request, send_from_directory, render_template, json, make_response, redirect,\
-    url_for, flash, send_file
+import random
+from flask import Flask, jsonify, request, send_from_directory, render_template, json, make_response, redirect, \
+    url_for, flash, send_file, Response
+from pymongo import MongoClient
 from flask_cors import CORS, cross_origin
-import flask_login
-from flask_mongoengine import MongoEngine
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import codecs
 from jsonConvert import json_convert
 from rchilli import rchilli_parse
+from mongodb import *
+import pdfkit
 from werkzeug.utils import secure_filename
 import os
 
 # Flask config
 app = Flask(__name__)
-app.config['MONGODB_SETTINGS'] = {
-    'db': 'test1',
-    'host': '127.0.0.1',
-    'port': 27017
-}
+app.config['SECRET_KEY'] = '1a2d5a33a7f02c888ff796a9f5f422bf96f4eb1c6'
 app.config['JSON_AS_ASCII'] = False
 app.config['UPLOAD_FOLDER'] = './static/data/cv/'
+app.config['UPLOAD_IMAGE_FOLDER'] = './static/data/img/'
 app.config.from_object(__name__)
 CORS(app)
 
+client = MongoClient('localhost', 27017)
+db = client['DPM']
+collection = db['users']
 
-# MongoDb
-db = MongoEngine()
-db.init_app(app)
-
-class User(db.Document):
-    name = db.StringField()
-    email = db.StringField()
-
-    def to_json(self):
-        return {"name": self.name,
-                "email": self.email}
-
-@app.route('/show', methods=['GET'])
-def query_records():
-    name = request.args.get('name')
-    user = User.objects(name=name).first()
-
-    if not user:
-        return jsonify({'error': 'data not found'})
-    else:
-        return jsonify(user.to_json())
-
-@app.route('/add', methods=['POST'])
-def create_record():
-    record = json.loads(request.data)
-    user = User(name=record['name'],
-                email=record['email'])
-    user.save()
-
-    return jsonify(user.to_json())
-
-@app.route('/upd', methods=['POST'])
-def update_record():
-    record = json.loads(request.data)
-    user = User.objects(name=record['name']).first()
-
-    if not user:
-        return jsonify({'error': 'data not found'})
-    else:
-        user.update(email=record['email'])
-
-    return jsonify(user.to_json())
-
-@app.route('/delete', methods=['POST'])
-def delete_record():
-    record = json.loads(request.data)
-    user = User.objects(name=record['name']).first()
-
-    if not user:
-        return jsonify({'error': 'data not found'})
-    else:
-        user.delete()
-
-    return jsonify(user.to_json())
-# MongoDB
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+login_manager.login_message = 'Please log in to access the site'
+login_manager.login_message_category = 'success'
 
 
+@login_manager.user_loader
+def load_user(userId):
+    return find_record('Id', userId)
+
+
+@app.after_request
+def apply_caching(response):
+    response.headers['X-Frame-Options'] = 'ALLOW'
+    return response
+
+
+# Загрузка аватара на сервер
+@app.route('/upload_avatar', methods=['GET', 'POST'])
+@login_required
+def upload_avatar():
+    curUserId = str(request.cookies.get('id'))
+    curUser = find_record('Id', curUserId)
+    avatar = request.files['avatar']
+    avatarName = avatar.filename
+    if request.method == 'POST' and avatar is not None and ('.jpg' in avatarName or '.png' in avatarName):
+
+        fname = secure_filename(avatarName.split('.')[0]) + str(random.randrange(0, 1000000, 1)) + '.' + \
+                secure_filename(avatarName.split('.')[1])
+
+        #print(fname)
+
+        # Локально сохраняем аватар
+        avatar.save(os.path.join(app.config['UPLOAD_IMAGE_FOLDER'], fname))
+
+        update_record('Id', curUserId, 'avatar', fname)
+
+    return render_template('index.html', title='Digital Professional Me', userName=curUser.name)
+
+
+# Загрузка CV на сервер
 @app.route('/uploader', methods=['GET', 'POST'])
 def upload_file():
+    global fname, curUser
     if request.method == 'POST':
-        f = request.files['file']
-        fname = secure_filename(f.filename)
-        f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
-        rchilli_parse(fname)
-        converting(fname)
-    return render_template('index.html', title='Digital Professional Me')
+        cvLink = request.form['link']
+
+        if cvLink != '':
+            try:
+                fname = 'hhCv_' + str(random.randrange(0, 1000000, 1)) + '.pdf'
+                save_pdf(cvLink, fileName=fname)
+                file = open(fname)
+                print(file)
+                print(fname)
+            except:
+                print("Error")
+        else:
+            file = request.files['file']
+            fname = secure_filename(file.filename)
+            # Локально сохраняем копию CV
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
+        print(fname)
+
+        curUserId = str(request.cookies.get('id'))
+        # print("Hello from updating + CurUsId= ", curUserId)
+        curUser = find_record('Id', curUserId)
+        # print("Hello from updating + CurUs= ", curUser)
+        if curUser is not None:
+            rchilliData = rchilli_parse(fileName=fname)
+            jsonData = json_convert(data=rchilliData)
+
+            # print(rchilliData)
+            # print(jsonData)
+
+            update_record('Id', curUserId, 'jsondata', jsonData)
+            update_record('Id', curUserId, 'rchillidata', rchilliData)
+
+            # update_record(curUser, jsonData, rchilliData)
+
+    # print(request.cookies.get('id'))
+    return render_template('index.html', title='Digital Professional Me', userName=curUser.name)
 
 
 # Основная страница
 @app.route('/')
+@login_required
 def index():
-    return render_template('index.html', title='Digital Professional Me')
+    if request.cookies.get('id') == None:
+        logout_user()
+        return render_template('login.html')
+
+    curUserId = str(request.cookies.get('id'))
+    curUser = find_record('Id', curUserId)
+
+    return render_template('index.html', title='Digital Professional Me', userName=curUser.name)
 
 
-# Основная страница
+# Avatar
+@app.route('/getAvatar', methods=['GET', 'POST'])
+@login_required
+def get_avatar():
+    curUserId = str(request.cookies.get('id'))
+    curUser = find_record('Id', curUserId)
+
+    return curUser.avatar
+
+
+# Json для Sunburst Chart
+@app.route('/getChartJson', methods=['GET', 'POST'])
+# @login_required
+def get_chart_json():
+    curUserId = str(request.args.get('id'))
+    curUser = find_record('Id', curUserId)
+
+    return jsonify(curUser.jsondata)
+
+
+# Rchilli Json
+@app.route('/getRchilliJson', methods=['GET', 'POST'])
+# @login_required
+def get_rchilli_json():
+    curUserId = str(request.args.get('id'))
+    curUser = find_record('Id', curUserId)
+
+    return jsonify(curUser.rchillidata)
+
+
+# # # User info
+# # @app.route('/getUserInfo', methods=['GET', 'POST'])
+# # @login_required
+# # def get_user_info():
+# #     curUserId = str(request.cookies.get('id'))
+# #     curUser = Users.find_user_byid(curUserId)
+# #
+# #     return jsonify(curUser.jsondata)
+#
+# Cтраница с информацией
 @app.route('/about')
 def about_us():
     return render_template('aboutus.html', title='About us')
 
 
-# Конвертация Json из формата Rchilli в формат, нужный для диаграммы
-@app.route('/convert-<name>', methods=['GET'])
-def converting(name):
-    #args = request.args
-    #jsonName = str(args.get('name'))
-    #json_convert(jsonName)
+# Регистрация
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        if len(request.form['name']) > 4 and len(request.form['email']) > 2 \
+                and 20 >= len(request.form['password']) >= 6 and request.form['password'] == request.form['password2']:
+            # hash = generate_password_hash(request.form['password'])
+            # res = dbase.addUser(request.form['name'], request.form['email'], request.form['password'])
 
-    json_convert(name)
-    return render_template('index.html')
+            # Проверка на существование пользователя в БД
+            curUser = find_record('email', str(request.form['email']))
+            if curUser is None:
+                create_record(request)
 
-@app.route('/getJson')
-def get_json_data():
-    path = './static/data/cv/rchilli.json'
-    return send_file(path)
+                flash("You have successfully registered", category='success')
+                return redirect(url_for('login'))
+            else:
+                #print("Уже есть в базе ", curUser.Id)
+                flash("Error adding to the database", category='error')
+        else:
+            #print("Не совпали данные")
+            flash("The fields are filled in incorrectly", category='error')
+    return render_template('register.html')
+
+
+# Авторизация
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        curUser = find_record('email', str(request.form['email']))
+
+        if curUser is not None and curUser.password == request.form['password']:
+            rm = True if request.form.get('remainme') else False
+
+            resp = make_response(render_template('index.html', userName=curUser.name))
+            resp.set_cookie(key='id', value=str(curUser.Id))
+
+            login_user(curUser, remember=rm)
+            # return redirect(request.args.get('next') or url_for('index'))
+            return resp
+
+        flash("Wrong password or login", 'error')
+
+    return render_template('login.html')
+
+
+# Деавторизация
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+
+    resp = make_response(render_template('login.html'))
+    resp.delete_cookie(key='id')
+
+    flash("You logged out of the profile", 'success')
+    return resp
+
+
+# @app.route('/savePdf')
+# @login_required
+def save_pdf(url, fileName):
+    pdfkit.from_url(url, './static/data/cv/' + fileName)
+    # configuration=pdfkit.configuration(wkhtmltopdf='wkhtmltopdf'))
+    # wkhtmltopdf=r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'))
+
 
 if __name__ == "__main__":
-    #rchilli_parse('cv2.pdf')
+    # save_pdf('https://rostov.hh.ru/resume/cff0c7840008df66c40039ed1f4f494c74544a?query=Python&hhtmFrom=resume_search_result',
+    #         fileName='hhCv_' + str(random.randrange(0, 1000000, 1))+'.pdf')
+
+    # print(find_record('Id', 'ff174dbe-0e26-4ecc-84f8-5efa239bb506'))
+    # collection.insert_one({
+    #    'jsondata': None,
+    #    'rchillidata': None,
+    #    'name': 'Sasha',
+    #    'password': 'Sasha',
+    #    'email': 'Sasha'
+    #     })
+    # collection.find_one_and_update({'name':"Sasha"},
+    #                    { '$set': { "name" : 'ECE'} })
+
+    # print(Users.find_user_byid(userId='62997f61f664117c00e939bf'))
+    # print(Users.objects(_id='62997f61f664117c00e939bf').first())
+    # print(Users.objects().first()._id)
+    # print(Users.objects(_id='629956fc902328af4a602b82').first())
+
     app.run(debug=True, port=5000, host="0.0.0.0")

@@ -1,11 +1,31 @@
 anychart.onDocumentReady(function () {
-    anychart.data.loadJsonFile("../static/data/cv/sunburstDataUpdated.json",
-      function (data) {
+ 
+  let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '';
+  //let xhr = new XMLHttpRequest();
+
+  //xhr.responseType = 'text'; // or json
+
+  let urlRequest = 'http://digitalprofessional.me:5000/getChartJson?id='+cookieId;
+  
+  // xhr.open(
+  //   'GET',
+  //   urlRequest,
+  //   true
+  // );
+  // xhr.send();
+
+  // xhr.onload = function() {
+  //   data = xhr.response;
+  // };
+   
+  anychart.data.loadJsonFile(urlRequest,
+    function (data) {
         // create a data tree from the dataset
         let dataTree = anychart.data.tree(data);
-
+        
         // create a sunburst chart
         let chart = anychart.sunburst(dataTree);
+        
 
         // set the calculation mode
         chart.calculationMode('parent-independent');
@@ -53,10 +73,15 @@ anychart.onDocumentReady(function () {
           .format("<h5 style='font-size:16px; margin: 0.25rem 0;'>{%name}</h5><h6 style='font-size:14px; font-weight:400; margin: 0.2rem 0;'>Level: <b>{%value}{groupsSeparator:\\,}</b></h6><h6 style='font-size:14px; font-weight:400; margin: 0.2rem 0;'></b></h6>");
 
         // Set chart fill.
-        chart.fill({
-        src: '../static/data/img/Alexey.jpg',
-        mode: 'fit'
-        });
+        let avatarName = new XMLHttpRequest();
+        avatarName.open("GET", "http://digitalprofessional.me:5000/getAvatar", true);
+        avatarName.onload = function () {
+                chart.fill({
+            src: '../static/data/img/' + avatarName.responseText,
+            mode: 'fit'
+            });
+        }
+        avatarName.send(null);
 
         chart.labels().useHtml(true);
         chart.labels().format("<span style='font-size: 8px; word-break: normal; word-wrap: break-word;'>{%name}</span>");
