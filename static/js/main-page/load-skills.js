@@ -3,47 +3,53 @@ let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.p
 
 // Смена состояний скиллов
 function changeSkillState(skillId) {
-    const skill = document.querySelector(`#${skillId}`),
-        ask = confirm(`Change state of the skill: ${skill.textContent}?`);
+    const skill = document.querySelector(`#${skillId}`);
+    let state;
 
-    if (ask && skill) {
+    if (skill) {
         skill.remove();
 
-        let classId = '';
+        let skillClass = '';
         for (let i = 0; i < skill.classList.length; i++) {
             if (skill.classList[i].includes('skill')) {
-                classId = skill.classList[i];
+                skillClass = skill.classList[i];
                 break;
             }
         }
-        console.log(skill.textContent);
-        fetch(`http://digitalprofessional.me:5000/changeSkillState?skillName=${skill.textContent}`, {mode: 'no-cors'})
-            .then(() => {
-                if (classId != 'disabled-skill') {
-                    skill.classList.remove(classId);
-                    skill.classList.add('disabled-skill');
-                    skillBlock.append(skill);
-                }
-                else {
-                    skill.classList.remove('disabled-skill');
-                    
-                    if (skill.id.includes('SoftSkill')) {
-                        skill.classList.add('soft-skill');
-                    } else if (skill.id.includes('OperationalSkill')) {
-                        skill.classList.add('hard-skill');
-                    }
-                    
-                    skillBlock.append(skill);
-                }
-            });
-            // .then(setTimeout(() => {
-            //     chart.draw();
-            //     console.log('TIMER');
-            // }, 5000));
+
+        if (skillClass != 'disabled-skill') {
+            skill.classList.remove(skillClass);
+            skill.classList.add('disabled-skill');
+
+            skillBlock.append(skill);
+            state = 0;
+        }
+        else {
+            skill.classList.remove('disabled-skill');
+
+            if (skill.id.includes('SoftSkill')) {
+                skill.classList.add('soft-skill');
+            } else if (skill.id.includes('OperationalSkill')) {
+                skill.classList.add('hard-skill');
+            }
+
+            skillBlock.append(skill);
+            state = 1;
+        }
+
+        let xhr = new XMLHttpRequest();
+        xhr.open(
+            'GET',
+            `http://localhost:5000/changeSkillState?skillName=${skill.textContent}`,
+            true
+        );
+        xhr.send();
     }
+
+    return state;
 }
 
-function loadSkills(skillList, redrawChart, filteringData) {
+function loadSkills(skillList, redrawChart, disabledSkills) {
     skillList.forEach(
         (skill, i) => {
             let skillDiv = document.createElement("div");
@@ -63,28 +69,39 @@ function loadSkills(skillList, redrawChart, filteringData) {
 
             skillDiv.id = `${skill.id}-${i}`;
 
-            // Создание иконки удаления
+            // Создание иконки переключения
             let iconButton = document.createElement("i");
             iconButton.className = "fa fa-close";
 
-            // Создание кнопки удаления
+            // Создание кнопки переключения
             let delButton = document.createElement("button");
             delButton.className = "btn";
             delButton.id = i;
 
+            // Кнопка становится красной при наведении мыши
             delButton.addEventListener("mouseover", (e) => {
                 e.currentTarget.setAttribute("style", "background-color: red");
             });
 
+            // Кнопка становится прозрачной при отведении мыши или нажатия на неё 
             delButton.addEventListener("mouseout", (e) => {
                 e.currentTarget.setAttribute("style", "");
             });
 
-            // Удаление по клику по кнопке
-            delButton.addEventListener("click", () => {
-                filteringData.push(skill);
-                changeSkillState(`${skill.id}-${delButton.id}`);
-                redrawChart(filteringData);
+            // Переключение состояния скиллов
+            delButton.addEventListener("click", (e) => {
+                e.currentTarget.setAttribute("style", "");
+
+                let state = changeSkillState(`${skill.id}-${delButton.id}`);
+
+                if (state == 0) {
+                    disabledSkills.push(skill);
+                    redrawChart(disabledSkills);
+                } else {
+                    disabledSkills.pop(skill);
+                    redrawChart(disabledSkills, skill);
+                }
+
             });
 
             // Добавление иконки к кнопке
@@ -95,7 +112,7 @@ function loadSkills(skillList, redrawChart, filteringData) {
     );
 }
 
-// Добавления скиллов
+//Добавление скиллов
 // function addSkiilButton() {
 //     let skillName = prompt("Enter skill name", "Python");
 

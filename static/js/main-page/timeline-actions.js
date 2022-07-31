@@ -19,20 +19,19 @@ function createTimeline() {
     showControllers();
   }
 
-  let arr_items = [];
+  let arrItems = [];
 
   let itemId = 0;
 
   let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '';
-  let urlRequest = 'http://digitalprofessional.me:5000/getRchilliJson?id=' + cookieId;
+  let urlRequest = 'http://localhost:5000/getRchilliJson?id=' + cookieId;
 
 
   fetch(urlRequest)
-    .then((response) => {
+    .then(response => {
       return response.json();
     })
-    .then((data) => {
-
+    .then(data => {
       // Обработка опыта работы
       data["ResumeParserData"]["SegregatedExperience"].forEach(job => {
 
@@ -43,7 +42,7 @@ function createTimeline() {
 
         let itemContent = "<b>" + employer + "</b>" + "<br>" + position;
 
-        arr_items.push({ id: itemId, content: itemContent, editable: false, start: startDate, end: endDate, group: 1 });
+        arrItems.push({ id: itemId, content: itemContent, editable: false, start: startDate, end: endDate, group: 1 });
 
         itemId++;
       });
@@ -64,12 +63,12 @@ function createTimeline() {
           let startDate = period.split("to")[0];
           let endDate = period.split("to")[1];
 
-          arr_items.push({ id: itemId, content: place, editable: false, start: new Date(startDate), end: new Date(endDate), group: 3 });
+          arrItems.push({ id: itemId, content: place, editable: false, start: new Date(startDate), end: new Date(endDate), group: 3 });
         }
         else {
           period = period.split('/').reverse().join('-');
 
-          arr_items.push({ id: itemId, content: place, editable: false, start: new Date(period), group: 3 });
+          arrItems.push({ id: itemId, content: place, editable: false, start: new Date(period), group: 3 });
         }
 
 
@@ -77,7 +76,7 @@ function createTimeline() {
         itemId++;
       });
 
-      let items = new vis.DataSet(arr_items);
+      let items = new vis.DataSet(arrItems);
 
       // Группы событий
       let groups = [

@@ -44,7 +44,7 @@ def json_convert(data):
     skillsArray = []
 
     # Структура Json
-    mainArray = []
+    # mainArray = []
     mainDict = {'name': 'Me', 'children': []}  # Первый уровень
 
     # Массив типов умений
@@ -63,7 +63,10 @@ def json_convert(data):
 
     # Заполнение типов умений
     for typeSkill in firstType:
-        childMain = {'name': typeSkill, 'id': '', 'fill': '', 'children': []}  # Второй уровень
+        childMain = {
+            'name': typeSkill, 'id': '', 'fill': '',
+            'parent': 'Me', 'children': []
+        }  # Второй уровень
 
         # Заполнение дочернего массива скиллов
         for skill in data['ResumeParserData']['SegregatedSkill']:
@@ -77,7 +80,11 @@ def json_convert(data):
             if ontologyMain[0] == typeSkill:
                 childMain['id'] = typeIdFill
 
-                tmp = {'name': ontologyMain[1], 'id': childMain['id'], 'value': '1', 'fill': '', 'children': []}
+                tmp = {
+                    'name': ontologyMain[1], 'id': childMain['id'],
+                    'value': '1', 'fill': '', 'parent': typeSkill,
+                    'children': []
+                }
 
                 for skillName in data['ResumeParserData']['SegregatedSkill']:
                     ontology = str(skillName['Ontology']).split('>')
@@ -87,8 +94,11 @@ def json_convert(data):
                         if len(shortName) > 5:
                             shortName = ontology[2][:6] + '...'
 
-                        skillSelf = {'name': ontology[2], 'id': childMain['id'], 'value': '1',
-                                     'shortName': shortName, 'enabled': True, 'fill': ''}
+                        skillSelf = {
+                            'name': ontology[2], 'id': childMain['id'], 'value': '1',
+                            'enabled': True, 'shortName': shortName, 'fill': '',
+                            'grandParent': typeSkill, 'parent': ontologyMain[1]
+                        }
 
                         if ontology[1] == ontologyMain[1] and ontology[2] not in skillsArray:
                             tmp['children'].append(skillSelf)
@@ -127,10 +137,11 @@ def json_convert(data):
 
         type['fill'] = filling
 
-    mainArray.append(mainDict)
+    # mainArray.append(mainDict)
 
     # Запись нового Json файла
     # with open('./static/data/cv/sunburstDataUpdated.json', 'w') as chartJson:
     #    json.dump(mainArray, chartJson, sort_keys=False, indent=2)
 
-    return mainArray
+    # return mainArray
+    return [mainDict]
