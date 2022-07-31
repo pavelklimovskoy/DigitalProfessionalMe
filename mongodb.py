@@ -57,8 +57,6 @@ def update_record(findKey, findValue, key, value):
 
 
 def create_record(CurRequest):
-
-
     collection.insert_one({'Id': str(uuid.uuid4()),
                            'name': CurRequest.form['name'],
                            'email': CurRequest.form['email'],
@@ -81,6 +79,24 @@ def find_record(key, value):
                      avatar=user['avatar'])
     else:
         return None
+
+def disable_skill(curUserId, skillName):
+    user = find_record('Id', curUserId)
+
+    data = user.jsondata[0]
+    for i in data['children']:
+        for j in i['children']:
+            for k in j['children']:
+                if k['name'] == skillName:
+                    if k['enabled'] is True:
+                        k['enabled'] = False
+                    else:
+                        k['enabled'] = True
+                    break
+
+    update_record('Id', curUserId, 'jsondata', [data])
+    return user
+
 
 # class Users(db.Document, UserMixin):
 #     _id = db.ObjectId()

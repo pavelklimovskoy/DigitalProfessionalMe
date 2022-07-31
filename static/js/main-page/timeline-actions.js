@@ -1,85 +1,81 @@
 let debugTimeline = false;
 
 // Вывод отладочной информации
-function showControllers()
-{
-    fetch('../templates/snippets/debug-form-timeline.html')
+function showControllers() {
+  fetch('../templates/snippets/debug-form-timeline.html')
     .then(response => response.text())
     .then(text => {
-        let divControl  = document.getElementById("debugTimeline");
+      let divControl = document.getElementById("debugTimeline");
 
-        if(divControl != null)
-        {
-            divControl.innerHTML = text;
-        }
-    })
+      if (divControl != null) {
+        divControl.innerHTML = text;
+      }
+    });
 }
 
 // Содание Timeline
-function createTimeline()
-{
-    if(debugTimeline == true)
-    {
-      showControllers();
-    }
+function createTimeline() {
+  if (debugTimeline == true) {
+    showControllers();
+  }
 
-   let arr_items = [];
+  let arr_items = [];
 
-   let itemId = 0;
+  let itemId = 0;
 
-   let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '';
-   let urlRequest = 'http://digitalprofessional.me:5000/getRchilliJson?id='+cookieId;
+  let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '';
+  let urlRequest = 'http://digitalprofessional.me:5000/getRchilliJson?id=' + cookieId;
 
 
-   fetch(urlRequest)
+  fetch(urlRequest)
     .then((response) => {
-        return response.json();
+      return response.json();
     })
     .then((data) => {
 
-        // Обработка опыта работы
-        data["ResumeParserData"]["SegregatedExperience"].forEach(job => {
+      // Обработка опыта работы
+      data["ResumeParserData"]["SegregatedExperience"].forEach(job => {
 
-          let endDate = job["EndDate"].split('/').reverse().join('-');
-          let startDate = job["StartDate"].split('/').reverse().join('-');
-          let position = job["JobProfile"]["FormattedName"];
-          let employer = job["Employer"]["EmployerName"];
+        let endDate = job["EndDate"].split('/').reverse().join('-');
+        let startDate = job["StartDate"].split('/').reverse().join('-');
+        let position = job["JobProfile"]["FormattedName"];
+        let employer = job["Employer"]["EmployerName"];
 
-          let itemContent = "<b>" + employer + "</b>" + "<br>" + position;
+        let itemContent = "<b>" + employer + "</b>" + "<br>" + position;
 
-          arr_items.push({id: itemId, content: itemContent, editable: false, start: startDate, end: endDate, group: 1});
+        arr_items.push({ id: itemId, content: itemContent, editable: false, start: startDate, end: endDate, group: 1 });
 
-          itemId++;
+        itemId++;
       });
 
-       // Обработка образования
-       data["ResumeParserData"]["SegregatedQualification"].forEach(study => {
+      // Обработка образования
+      data["ResumeParserData"]["SegregatedQualification"].forEach(study => {
 
         let itemIcon = '<div><img id="111"src="../static/data/img/university.png"></div>';
 
         let period = study["FormattedDegreePeriod"];
         //let place = study["Institution"]["Name"] + itemIcon;
         //let place = "<span>&#127891; </span>" + study["Institution"]["Name"];
-        let place = "<div>" + study["Institution"]["Name"] + "</div>" +itemIcon;
+        let place = "<div>" + study["Institution"]["Name"] + "</div>" + itemIcon;
 
-        if(period.includes("to") == true) {
+        if (period.includes("to") == true) {
           period = period.replace(/\s/g, '');
 
           let startDate = period.split("to")[0];
           let endDate = period.split("to")[1];
 
-          arr_items.push({id: itemId, content: place, editable: false, start: new Date(startDate), end: new Date(endDate), group: 3});
+          arr_items.push({ id: itemId, content: place, editable: false, start: new Date(startDate), end: new Date(endDate), group: 3 });
         }
-        else{
+        else {
           period = period.split('/').reverse().join('-');
 
-          arr_items.push({id: itemId, content: place, editable: false,  start: new Date(period), group: 3});
+          arr_items.push({ id: itemId, content: place, editable: false, start: new Date(period), group: 3 });
         }
 
-      
+
 
         itemId++;
-    });
+      });
 
       let items = new vis.DataSet(arr_items);
 
@@ -106,8 +102,8 @@ function createTimeline()
       let options = {
         zoomMax: 900000000000,
         zoomMin: 80000000000,
-        
-        autoResize : false,
+
+        autoResize: false,
         editable: {
           add: false,
           remove: false,
@@ -116,20 +112,20 @@ function createTimeline()
           overrideItems: false
         }
       };
-    
+
       let timeline = new vis.Timeline(container, items, groups, options);
-    
-      let updateEditOptions = function(e){
+
+      let updateEditOptions = function (e) {
         let changedOption = e.target.name;
-        let options = { editable: { } };
+        let options = { editable: {} };
         options.editable[changedOption] = e.target.checked;
         timeline.setOptions(options);
       };
-    
+
       let cbs = document.getElementsByTagName("input");
-      [].forEach.call(cbs, function(cb){
+      [].forEach.call(cbs, function (cb) {
         cb.onchange = updateEditOptions;
       });
 
-    });  
+    });
 }

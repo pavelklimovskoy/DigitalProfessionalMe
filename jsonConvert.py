@@ -1,5 +1,6 @@
 import json
 
+
 # Определение цвета для сектора
 def color_calc(check, skillType):
     # Массив цветов
@@ -34,9 +35,9 @@ def color_calc(check, skillType):
 
 # Конвертация Json
 def json_convert(data):
-    #jsonName = './static/data/cv/' + 'rchilli.json'
+    # jsonName = './static/data/cv/' + 'rchilli.json'
 
-    #with open(jsonName, encoding='utf-8') as rchilliJson:
+    # with open(jsonName, encoding='utf-8') as rchilliJson:
     #    data = json.load(rchilliJson)
 
     # Массив названий навыков для удаления дублей
@@ -81,8 +82,13 @@ def json_convert(data):
                 for skillName in data['ResumeParserData']['SegregatedSkill']:
                     ontology = str(skillName['Ontology']).split('>')
                     if len(ontology) == 3:
+                        shortName = ontology[2]
 
-                        skillSelf = {'name': ontology[2], 'id': childMain['id'], 'value': '1', 'fill': ''}
+                        if len(shortName) > 5:
+                            shortName = ontology[2][:6] + '...'
+
+                        skillSelf = {'name': ontology[2], 'id': childMain['id'], 'value': '1',
+                                     'shortName': shortName, 'enabled': True, 'fill': ''}
 
                         if ontology[1] == ontologyMain[1] and ontology[2] not in skillsArray:
                             tmp['children'].append(skillSelf)
@@ -124,7 +130,7 @@ def json_convert(data):
     mainArray.append(mainDict)
 
     # Запись нового Json файла
-    #with open('./static/data/cv/sunburstDataUpdated.json', 'w') as chartJson:
+    # with open('./static/data/cv/sunburstDataUpdated.json', 'w') as chartJson:
     #    json.dump(mainArray, chartJson, sort_keys=False, indent=2)
 
     return mainArray

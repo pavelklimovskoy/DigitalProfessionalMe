@@ -1,7 +1,7 @@
 import os
 import random
 from flask import Flask, jsonify, request, send_from_directory, render_template, json, make_response, redirect, \
-    url_for, flash, send_file, Response
+    url_for, flash, send_file, Response, session
 from pymongo import MongoClient
 from flask_cors import CORS, cross_origin
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -47,7 +47,9 @@ def apply_caching(response):
 @app.route('/upload_avatar', methods=['GET', 'POST'])
 @login_required
 def upload_avatar():
-    curUserId = str(request.cookies.get('id'))
+    #curUserId = str(request.cookies.get('id'))
+    curUserId = session['id']
+
     curUser = find_record('Id', curUserId)
     avatar = request.files['avatar']
     avatarName = avatar.filename
@@ -78,8 +80,8 @@ def upload_file():
                 fname = 'hhCv_' + str(random.randrange(0, 1000000, 1)) + '.pdf'
                 save_pdf(cvLink, fileName=fname)
                 file = open(fname)
-                print(file)
-                print(fname)
+                #print(file)
+                #print(fname)
             except:
                 print("Error")
         else:
@@ -87,12 +89,14 @@ def upload_file():
             fname = secure_filename(file.filename)
             # Локально сохраняем копию CV
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
-        print(fname)
+        #print(fname)
 
-        curUserId = str(request.cookies.get('id'))
+        #curUserId = str(request.cookies.get('id'))
+        curUserId = session['id']
+
         # print("Hello from updating + CurUsId= ", curUserId)
         curUser = find_record('Id', curUserId)
-        # print("Hello from updating + CurUs= ", curUser)
+        #print("Hello from updating + CurUs= ", curUser)
         if curUser is not None:
             rchilliData = rchilli_parse(fileName=fname)
             jsonData = json_convert(data=rchilliData)
@@ -113,11 +117,14 @@ def upload_file():
 @app.route('/')
 @login_required
 def index():
-    if request.cookies.get('id') == None:
+    #if request.cookies.get('id') == None:
+    if session is None or 'id' not in session.keys():
         logout_user()
         return render_template('login.html')
 
-    curUserId = str(request.cookies.get('id'))
+    #curUserId = str(request.cookies.get('id'))
+    curUserId = session['id']
+
     curUser = find_record('Id', curUserId)
 
     return render_template('index.html', title='Digital Professional Me', userName=curUser.name)
@@ -127,9 +134,12 @@ def index():
 @app.route('/getAvatar', methods=['GET', 'POST'])
 @login_required
 def get_avatar():
-    curUserId = str(request.cookies.get('id'))
+    #curUserId = str(request.cookies.get('id'))
+    #curUserId = str(session['id'])
+    #print(str(request.args.get('id')))
+    curUserId = str(request.args.get('id'))
     curUser = find_record('Id', curUserId)
-
+    #print(curUser)
     return curUser.avatar
 
 
@@ -206,7 +216,9 @@ def login():
             rm = True if request.form.get('remainme') else False
 
             resp = make_response(render_template('index.html', userName=curUser.name))
+
             resp.set_cookie(key='id', value=str(curUser.Id))
+            session['id'] = curUser.Id
 
             login_user(curUser, remember=rm)
             # return redirect(request.args.get('next') or url_for('index'))
@@ -224,7 +236,9 @@ def logout():
     logout_user()
 
     resp = make_response(render_template('login.html'))
+
     resp.delete_cookie(key='id')
+    session.pop('id', default=None)
 
     flash("You logged out of the profile", 'success')
     return resp
@@ -236,6 +250,15 @@ def save_pdf(url, fileName):
     pdfkit.from_url(url, './static/data/cv/' + fileName)
     # configuration=pdfkit.configuration(wkhtmltopdf='wkhtmltopdf'))
     # wkhtmltopdf=r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'))
+
+
+@app.route('/changeSkillState')
+def change_skill_state():
+    curUserId = session['id']
+    print(curUserId)
+    skillName = str(request.args.get('skillName'))
+    curUser = disable_skill(curUserId, skillName)
+    return render_template('index.html', title='Digital Professional Me', userName=curUser.name)
 
 
 if __name__ == "__main__":
