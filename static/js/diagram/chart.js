@@ -37,9 +37,6 @@ anychart.onDocumentReady(function () {
       let dataTree = anychart.data.tree(data);
 
       let redrawChart = (disabledSkills, skill = '') => {
-        console.log('disabledSkills: ', disabledSkills);
-        console.log('skill: ', skill);
-
         // Выключение скилла
         if (!skill) {
           disabledSkills.forEach(item => {
