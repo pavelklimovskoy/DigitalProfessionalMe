@@ -1,5 +1,4 @@
 import os
-import random
 from flask import Flask, jsonify, request, send_from_directory, render_template, json, make_response, redirect, \
     url_for, flash, send_file, Response, session
 from pymongo import MongoClient
@@ -9,13 +8,14 @@ import codecs
 from jsonConvert import json_convert
 from rchilli import rchilli_parse, skill_search, skill_autocomplete
 from mongodb import *
+from analytics import *
 import pdfkit
 from werkzeug.utils import secure_filename
 import os
 
 # Flask config
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '1a2d5a33a7f02c888ff796a9f5f422bf96f4eb1c6'
+app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY')
 app.config['JSON_AS_ASCII'] = False
 app.config['UPLOAD_FOLDER'] = './static/data/cv/'
 app.config['UPLOAD_IMAGE_FOLDER'] = './static/data/img/'
@@ -49,20 +49,22 @@ def apply_caching(response):
 def upload_avatar():
     # curUserId = str(request.cookies.get('id'))
     curUserId = session['id']
-
     curUser = find_record('Id', curUserId)
     avatar = request.files['avatar']
     avatarName = avatar.filename
-    if request.method == 'POST' and avatar is not None and ('.jpg' in avatarName or '.png' in avatarName):
-        fname = secure_filename(avatarName.split('.')[0]) + str(random.randrange(0, 1000000, 1)) + '.' + \
-                secure_filename(avatarName.split('.')[1])
+    image_id = summary_image_count()
 
-        # print(fname)
 
-        # Локально сохраняем аватар
-        avatar.save(os.path.join(app.config['UPLOAD_IMAGE_FOLDER'], fname))
+    if request.method == 'POST':
+        if avatar is not None:
+            if avatarName[-3:] in ["jpg", "png"]:
+                file_name = f"{avatarName[:-4]}-id-{image_id}.{avatarName[-3:]}"
 
-        update_record('Id', curUserId, 'avatar', fname)
+                # Локально сохраняем аватар
+                avatar.save(os.path.join(app.config['UPLOAD_IMAGE_FOLDER'], file_name))
+
+                increment_image_count()
+                update_record('Id', curUserId, 'avatar', file_name)
 
     return render_template('index.html', title='Digital Professional Me', userName=curUser.name)
 
@@ -76,11 +78,10 @@ def upload_file():
 
         if cvLink != '':
             try:
-                fname = 'hhCv_' + str(random.randrange(0, 1000000, 1)) + '.pdf'
+                fname = f'hhCv_{summary_cv_count()}.pdf'
                 save_pdf(cvLink, fileName=fname)
-                file = open(fname)
-                # print(file)
-                # print(fname)
+
+                increment_cv_count()
             except:
                 print("Error")
         else:
@@ -247,7 +248,7 @@ def logout():
 # @app.route('/savePdf')
 # @login_required
 def save_pdf(url, fileName):
-    pdfkit.from_url(url, './static/data/cv/' + fileName)
+    pdfkit.from_url(url, f'./static/data/cv/{fileName}')
     # configuration=pdfkit.configuration(wkhtmltopdf='wkhtmltopdf'))
     # wkhtmltopdf=r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'))
 
@@ -270,10 +271,11 @@ def show_input_options():
 @app.route('/findSkill')
 def find_skill():
     skillName = str(request.args.get('skillName'))
+
     print(skillName)
+
     return skill_search(skillName)
 
 
 if __name__ == "__main__":
-    # skill_autocomplete('Prog')
     app.run(debug=True, port=5000, host="0.0.0.0")
