@@ -15,7 +15,7 @@ import os
 
 # Flask config
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '1a2d5a33a7f02c888ff796a9f5f422bf96f4eb1c6'
+app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY')
 app.config['JSON_AS_ASCII'] = False
 app.config['UPLOAD_FOLDER'] = './static/data/cv/'
 app.config['UPLOAD_IMAGE_FOLDER'] = './static/data/img/'
@@ -57,8 +57,6 @@ def upload_avatar():
         fname = secure_filename(avatarName.split('.')[0]) + str(random.randrange(0, 1000000, 1)) + '.' + \
                 secure_filename(avatarName.split('.')[1])
 
-        # print(fname)
-
         # Локально сохраняем аватар
         avatar.save(os.path.join(app.config['UPLOAD_IMAGE_FOLDER'], fname))
 
@@ -76,7 +74,8 @@ def upload_file():
 
         if cvLink != '':
             try:
-                fname = 'hhCv_' + str(random.randrange(0, 1000000, 1)) + '.pdf'
+                #fname = 'hhCv_' + str(random.randrange(0, 1000000, 1)) + '.pdf'
+                fname = f'hhCv_{str(random.randrange(0, 1000000, 1))}.pdf'
                 save_pdf(cvLink, fileName=fname)
                 file = open(fname)
                 # print(file)
@@ -247,7 +246,7 @@ def logout():
 # @app.route('/savePdf')
 # @login_required
 def save_pdf(url, fileName):
-    pdfkit.from_url(url, './static/data/cv/' + fileName)
+    pdfkit.from_url(url, f'./static/data/cv/{fileName}')
     # configuration=pdfkit.configuration(wkhtmltopdf='wkhtmltopdf'))
     # wkhtmltopdf=r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'))
 
@@ -270,10 +269,11 @@ def show_input_options():
 @app.route('/findSkill')
 def find_skill():
     skillName = str(request.args.get('skillName'))
+
     print(skillName)
+
     return skill_search(skillName)
 
 
 if __name__ == "__main__":
-    # skill_autocomplete('Prog')
-    app.run(debug=True, port=5000, host="0.0.0.0")
+    app.run(debug=False, port=5000, host="0.0.0.0")

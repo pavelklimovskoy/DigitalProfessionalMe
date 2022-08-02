@@ -30,11 +30,11 @@ function createModalAddingSkill() {
 
   const element = document.createElement('div');
   element.innerHTML = `
-  <form autocomplete="off" action="http://localhost:5000/findSkill">
+  <form id="addSkillButton" autocomplete="off" action="http://localhost:5000/findSkill">
     <div class="autocomplete" style="width:300px;">
       <input id="myInput" type="text" name="skillName" placeholder="skillName">
     </div>
-    <input id="addSkillButton" type="submit">
+    <input type="submit">
   </form>
   `;
 
@@ -42,10 +42,37 @@ function createModalAddingSkill() {
 
   autocomplete(document.getElementById("myInput"));
 
-  const elem = document.querySelector('#addSkillButton');
-  console.log(elem);
+  const form = document.querySelector('#addSkillButton');
+
+  form.addEventListener('click', (e) => {
+    e.preventDefault();
+    console.log(e);
+
+    const urlRequest = `http://localhost:5000/findSkill?findSkill=${skillName}`;
+    fetch(urlRequest)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+      });
+  });
 }
 
+// function addSkillOnChart(skillName) {
+//   const form = document.querySelector('#addSkillButton');
+
+//   form.addEventListener('click', (e) => {
+//     e.preventDefault();
+//     //form.children();
+//     console.log(skillName);
+
+//     const urlRequest = `http://localhost:5000/findSkill?findSkill=${skillName}`;
+//     fetch(urlRequest)
+//       .then(response => response.json())
+//       .then(data => {
+//         console.log(data);
+//       });
+//   });
+// }
 function createModalCv() {
   modalContent.innerHTML = '';
 

@@ -1,6 +1,7 @@
 import base64
 import requests
 import json
+import os
 
 # Rchilli API config
 apiParseResumeUrl = 'https://rest.rchilli.com/RChilliParser/Rchilli/parseResumeBinary'
@@ -8,12 +9,12 @@ apiSkillSearchUrl = 'https://taxonomy3.rchilli.com/taxonomy/skillsearch'
 apiSkillAutocompleteUrl = 'https://taxonomy3.rchilli.com/taxonomy/autocompleteskill'
 apiResumeVersion = '8.0.0'
 apiTaxonomyVersion = '3.0'
-userkey = '00SLQQL6'
+userkey = os.getenv('RCHILLI_API_KEY')
 subUserId = 'Alexander Fedorov'
 
 
 def rchilli_parse(fileName):
-    filePath = './static/data/cv/' + fileName
+    filePath = f'./static/data/cv/{fileName}'
     # service url- provided by RChilli
 
     with open(filePath, "rb") as filePath:
@@ -59,7 +60,6 @@ def skill_search(skillName):
         'type': resp['SkillType']
     }
 
-    print(skillData)
     return skillData
 
 
@@ -80,7 +80,9 @@ def skill_autocomplete(skillName):
         'Content-Type': 'application/json'
     }
 
-    response = requests.request("POST", apiSkillAutocompleteUrl, headers=headers, data=payload)
-
-    resp = response.json()['SkillAutoComplete']
-    return {'options': resp}
+    try:
+        response = requests.request("POST", apiSkillAutocompleteUrl, headers=headers, data=payload)
+        resp = response.json()['SkillAutoComplete']
+        return {'options': resp}
+    except:
+        print('skill_autocomplete: ERROR')
