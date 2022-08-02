@@ -92,7 +92,7 @@ def json_convert(data):
                         shortName = ontology[2]
 
                         if len(shortName) > 5:
-                            shortName = ontology[2][:6] + '...'
+                            shortName = f'{ontology[2][:6]}...'
 
                         skillSelf = {
                             'name': ontology[2], 'id': childMain['id'], 'value': '1',

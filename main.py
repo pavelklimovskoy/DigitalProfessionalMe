@@ -7,7 +7,7 @@ from flask_cors import CORS, cross_origin
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import codecs
 from jsonConvert import json_convert
-from rchilli import rchilli_parse
+from rchilli import rchilli_parse, skill_search, skill_autocomplete
 from mongodb import *
 import pdfkit
 from werkzeug.utils import secure_filename
@@ -15,7 +15,7 @@ import os
 
 # Flask config
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '1a2d5a33a7f02c888ff796a9f5f422bf96f4eb1c6'
+app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY')
 app.config['JSON_AS_ASCII'] = False
 app.config['UPLOAD_FOLDER'] = './static/data/cv/'
 app.config['UPLOAD_IMAGE_FOLDER'] = './static/data/img/'
@@ -47,18 +47,15 @@ def apply_caching(response):
 @app.route('/upload_avatar', methods=['GET', 'POST'])
 @login_required
 def upload_avatar():
-    #curUserId = str(request.cookies.get('id'))
+    # curUserId = str(request.cookies.get('id'))
     curUserId = session['id']
 
     curUser = find_record('Id', curUserId)
     avatar = request.files['avatar']
     avatarName = avatar.filename
     if request.method == 'POST' and avatar is not None and ('.jpg' in avatarName or '.png' in avatarName):
-
         fname = secure_filename(avatarName.split('.')[0]) + str(random.randrange(0, 1000000, 1)) + '.' + \
                 secure_filename(avatarName.split('.')[1])
-
-        #print(fname)
 
         # Локально сохраняем аватар
         avatar.save(os.path.join(app.config['UPLOAD_IMAGE_FOLDER'], fname))
@@ -77,11 +74,12 @@ def upload_file():
 
         if cvLink != '':
             try:
-                fname = 'hhCv_' + str(random.randrange(0, 1000000, 1)) + '.pdf'
+                #fname = 'hhCv_' + str(random.randrange(0, 1000000, 1)) + '.pdf'
+                fname = f'hhCv_{str(random.randrange(0, 1000000, 1))}.pdf'
                 save_pdf(cvLink, fileName=fname)
                 file = open(fname)
-                #print(file)
-                #print(fname)
+                # print(file)
+                # print(fname)
             except:
                 print("Error")
         else:
@@ -89,14 +87,14 @@ def upload_file():
             fname = secure_filename(file.filename)
             # Локально сохраняем копию CV
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
-        #print(fname)
+        # print(fname)
 
-        #curUserId = str(request.cookies.get('id'))
+        # curUserId = str(request.cookies.get('id'))
         curUserId = session['id']
 
         # print("Hello from updating + CurUsId= ", curUserId)
         curUser = find_record('Id', curUserId)
-        #print("Hello from updating + CurUs= ", curUser)
+        # print("Hello from updating + CurUs= ", curUser)
         if curUser is not None:
             rchilliData = rchilli_parse(fileName=fname)
             jsonData = json_convert(data=rchilliData)
@@ -115,14 +113,15 @@ def upload_file():
 
 # Основная страница
 @app.route('/')
+@app.route('/me')
 @login_required
 def index():
-    #if request.cookies.get('id') == None:
+    # if request.cookies.get('id') == None:
     if session is None or 'id' not in session.keys():
         logout_user()
         return render_template('login.html')
 
-    #curUserId = str(request.cookies.get('id'))
+    # curUserId = str(request.cookies.get('id'))
     curUserId = session['id']
 
     curUser = find_record('Id', curUserId)
@@ -134,12 +133,12 @@ def index():
 @app.route('/getAvatar', methods=['GET', 'POST'])
 @login_required
 def get_avatar():
-    #curUserId = str(request.cookies.get('id'))
-    #curUserId = str(session['id'])
-    #print(str(request.args.get('id')))
+    # curUserId = str(request.cookies.get('id'))
+    # curUserId = str(session['id'])
+    # print(str(request.args.get('id')))
     curUserId = str(request.args.get('id'))
     curUser = find_record('Id', curUserId)
-    #print(curUser)
+    # print(curUser)
     return curUser.avatar
 
 
@@ -195,10 +194,10 @@ def register():
                 flash("You have successfully registered", category='success')
                 return redirect(url_for('login'))
             else:
-                #print("Уже есть в базе ", curUser.Id)
+                # print("Уже есть в базе ", curUser.Id)
                 flash("Error adding to the database", category='error')
         else:
-            #print("Не совпали данные")
+            # print("Не совпали данные")
             flash("The fields are filled in incorrectly", category='error')
     return render_template('register.html')
 
@@ -247,7 +246,7 @@ def logout():
 # @app.route('/savePdf')
 # @login_required
 def save_pdf(url, fileName):
-    pdfkit.from_url(url, './static/data/cv/' + fileName)
+    pdfkit.from_url(url, f'./static/data/cv/{fileName}')
     # configuration=pdfkit.configuration(wkhtmltopdf='wkhtmltopdf'))
     # wkhtmltopdf=r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'))
 
@@ -255,30 +254,26 @@ def save_pdf(url, fileName):
 @app.route('/changeSkillState')
 def change_skill_state():
     curUserId = session['id']
-    print(curUserId)
     skillName = str(request.args.get('skillName'))
     curUser = disable_skill(curUserId, skillName)
+
     return render_template('index.html', title='Digital Professional Me', userName=curUser.name)
 
 
+@app.route('/InputAutocomplete')
+def show_input_options():
+    skillName = str(request.args.get('skillName'))
+    return skill_autocomplete(skillName)
+
+
+@app.route('/findSkill')
+def find_skill():
+    skillName = str(request.args.get('skillName'))
+
+    print(skillName)
+
+    return skill_search(skillName)
+
+
 if __name__ == "__main__":
-    # save_pdf('https://rostov.hh.ru/resume/cff0c7840008df66c40039ed1f4f494c74544a?query=Python&hhtmFrom=resume_search_result',
-    #         fileName='hhCv_' + str(random.randrange(0, 1000000, 1))+'.pdf')
-
-    # print(find_record('Id', 'ff174dbe-0e26-4ecc-84f8-5efa239bb506'))
-    # collection.insert_one({
-    #    'jsondata': None,
-    #    'rchillidata': None,
-    #    'name': 'Sasha',
-    #    'password': 'Sasha',
-    #    'email': 'Sasha'
-    #     })
-    # collection.find_one_and_update({'name':"Sasha"},
-    #                    { '$set': { "name" : 'ECE'} })
-
-    # print(Users.find_user_byid(userId='62997f61f664117c00e939bf'))
-    # print(Users.objects(_id='62997f61f664117c00e939bf').first())
-    # print(Users.objects().first()._id)
-    # print(Users.objects(_id='629956fc902328af4a602b82').first())
-
-    app.run(debug=True, port=5000, host="0.0.0.0")
+    app.run(debug=False, port=5000, host="0.0.0.0")

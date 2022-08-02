@@ -51,6 +51,7 @@
   margin-top: 2%;
   margin-bottom: 1%;
 }
+
 /* Header style */
 .navbar {
   height: 40px;
@@ -130,7 +131,6 @@
   transform: translateY(-7px);
 }
 
-/* The Modal (background) */
 .modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
@@ -151,6 +151,40 @@
   padding: 20px;
   border: 1px solid #888;
   width: 50%  !important; /* Could be more or less, depending on screen size */
+}
+
+/* .btn {
+  width: 220px;
+  height: 65px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: 0.3s all;
+  outline: 0;
+} */
+
+.btn-white {
+  background-color: #fff;
+}
+
+.btn-dark {
+  background-color: #303030;
+  color: #fff;
+  border: none;
+}
+
+.btn-min {
+  height: 50px;
+}
+
+.btn:hover {
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
 }
 
 /* The Close Button */
