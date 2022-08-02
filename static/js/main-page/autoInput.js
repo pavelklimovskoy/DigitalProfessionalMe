@@ -11,9 +11,7 @@ function autocomplete(inp) {
         if (val.length > 3) {
             let urlRequest = `http://localhost:5000/InputAutocomplete?skillName=${val}`;
             fetch(urlRequest)
-                .then(response => {
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
                     let arr = data.options;
                     /*close any already open lists of autocompleted values*/
