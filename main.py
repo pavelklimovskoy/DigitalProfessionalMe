@@ -306,7 +306,6 @@ def show_input_options():
 
 @app.route('/findSkill')
 def find_skill():
-    return skill_search(f"{request.args.get('skillName')}")
     skill_name = str(request.args.get('skillName'))
     cur_user_id = session['id']
     cur_user_data = find_record('Id', cur_user_id).jsondata[0]
