@@ -1,3 +1,5 @@
+anychart.onDocumentReady(renderChart);
+
 function filterSkills(data) {
   let disabledSkills = [];
 
@@ -28,7 +30,7 @@ function unfilteringSkills(data) {
   return unfilteringData;
 }
 
-anychart.onDocumentReady(function () {
+function renderChart() {
   let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '',
     urlRequest = `http://localhost:5000/getChartJson?id=${cookieId}`;
 
@@ -158,4 +160,4 @@ anychart.onDocumentReady(function () {
       createTimeline();
       loadSkills(unfilteringSkills(data), redrawChart, filterSkills(data));
     });
-});
+}

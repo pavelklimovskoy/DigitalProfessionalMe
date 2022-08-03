@@ -61,11 +61,12 @@ function loadSkills(skillList, redrawChart, disabledSkills) {
             else if (skill.id == "SoftSkill") {
                 skillDiv.className = "badge bg-primary text-wrap soft-skill";
             }
-            else if (skill.id == "OperationalSkill") {
+            else {//if (skill.id == "OperationalSkill") {
                 skillDiv.className = "badge bg-primary text-wrap hard-skill";
-            } else {
-                skillDiv.className = "badge bg-primary text-wrap unknown-skill";
             }
+            // } else {
+            //     skillDiv.className = "badge bg-primary text-wrap unknown-skill";
+            // }
 
             skillDiv.textContent = skill.name;
 
@@ -115,9 +116,10 @@ function loadSkills(skillList, redrawChart, disabledSkills) {
 }
 
 // Добавление собственного скилла
-function addSkiil() {
+function addSkiil(skillData) {
 
 }
+
 //Добавление скиллов
 // function addSkiilButton() {
 //     let skillName = prompt("Enter skill name", "Python");

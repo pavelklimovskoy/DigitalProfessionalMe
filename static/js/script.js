@@ -30,29 +30,40 @@ function createModalAddingSkill() {
 
   const element = document.createElement('div');
   element.innerHTML = `
-  <form id="addSkillButton" autocomplete="off" action="http://localhost:5000/findSkill">
+  <span data-close class="close">&times;</span>
+  <form autocomplete="off" action="#">
     <div class="autocomplete" style="width:300px;">
-      <input id="myInput" type="text" name="skillName" placeholder="skillName">
+      <input id="skillInput" type="text" name="skillName" placeholder="skillName">
     </div>
-    <input type="submit">
+    <input id="addSkillButton" type="submit">
   </form>
   `;
 
   modalContent.append(element);
 
-  autocomplete(document.getElementById("myInput"));
+  const input = document.querySelector('#skillInput'),
+    formButton = document.querySelector('#addSkillButton');
 
-  const form = document.querySelector('#addSkillButton');
+  autocomplete(input);
 
-  form.addEventListener('click', (e) => {
+  formButton.addEventListener('click', (e) => {
     e.preventDefault();
-    console.log(e);
-
-    const urlRequest = `http://localhost:5000/findSkill?findSkill=${skillName}`;
+    const urlRequest = `http://localhost:5000/findSkill?skillName=${input.value}`;
     fetch(urlRequest)
       .then(response => response.json())
-      .then(data => {
-        console.log(data);
+      .then(skillData => {
+        console.log(skillData);
+        
+        const chart = document.querySelector('.chart');
+        chart.innerHTML = '';
+
+        const skillBlock = document.querySelector('.skillsBlock');
+        skillBlock.innerHTML = `
+        <p class="text-center">Skills <button data-modal id="addSkill" class="btn">Add Skill </button></p>
+        `;
+
+        renderChart();
+        closeModal();
       });
   });
 }
@@ -73,6 +84,7 @@ function createModalAddingSkill() {
 //       });
 //   });
 // }
+
 function createModalCv() {
   modalContent.innerHTML = '';
 
@@ -80,14 +92,34 @@ function createModalCv() {
   element.innerHTML = `
   <span data-close class="close">&times;</span>
   <form action="http://localhost:5000/uploader" method="POST" enctype="multipart/form-data">
-    <input type="file" name="file">
+    <input id="cvFileInput" type="file" name="file">
     <p class="text-center">OR <br> Enter the link (hh.ru): </p>
-    <input type="text" name="link">
-    <input type="submit" />
+    <input id="cvStringInput" type="text" name="link">
+    <input id="cvSubmitButtonInput" type="submit" />
   </form>
   `;
 
   modalContent.append(element);
+  
+  // const inputFile = document.querySelector('#cvFileInput'),
+  //   inputString = document.querySelector('#cvStringInput'),
+  //   formButton = document.querySelector('#cvSubmitButtonInput'),
+  //   urlRequest = `http://localhost:5000/uploader`;
+
+  // formButton.addEventListener('click', (e) => {
+  //   e.preventDefault();
+  //   let data;
+  //   if (inputFile.files.length && !inputString.value) {
+  //     data = inputFile.files[0];
+  //   } else {
+  //     data = inputString.value;
+  //   }
+    
+  //   fetch(urlRequest, {
+  //     method: 'POST',
+  //     body: data
+  //   });
+  // });
 }
 
 function createModalEvidence() {

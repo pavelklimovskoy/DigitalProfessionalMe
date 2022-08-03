@@ -1,4 +1,6 @@
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+import codecs
+from jsonConvert import json_convert, color_calc
 from flask import render_template, make_response, redirect, url_for, flash, session
 from flask_cors import CORS
 from jsonConvert import json_convert
@@ -305,6 +307,124 @@ def show_input_options():
 @app.route('/findSkill')
 def find_skill():
     return skill_search(f"{request.args.get('skillName')}")
+    skill_name = str(request.args.get('skillName'))
+    cur_user_id = session['id']
+    cur_user_data = find_record('Id', cur_user_id).jsondata[0]
+
+    resp = skill_search(skill_name)
+
+    ontoloty = resp['ontology']
+
+    flag1 = False
+    flag2 = False
+
+    for grandParentSkillType in cur_user_data['children']:
+        if ontoloty.split('>')[0] == grandParentSkillType['name']:
+            flag1 = True
+
+            for parentSkillType in grandParentSkillType['children']:
+                if ontoloty.split('>')[1] == parentSkillType['name']: # Найден Parent, GrandParent
+                    flag2 = True
+
+                    shortName = ontoloty.split('>')[-1]
+                    if len(shortName) > 6:
+                        shortName = f'{ontoloty.split(">")[-1][:6]}...'
+
+                    if resp['type'] == 'SoftSkill':
+                        filling = '#FFB240'
+                    else:
+                        filling = '#4188D2'
+
+                    skill = {
+                        'name': ontoloty.split('>')[-1],
+                        'id': resp['type'],
+                        'value': '1',
+                        'enabled': True,
+                        'shortName': shortName,
+                        'fill': filling,
+                        'grandParent': grandParentSkillType['name'],
+                        'parent': parentSkillType['name']
+                    }
+                    parentSkillType['children'].append(skill)
+                    break
+
+            if flag2 is False:  # Parent не найден, только GrandParent
+                parentSkillType = {
+                    'name': ontoloty.split('>')[1],
+                    'id': resp['type'],
+                    'value': '1',
+                    'fill': color_calc(1, resp['type']),
+                    'parent': grandParentSkillType['name'],
+                    'children': []
+                }
+
+                shortName = ontoloty.split('>')[-1]
+                if len(shortName) > 6:
+                    shortName = f'{ontoloty.split(">")[-1][:6]}...'
+
+                if resp['type'] == 'SoftSkill':
+                    filling = '#FFB240'
+                else:
+                    filling = '#4188D2'
+
+                skill = {
+                    'name': ontoloty.split('>')[-1],
+                    'id': resp['type'],
+                    'value': '1',
+                    'enabled': True,
+                    'shortName': shortName,
+                    'fill': filling,
+                    'grandParent': grandParentSkillType['name'],
+                    'parent': parentSkillType['name']
+                }
+                parentSkillType['children'].append(skill)
+                grandParentSkillType['children'].append(parentSkillType)
+
+    if flag1 is False:  # Не найдено ни GrandParent, ни Parent
+        grandParentSkillType = {
+            'name': ontoloty.split('>')[0],
+            'id': resp['type'],
+            'value': '1',
+            'fill': color_calc(1, resp['type']),
+            'parent': 'Me',
+            'children': []
+        }
+
+        parentSkillType = {
+            'name': ontoloty.split('>')[1],
+            'id': resp['type'],
+            'value': '1',
+            'fill': color_calc(1, resp['type']),
+            'parent': grandParentSkillType['name'],
+            'children': []
+        }
+
+        shortName = ontoloty.split('>')[-1]
+        if len(shortName) > 6:
+            shortName = f'{ontoloty.split(">")[-1][:6]}...'
+
+        if resp['type'] == 'SoftSkill':
+            filling = '#FFB240'
+        else:
+            filling = '#4188D2'
+
+        skill = {
+            'name': ontoloty.split('>')[-1],
+            'id': resp['type'],
+            'value': '1',
+            'enabled': True,
+            'shortName': shortName,
+            'fill': filling,
+            'grandParent': grandParentSkillType['name'],
+            'parent': parentSkillType['name']
+        }
+        parentSkillType['children'].append(skill)
+        grandParentSkillType['children'].append(parentSkillType)
+        cur_user_data['children'].append(grandParentSkillType)
+
+    update_record('Id', cur_user_id, 'jsondata', [cur_user_data])
+
+    return resp
 
 
 if __name__ == "__main__":

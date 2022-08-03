@@ -6,7 +6,7 @@ function autocomplete(inp) {
     /*execute a function when someone writes in the text field:*/
     inp.addEventListener("input", function (e) {
         let val = this.value;
-        console.log(val);
+        //console.log(val);
 
         if (val.length > 3) {
             let urlRequest = `http://localhost:5000/InputAutocomplete?skillName=${val}`;

@@ -54,7 +54,7 @@ def skill_search(skillName):
 
     response = requests.request("POST", apiSkillSearchUrl, headers=headers, data=payload)
     resp = response.json()['Skill']['SkillData']
-
+    print(resp)
     skillData = {
         'ontology': resp['SkillOntology'],
         'type': resp['SkillType']
