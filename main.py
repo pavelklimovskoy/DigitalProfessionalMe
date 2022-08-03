@@ -88,6 +88,9 @@ def upload_file():
 
             # Локально сохраняем копию CV
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], file_name))
+            
+            increment_cv_count()
+
 
         cur_user_id = session['id']
 
