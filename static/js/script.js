@@ -48,7 +48,7 @@ function createModalAddingSkill() {
 
   formButton.addEventListener('click', (e) => {
     e.preventDefault();
-    const urlRequest = `http://localhost:5000/findSkill?skillName=${input.value}`;
+    const urlRequest = `http://digitalprofessional.me:5000/findSkill?skillName=${input.value}`;
     fetch(urlRequest)
       .then(response => response.json())
       .then(skillData => {
@@ -91,7 +91,7 @@ function createModalCv() {
   const element = document.createElement('div');
   element.innerHTML = `
   <span data-close class="close">&times;</span>
-  <form action="http://localhost:5000/uploader" method="POST" enctype="multipart/form-data">
+  <form action="http://digitalprofessional.me:5000/uploader" method="POST" enctype="multipart/form-data">
     <input id="cvFileInput" type="file" name="file">
     <p class="text-center">OR <br> Enter the link (hh.ru): </p>
     <input id="cvStringInput" type="text" name="link">

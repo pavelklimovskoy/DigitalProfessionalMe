@@ -1,68 +1,64 @@
 import json
 
+# Soft Types of skills
+soft_types = ['SoftSkill', 'Knowledge', 'Soft', 'Tool']
+
+# Colors for skills
+hard_colors = ['#4188D2', '#3272B5', '#235C97', '#144679', '#05305B']  # 1-2, 3-4, 5-6, 7-8, >= 9
+soft_colors = ['#FFB240', '#D99632', '#B27923', '#8C5C14', '#653F05']  # 1-2, 3-4, 5-6, 7-8, >= 9
+
 
 # Определение цвета для сектора
-def color_calc(check, skillType):
-    # Массив цветов
-    hardColors = ['#4188D2', '#3272B5', '#235C97', '#144679', '#05305B']  # 1-2, 3-4, 5-6, 7-8, >= 9
-    softColors = ['#FFB240', '#D99632', '#B27923', '#8C5C14', '#653F05']  # 1-2, 3-4, 5-6, 7-8, >= 9
-
-    if skillType == 'SoftSkill':
+def color_calc(check, skill_type):
+    if skill_type in soft_types:
         if check == 1:
-            filling = softColors[0]
+            filling = soft_colors[0]
         elif 2 <= check <= 4:
-            filling = softColors[1]
+            filling = soft_colors[1]
         elif 5 <= check <= 6:
-            filling = softColors[2]
+            filling = soft_colors[2]
         elif 7 <= check <= 8:
-            filling = softColors[3]
+            filling = soft_colors[3]
         else:
-            filling = softColors[4]
+            filling = soft_colors[4]
     else:  # HardSkill
         if check == 1:
-            filling = hardColors[0]
+            filling = hard_colors[0]
         elif 2 <= check <= 4:
-            filling = hardColors[1]
+            filling = hard_colors[1]
         elif 5 <= check <= 6:
-            filling = hardColors[2]
+            filling = hard_colors[2]
         elif 7 <= check <= 8:
-            filling = hardColors[3]
+            filling = hard_colors[3]
         else:
-            filling = hardColors[4]
+            filling = hard_colors[4]
 
     return filling
 
 
 # Конвертация Json
 def json_convert(data):
-    # jsonName = './static/data/cv/' + 'rchilli.json'
-
-    # with open(jsonName, encoding='utf-8') as rchilliJson:
-    #    data = json.load(rchilliJson)
-
     # Массив названий навыков для удаления дублей
-    skillsArray = []
+    skills_array = []
 
-    # Структура Json
-    # mainArray = []
-    mainDict = {'name': 'Me', 'children': []}  # Первый уровень
+    main_dict = {'name': 'Me', 'children': []}  # Первый уровень
 
     # Массив типов умений
-    firstType = []
+    first_type = []
     secondType = []
 
     for skill in data['ResumeParserData']['SegregatedSkill']:
         ontology = str(skill['Ontology']).split('>')
 
         if len(ontology) == 3:
-            if ontology[0] not in firstType:
-                firstType.append(ontology[0])
+            if ontology[0] not in first_type:
+                first_type.append(ontology[0])
 
             if ontology[1] not in secondType:
                 secondType.append(ontology[1])
 
     # Заполнение типов умений
-    for typeSkill in firstType:
+    for typeSkill in first_type:
         childMain = {
             'name': typeSkill, 'id': '', 'fill': '',
             'parent': 'Me', 'children': []
@@ -72,13 +68,8 @@ def json_convert(data):
         for skill in data['ResumeParserData']['SegregatedSkill']:
             ontologyMain = str(skill['Ontology']).split('>')
 
-            if skill['Type'] == 'SoftSkill':
-                typeIdFill = 'SoftSkill'
-            else:
-                typeIdFill = 'OperationalSkill'
-
             if ontologyMain[0] == typeSkill:
-                childMain['id'] = typeIdFill
+                childMain['id'] = skill['Type']
 
                 tmp = {
                     'name': ontologyMain[1], 'id': childMain['id'],
@@ -100,48 +91,35 @@ def json_convert(data):
                             'grandParent': typeSkill, 'parent': ontologyMain[1]
                         }
 
-                        if ontology[1] == ontologyMain[1] and ontology[2] not in skillsArray:
+                        if ontology[1] == ontologyMain[1] and ontology[2] not in skills_array:
                             tmp['children'].append(skillSelf)
-                            skillsArray.append(ontology[2])
+                            skills_array.append(ontology[2])
 
                 if tmp not in childMain['children'] and len(tmp['children']) > 0:
                     childMain['children'].append(tmp)
 
         if len(childMain['children']) > 0:
-            mainDict['children'].append(childMain)
+            main_dict['children'].append(childMain)
 
-    for type in mainDict['children']:
+    for type in main_dict['children']:
         skillCounter = 0
 
         for subType in type['children']:
-            if subType['id'] == 'SoftSkill':  # SoftSkill
-                filling = color_calc(len(subType['children']), 'SoftSkill')
-            else:  # HardSkill
-                filling = color_calc(len(subType['children']), 'OperationalSkill')
+            filling = color_calc(len(subType['children']), subType['id'])
 
             subType['fill'] = filling
 
             for skill in subType['children']:
                 skillCounter += 1
 
-                if skill['id'] == 'SoftSkill':
+                if skill['id'] in soft_types:
                     filling = '#FFB240'
                 else:
                     filling = '#4188D2'
                 skill['fill'] = filling
 
-        if type['id'] == 'SoftSkill':  # SoftSkill
-            filling = color_calc(skillCounter, 'SoftSkill')
-        else:  # HardSkill
-            filling = color_calc(skillCounter, 'OperationalSkill')
+        filling = color_calc(skillCounter, type['id'])
 
         type['fill'] = filling
 
-    # mainArray.append(mainDict)
-
-    # Запись нового Json файла
-    # with open('./static/data/cv/sunburstDataUpdated.json', 'w') as chartJson:
-    #    json.dump(mainArray, chartJson, sort_keys=False, indent=2)
-
-    # return mainArray
-    return [mainDict]
+    return [main_dict]
