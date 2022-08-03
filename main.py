@@ -1,10 +1,6 @@
-import os
-from flask import Flask, jsonify, request, send_from_directory, render_template, json, make_response, redirect, \
-    url_for, flash, send_file, Response, session
-from pymongo import MongoClient
-from flask_cors import CORS, cross_origin
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-import codecs
+from flask import render_template, make_response, redirect, url_for, flash, session
+from flask_cors import CORS
 from jsonConvert import json_convert
 from rchilli import rchilli_parse, skill_search, skill_autocomplete
 from mongodb import *
@@ -12,6 +8,7 @@ from analytics import *
 import pdfkit
 from werkzeug.utils import secure_filename
 import os
+import re
 
 # Flask config
 app = Flask(__name__)
@@ -33,8 +30,8 @@ login_manager.login_message_category = 'success'
 
 
 @login_manager.user_loader
-def load_user(userId):
-    return find_record('Id', userId)
+def load_user(user_id):
+    return find_record('Id', user_id)
 
 
 @app.after_request
@@ -47,69 +44,61 @@ def apply_caching(response):
 @app.route('/upload_avatar', methods=['GET', 'POST'])
 @login_required
 def upload_avatar():
-    # curUserId = str(request.cookies.get('id'))
-    curUserId = session['id']
-    curUser = find_record('Id', curUserId)
+    cur_user_id = session['id']
+    cur_user = find_record('Id', cur_user_id)
     avatar = request.files['avatar']
-    avatarName = avatar.filename
+    avatar_name = avatar.filename
     image_id = summary_image_count()
 
     if request.method == 'POST':
         if avatar is not None:
-            if avatarName[-3:] in ["jpg", "png"]:
-                file_name = f"{avatarName[:-4]}-id-{image_id}.{avatarName[-3:]}"
+            if avatar_name[-3:] in ["jpg", "png"]:
+                file_name = f"{avatar_name[:-4]}-id-{image_id}.{avatar_name[-3:]}"
 
                 # Локально сохраняем аватар
                 avatar.save(os.path.join(app.config['UPLOAD_IMAGE_FOLDER'], file_name))
 
                 increment_image_count()
-                update_record('Id', curUserId, 'avatar', file_name)
+                update_record('Id', cur_user_id, 'avatar', file_name)
 
-    return render_template('index.html', title='Digital Professional Me', userName=curUser.name)
+    return render_template('index.html', title='Digital Professional Me', userName=cur_user.name)
 
 
-# Загрузка CV на сервер
+# Uploading CV in storage
 @app.route('/uploader', methods=['GET', 'POST'])
 def upload_file():
-    global fname, curUser
-    if request.method == 'POST':
-        cvLink = request.form['link']
+    file_name, cur_user = "", ""
 
-        if cvLink != '':
+    if request.method == 'POST':
+        cv_link = request.form['link']
+
+        if cv_link != '':
             try:
-                fname = f'hhCv_{summary_cv_count()}.pdf'
-                save_pdf(cvLink, fileName=fname)
+                file_name = f'hhCv_{summary_cv_count()}.pdf'
+                save_pdf(cv_link, fileName=file_name)
 
                 increment_cv_count()
-            except:
-                print("Error")
+            except Exception as e:
+                print(e)
         else:
             file = request.files['file']
-            fname = secure_filename(file.filename)
+            file_name = secure_filename(file.filename)
+
             # Локально сохраняем копию CV
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
-        # print(fname)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], file_name))
 
-        # curUserId = str(request.cookies.get('id'))
-        curUserId = session['id']
+        cur_user_id = session['id']
 
-        # print("Hello from updating + CurUsId= ", curUserId)
-        curUser = find_record('Id', curUserId)
-        # print("Hello from updating + CurUs= ", curUser)
-        if curUser is not None:
-            rchilliData = rchilli_parse(fileName=fname)
-            jsonData = json_convert(data=rchilliData)
+        cur_user = find_record('Id', cur_user_id)
 
-            # print(rchilliData)
-            # print(jsonData)
+        if cur_user is not None:
+            rchilli_data = rchilli_parse(fileName=file_name)
+            json_data = json_convert(data=rchilli_data)
 
-            update_record('Id', curUserId, 'jsondata', jsonData)
-            update_record('Id', curUserId, 'rchillidata', rchilliData)
+            update_record('Id', cur_user_id, 'jsondata', json_data)
+            update_record('Id', cur_user_id, 'rchillidata', rchilli_data)
 
-            # update_record(curUser, jsonData, rchilliData)
-
-    # print(request.cookies.get('id'))
-    return render_template('index.html', title='Digital Professional Me', userName=curUser.name)
+    return render_template('index.html', title='Digital Professional Me', userName=file_name.name)
 
 
 # Основная страница
@@ -157,33 +146,98 @@ def get_rchilli_json():
     return jsonify(cur_user.rchillidata)
 
 
-# Cтраница с информацией
+# About page
 @app.route('/about')
 def about_us():
     return render_template('aboutus.html', title='About us')
 
 
-# Регистрация
+# Password validation with regEx
+def password_correct(data: str) -> bool:
+    """
+    Conditions for a valid password are:
+        Should have at least one number.
+        Should have at least one uppercase and one lowercase character.
+        Should have at least one special symbol.
+        Should be between 6 to 20 characters long.
+    :param data:
+    :return:
+    """
+    regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
+    pat = re.compile(regex)
+
+    if re.search(pat, data):
+        return True
+    else:
+        flash("Wrong password format", category='error')
+        return False
+
+
+# Email validation
+def email_correct(email: str) -> bool:
+    """
+    Validation email with regEx
+    :param email:
+    :return:
+    """
+    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+
+    if re.search(regex, email):
+        return True
+    else:
+        flash("Wrong email format", category='error')
+        return False
+
+
+# User's fullname validation
+def name_correct(data: str) -> bool:
+    fullname = data.split()
+
+    check_count = len(fullname) == 2
+    check_name = 2 <= len(fullname[0]) <= 35
+    check_surname = 2 <= len(fullname[1]) <= 35
+
+    if check_name and check_surname and check_count:
+        return True
+    else:
+        flash("Wrong fullname format", category='error')
+        return False
+
+
+def password_equal(str1, str2) -> bool:
+    if str1 == str2:
+        return True
+    else:
+        flash("Passwords not equal", category='error')
+        return False
+
+
+def input_form_correct(input_form) -> bool:
+
+    res = name_correct(input_form['name'])
+    res &= password_correct(input_form['password'])
+    res &= email_correct(input_form['email'])
+    res &= password_equal(input_form['password'], input_form['password2'])
+
+    return res
+
+
+# Registration
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        if len(request.form['name']) > 4 and len(request.form['email']) > 2 \
-                and 20 >= len(request.form['password']) >= 6 and request.form['password'] == request.form['password2']:
-            # hash = generate_password_hash(request.form['password'])
-            # res = dbase.addUser(request.form['name'], request.form['email'], request.form['password'])
+        if input_form_correct(request.form):
 
             # Проверка на существование пользователя в БД
-            curUser = find_record('email', str(request.form['email']))
-            if curUser is None:
+            cur_user = find_record('email', str(request.form['email']))
+            if cur_user is None:
                 create_record(request)
 
                 flash("You have successfully registered", category='success')
                 return redirect(url_for('login'))
             else:
-                # print("Уже есть в базе ", curUser.Id)
                 flash("Error adding to the database", category='error')
         else:
-            # print("Не совпали данные")
             flash("The fields are filled in incorrectly", category='error')
     return render_template('register.html')
 
@@ -195,18 +249,18 @@ def login():
         return redirect(url_for('index'))
 
     if request.method == 'POST':
-        curUser = find_record('email', str(request.form['email']))
+        cur_user = find_record('email', str(request.form['email']))
 
-        if curUser is not None and curUser.password == request.form['password']:
+        if cur_user is not None and cur_user.password == request.form['password']:
             rm = True if request.form.get('remainme') else False
 
-            resp = make_response(render_template('index.html', userName=curUser.name))
+            resp = make_response(render_template('index.html', userName=cur_user.name))
 
-            resp.set_cookie(key='id', value=str(curUser.Id))
-            session['id'] = curUser.Id
+            resp.set_cookie(key='id', value=str(cur_user.Id))
+            session['id'] = cur_user.Id
 
-            login_user(curUser, remember=rm)
-            # return redirect(request.args.get('next') or url_for('index'))
+            login_user(cur_user, remember=rm)
+
             return resp
 
         flash("Wrong password or login", 'error')
@@ -244,15 +298,12 @@ def change_skill_state():
 
 @app.route('/InputAutocomplete')
 def show_input_options():
-    skill_name = str(request.args.get('skillName'))
-    return skill_autocomplete(skill_name)
+    return skill_autocomplete(f"{request.args.get('skillName')}")
 
 
 @app.route('/findSkill')
 def find_skill():
-    skill_name = str(request.args.get('skillName'))
-
-    return skill_search(skill_name)
+    return skill_search(f"{request.args.get('skillName')}")
 
 
 if __name__ == "__main__":
