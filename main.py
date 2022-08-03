@@ -75,7 +75,7 @@ def upload_file():
         if cv_link != '':
             try:
                 file_name = f'hhCv_{summary_cv_count()}.pdf'
-                save_pdf(cv_link, fileName=file_name)
+                save_pdf(cv_link, file_name=file_name)
 
                 increment_cv_count()
             except Exception as e:
@@ -98,7 +98,8 @@ def upload_file():
             update_record('Id', cur_user_id, 'jsondata', json_data)
             update_record('Id', cur_user_id, 'rchillidata', rchilli_data)
 
-    return render_template('index.html', title='Digital Professional Me', userName=file_name.name)
+    # Переписать на редирект
+    return render_template('index.html', title='Digital Professional Me', userName=cur_user.name)
 
 
 # Основная страница
