@@ -54,7 +54,6 @@ def upload_avatar():
     avatarName = avatar.filename
     image_id = summary_image_count()
 
-
     if request.method == 'POST':
         if avatar is not None:
             if avatarName[-3:] in ["jpg", "png"]:
@@ -118,61 +117,46 @@ def upload_file():
 @app.route('/me')
 @login_required
 def index():
-    # if request.cookies.get('id') == None:
     if session is None or 'id' not in session.keys():
         logout_user()
         return render_template('login.html')
 
-    # curUserId = str(request.cookies.get('id'))
-    curUserId = session['id']
+    cur_user_id = session['id']
 
-    curUser = find_record('Id', curUserId)
+    cur_user = find_record('Id', cur_user_id)
 
-    return render_template('index.html', title='Digital Professional Me', userName=curUser.name)
+    return render_template('index.html', title='Digital Professional Me', userName=cur_user.name)
 
 
 # Avatar
 @app.route('/getAvatar', methods=['GET', 'POST'])
 @login_required
 def get_avatar():
-    # curUserId = str(request.cookies.get('id'))
-    # curUserId = str(session['id'])
-    # print(str(request.args.get('id')))
-    curUserId = str(request.args.get('id'))
-    curUser = find_record('Id', curUserId)
-    # print(curUser)
-    return curUser.avatar
+    cur_user_id = str(request.args.get('id'))
+    cur_user = find_record('Id', cur_user_id)
+
+    return cur_user.avatar
 
 
 # Json для Sunburst Chart
 @app.route('/getChartJson', methods=['GET', 'POST'])
 # @login_required
 def get_chart_json():
-    curUserId = str(request.args.get('id'))
-    curUser = find_record('Id', curUserId)
+    cur_user_id = str(request.args.get('id'))
+    cur_user = find_record('Id', cur_user_id)
 
-    return jsonify(curUser.jsondata)
+    return jsonify(cur_user.jsondata)
 
 
 # Rchilli Json
 @app.route('/getRchilliJson', methods=['GET', 'POST'])
-# @login_required
 def get_rchilli_json():
-    curUserId = str(request.args.get('id'))
-    curUser = find_record('Id', curUserId)
+    cur_user_id = str(request.args.get('id'))
+    cur_user = find_record('Id', cur_user_id)
 
-    return jsonify(curUser.rchillidata)
+    return jsonify(cur_user.rchillidata)
 
 
-# # # User info
-# # @app.route('/getUserInfo', methods=['GET', 'POST'])
-# # @login_required
-# # def get_user_info():
-# #     curUserId = str(request.cookies.get('id'))
-# #     curUser = Users.find_user_byid(curUserId)
-# #
-# #     return jsonify(curUser.jsondata)
-#
 # Cтраница с информацией
 @app.route('/about')
 def about_us():
@@ -245,36 +229,30 @@ def logout():
     return resp
 
 
-# @app.route('/savePdf')
-# @login_required
-def save_pdf(url, fileName):
-    pdfkit.from_url(url, f'./static/data/cv/{fileName}')
-    # configuration=pdfkit.configuration(wkhtmltopdf='wkhtmltopdf'))
-    # wkhtmltopdf=r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'))
+def save_pdf(url, file_name):
+    pdfkit.from_url(url, f'./static/data/cv/{file_name}')
 
 
 @app.route('/changeSkillState')
 def change_skill_state():
-    curUserId = session['id']
-    skillName = str(request.args.get('skillName'))
-    curUser = disable_skill(curUserId, skillName)
+    cur_user_id = session['id']
+    skill_name = str(request.args.get('skillName'))
+    cur_user = disable_skill(cur_user_id, skill_name)
 
-    return render_template('index.html', title='Digital Professional Me', userName=curUser.name)
+    return render_template('index.html', title='Digital Professional Me', userName=cur_user.name)
 
 
 @app.route('/InputAutocomplete')
 def show_input_options():
-    skillName = str(request.args.get('skillName'))
-    return skill_autocomplete(skillName)
+    skill_name = str(request.args.get('skillName'))
+    return skill_autocomplete(skill_name)
 
 
 @app.route('/findSkill')
 def find_skill():
-    skillName = str(request.args.get('skillName'))
+    skill_name = str(request.args.get('skillName'))
 
-    print(skillName)
-
-    return skill_search(skillName)
+    return skill_search(skill_name)
 
 
 if __name__ == "__main__":
