@@ -45,7 +45,7 @@ def json_convert(data):
 
     # Массив типов умений
     first_type = []
-    secondType = []
+    second_type = []
 
     for skill in data['ResumeParserData']['SegregatedSkill']:
         ontology = str(skill['Ontology']).split('>')
@@ -54,63 +54,63 @@ def json_convert(data):
             if ontology[0] not in first_type:
                 first_type.append(ontology[0])
 
-            if ontology[1] not in secondType:
-                secondType.append(ontology[1])
+            if ontology[1] not in second_type:
+                second_type.append(ontology[1])
 
     # Заполнение типов умений
-    for typeSkill in first_type:
-        childMain = {
-            'name': typeSkill, 'id': '', 'fill': '',
+    for type_skill in first_type:
+        child_main = {
+            'name': type_skill, 'id': '', 'fill': '',
             'parent': 'Me', 'children': []
         }  # Второй уровень
 
         # Заполнение дочернего массива скиллов
         for skill in data['ResumeParserData']['SegregatedSkill']:
-            ontologyMain = str(skill['Ontology']).split('>')
+            ontology_main = str(skill['Ontology']).split('>')
 
-            if ontologyMain[0] == typeSkill:
-                childMain['id'] = skill['Type']
+            if ontology_main[0] == type_skill:
+                child_main['id'] = skill['Type']
 
                 tmp = {
-                    'name': ontologyMain[1], 'id': childMain['id'],
-                    'value': '1', 'fill': '', 'parent': typeSkill,
+                    'name': ontology_main[1], 'id': child_main['id'],
+                    'value': '1', 'fill': '', 'parent': type_skill,
                     'children': []
                 }
 
                 for skillName in data['ResumeParserData']['SegregatedSkill']:
                     ontology = str(skillName['Ontology']).split('>')
                     if len(ontology) == 3:
-                        shortName = ontology[2]
+                        short_name = ontology[2]
 
-                        if len(shortName) > 5:
-                            shortName = f'{ontology[2][:6]}...'
+                        if len(short_name) > 5:
+                            short_name = f'{ontology[2][:6]}...'
 
-                        skillSelf = {
-                            'name': ontology[2], 'id': childMain['id'], 'value': '1',
-                            'enabled': True, 'shortName': shortName, 'fill': '',
-                            'grandParent': typeSkill, 'parent': ontologyMain[1]
+                        skill_self = {
+                            'name': ontology[2], 'id': child_main['id'], 'value': '1',
+                            'enabled': True, 'shortName': short_name, 'fill': '',
+                            'grandParent': type_skill, 'parent': ontology_main[1]
                         }
 
-                        if ontology[1] == ontologyMain[1] and ontology[2] not in skills_array:
-                            tmp['children'].append(skillSelf)
+                        if ontology[1] == ontology_main[1] and ontology[2] not in skills_array:
+                            tmp['children'].append(skill_self)
                             skills_array.append(ontology[2])
 
-                if tmp not in childMain['children'] and len(tmp['children']) > 0:
-                    childMain['children'].append(tmp)
+                if tmp not in child_main['children'] and len(tmp['children']) > 0:
+                    child_main['children'].append(tmp)
 
-        if len(childMain['children']) > 0:
-            main_dict['children'].append(childMain)
+        if len(child_main['children']) > 0:
+            main_dict['children'].append(child_main)
 
     for type in main_dict['children']:
-        skillCounter = 0
+        skill_counter = 0
 
-        for subType in type['children']:
-            filling = color_calc(len(subType['children']), subType['id'])
+        for sub_type in type['children']:
+            filling = color_calc(len(sub_type['children']), sub_type['id'])
 
-            subType['fill'] = filling
+            sub_type['fill'] = filling
 
-            for skill in subType['children']:
-                skillCounter += 1
+            for skill in sub_type['children']:
+                skill_counter += 1
 
                 if skill['id'] in soft_types:
                     filling = '#FFB240'
@@ -118,7 +118,7 @@ def json_convert(data):
                     filling = '#4188D2'
                 skill['fill'] = filling
 
-        filling = color_calc(skillCounter, type['id'])
+        filling = color_calc(skill_counter, type['id'])
 
         type['fill'] = filling
 

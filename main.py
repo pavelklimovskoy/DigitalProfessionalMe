@@ -319,6 +319,7 @@ def find_skill():
 
     flag1 = False
     flag2 = False
+    filling = ''
 
     for grandParentSkillType in cur_user_data['children']:
         if ontoloty.split('>')[0] == grandParentSkillType['name']:
@@ -420,10 +421,17 @@ def find_skill():
             'grandParent': grandParentSkillType['name'],
             'parent': parentSkillType['name']
         }
+
         parentSkillType['children'].append(skill)
         grandParentSkillType['children'].append(parentSkillType)
         cur_user_data['children'].append(grandParentSkillType)
 
+    if filling != '':
+        resp['filling'] = filling
+    else:
+        resp['filling'] = '#4188D2'
+
+    #resp['parentFilling'] = color_calc(1, resp['type'])
     update_record('Id', cur_user_id, 'jsondata', [cur_user_data])
 
     return resp

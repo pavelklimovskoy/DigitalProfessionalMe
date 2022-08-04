@@ -4,84 +4,77 @@ import json
 import os
 
 # Rchilli API config
-apiParseResumeUrl = 'https://rest.rchilli.com/RChilliParser/Rchilli/parseResumeBinary'
-apiSkillSearchUrl = 'https://taxonomy3.rchilli.com/taxonomy/skillsearch'
-apiSkillAutocompleteUrl = 'https://taxonomy3.rchilli.com/taxonomy/autocompleteskill'
-apiResumeVersion = '8.0.0'
-apiTaxonomyVersion = '3.0'
-userkey = os.getenv('RCHILLI_API_KEY')
-subUserId = 'Alexander Fedorov'
+API_PARSE_RESUME_URL = 'https://rest.rchilli.com/RChilliParser/Rchilli/parseResumeBinary'
+API_SKILL_SEARCH_URL = 'https://taxonomy3.rchilli.com/taxonomy/skillsearch'
+API_SKILL_AUTOCOMPLETE_URL = 'https://taxonomy3.rchilli.com/taxonomy/autocompleteskill'
+API_RESUME_VERSION = '8.0.0'
+API_TAXONOMY_VERSION = '3.0'
+USER_KEY = os.getenv('RCHILLI_API_KEY')
+USER_NAME = 'Alexander Fedorov'
 
 
-def rchilli_parse(fileName):
-    filePath = f'./static/data/cv/{fileName}'
-    # service url- provided by RChilli
+def rchilli_parse(file_name):
+    file_path = f'./static/data/cv/{file_name}'
 
-    with open(filePath, "rb") as filePath:
+    with open(file_path, "rb") as filePath:
         encoded_string = base64.b64encode(filePath.read())
 
     data64 = encoded_string.decode('unicode_escape')
     headers = {'content-type': 'application/json'}
-    body = """{"filedata":\"""" + data64 + """\","filename":\"""" + fileName + """\","userkey":\"""" + userkey + """\",\"version\":\"""" + apiResumeVersion + """\",\"subuserid\":\"""" + subUserId + """\"}"""
-    response = requests.post(apiParseResumeUrl, data=body, headers=headers)
+    body = """{"filedata":\"""" + data64 + """\","filename":\"""" + file_name + """\","userkey":\"""" + \
+           USER_KEY + """\",\"version\":\"""" + API_RESUME_VERSION + """\",\"subuserid\":\"""" + USER_NAME + """\"}"""
+    response = requests.post(API_PARSE_RESUME_URL, data=body, headers=headers)
     resp = json.loads(response.text)
-
-    # please handle error too
-
-    #Resume = resp["ResumeParserData"]
-    # read values from response
-
-    # jsonName = './static/data/cv/' + 'rchilli.json'
-
-    # with open(jsonName, 'w', encoding='utf-8') as outfile:
-    #    json.dump(resp, outfile, sort_keys=True, indent=2, ensure_ascii=False)
 
     return resp
 
 
-def skill_search(skillName):
+def skill_search(skill_name):
     payload = json.dumps({
-        "ApiKey": userkey,
-        "Version": apiTaxonomyVersion,
+        "ApiKey": USER_KEY,
+        "Version": API_TAXONOMY_VERSION,
         "Language": "ENG",
         "Locale": "US",
         "CustomValues": "",
-        "Keyword": skillName
+        "Keyword": skill_name
     })
     headers = {
         'Content-Type': 'application/json'
     }
 
-    response = requests.request("POST", apiSkillSearchUrl, headers=headers, data=payload)
+    response = requests.request("POST", API_SKILL_SEARCH_URL, headers=headers, data=payload)
     resp = response.json()['Skill']['SkillData']
     print(resp)
-    skillData = {
+    skill_type = str(resp['SkillType']).split('/')
+    print(skill_type)
+    skill_data = {
         'ontology': resp['SkillOntology'],
-        'type': resp['SkillType']
+        'type': skill_type[0],
+        'searchWord': skill_name
     }
 
-    return skillData
+    return skill_data
+
+    # resp = json.loads(response.text)
+    # print(resp)
+    # return resp
 
 
-    #resp = json.loads(response.text)
-    #print(resp)
-    #return resp
-
-def skill_autocomplete(skillName):
+def skill_autocomplete(skill_name):
     payload = json.dumps({
-        "ApiKey": userkey,
-        "Version": apiTaxonomyVersion,
+        "ApiKey": USER_KEY,
+        "Version": API_TAXONOMY_VERSION,
         "Language": "ENG",
         "Locale": "US",
         "CustomValues": "",
-        "Keyword": skillName
+        "Keyword": skill_name
     })
     headers = {
         'Content-Type': 'application/json'
     }
 
     try:
-        response = requests.request("POST", apiSkillAutocompleteUrl, headers=headers, data=payload)
+        response = requests.request("POST", API_SKILL_AUTOCOMPLETE_URL, headers=headers, data=payload)
         resp = response.json()['SkillAutoComplete']
         return {'options': resp}
     except:

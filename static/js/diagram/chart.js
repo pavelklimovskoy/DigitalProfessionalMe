@@ -1,8 +1,7 @@
 anychart.onDocumentReady(renderChart);
+let dataTree, skillList = [], disabledSkills = [];
 
 function filterSkills(data) {
-  let disabledSkills = [];
-
   data[0].children.forEach(item => {
     item.children.forEach(item => {
       item.children.forEach(item => {
@@ -17,101 +16,156 @@ function filterSkills(data) {
 }
 
 function unfilteringSkills(data) {
-  let unfilteringData = [];
-
   data[0].children.forEach(item => {
     item.children.forEach(item => {
       item.children.forEach(item => {
-        unfilteringData.push(item);
+        skillList.push(item);
       });
     });
   });
 
-  return unfilteringData;
+  return skillList;
+}
+
+function redrawChart(skill = '') {
+  // Выключение скилла
+  if (!skill) {
+    console.log(disabledSkills);
+    disabledSkills.forEach(item => {
+      console.log(item);
+      let child = dataTree.search('name', item.name),
+        root = dataTree.search('name', 'Me');
+
+      if (child) {
+        let parent = child.getParent(),
+          grandParent = parent.getParent();
+
+        parent.removeChild(child);
+
+        if (!parent.numChildren()) {
+          grandParent.removeChild(parent);
+          if (!grandParent.numChildren()) {
+            root.removeChild(grandParent);
+            //dataTree.removeChild(grandParent).removeChild(parent).removeChild(child);
+          }
+        }
+      }
+    });
+  }
+  else {  // Включение скилла
+    let treeParent = dataTree.search('name', skill.parent),
+      treeGrandParent = dataTree.search('name', skill.grandParent),
+      root = dataTree.search('name', 'Me');
+
+
+    if (treeGrandParent) {
+      if (treeParent) {
+        treeParent.addChild(skill);
+      } else {
+        let parent = {
+          'name': skill.parent,
+          'id': skill.id,
+          'value': '1',
+          'fill': skill.fill,
+          'parent': skill.grandParent,
+          'children': []
+        };
+
+        treeGrandParent.addChild(parent).addChild(skill);
+      }
+    } else {
+      let grandParent = {
+        'name': skill.grandParent,
+        'id': skill.id,
+        'fill': skill.fill,
+        'parent': 'Me',
+        'children': []
+      };
+
+      let parent = {
+        'name': skill.parent,
+        'id': skill.id,
+        'value': '1',
+        'fill': skill.fill,
+        'parent': skill.grandParent,
+        'children': []
+      };
+
+      root.addChild(grandParent).addChild(parent).addChild(skill);
+    }
+  }
+};
+
+function addSkillToChart(skillName, skillParentName, skillGrandParentName, skillType, skillFilling) {
+  let treeChild = dataTree.search('name', skillName),
+    treeParent = dataTree.search('name', skillParentName),
+    treeGrandParent = dataTree.search('name', skillGrandParentName);
+
+  if (!treeChild) {
+    let shortName;
+    if (skillName.length > 6) {
+      shortName = `${skillName.slice(0, 6)}...`;
+    } else {
+      shortName = skillName;
+    }
+
+    let grandParent = {
+      'name': skillGrandParentName,
+      'id': skillType,
+      'fill': skillFilling,
+      'parent': 'Me',
+      'children': []
+    };
+
+    let parent = {
+      'name': skillParentName,
+      'id': skillType,
+      'value': '1',
+      'fill': skillFilling,
+      'parent': skillGrandParentName,
+      'children': []
+    };
+
+    let skill = {
+      'name': skillName,
+      'id': skillType,
+      'value': '1',
+      'enabled': true,
+      'shortName': shortName,
+      'fill': skillFilling,
+      'grandParent': skillGrandParentName,
+      'parent': skillParentName
+    };
+
+    if (treeGrandParent) {
+      if (treeParent) {
+        console.log('!');
+        treeParent.addChild(skill);
+      } else {
+        treeGrandParent.addChild(parent).addChild(skill);
+        console.log('!!');
+      }
+    } else {
+      console.log('!!!')
+      dataTree.addChild(grandParent).addChild(parent).addChild(skill);
+    }
+  }
 }
 
 function renderChart() {
   let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '',
-    urlRequest = `http://digitalprofessional.me:5000/getChartJson?id=${cookieId}`;
+    urlRequest = `http://localhost:5000/getChartJson?id=${cookieId}`;
 
   anychart.data.loadJsonFile(urlRequest,
     function (data) {
-      let dataTree = anychart.data.tree(data);
-
-      let redrawChart = (disabledSkills, skill = '') => {
-        // Выключение скилла
-        if (!skill) {
-          disabledSkills.forEach(item => {
-            let child = dataTree.search('name', item.name);
-
-            if (child) {
-              let parent = child.getParent(),
-                grandParent = parent.getParent();
-              parent.removeChild(child);
-              if (parent.numChildren() == 0) {
-                grandParent.removeChild(parent);
-              }
-            }
-          });
-          chart.autoRedraw(true);
-        }
-        else {  // Включение скилла
-          let treeParent = dataTree.search('name', skill.parent),
-            treeGrandParent = dataTree.search('name', skill.grandParent);
-
-          if (treeGrandParent) {
-            if (treeParent) {
-              treeParent.addChild(skill);
-            } else {
-              let parent = {
-                'name': skill.parent,
-                'id': skill.id,
-                'value': '1',
-                'fill': skill.fill,
-                'parent': skill.grandParent
-              };
-
-              treeGrandParent.addChild(parent).addChild(skill);
-            }
-          } else {
-            let grandParent = {
-              'name': skill.grandParent,
-              'id': skill.id,
-              'value': '1',
-              'fill': skill.fill
-            };
-
-            let parent = {
-              'name': skill.parent,
-              'id': skill.id,
-              'value': '1',
-              'fill': skill.fill,
-              'parent': skill.grandParent
-            };
-
-            dataTree.addChild(grandParent).addChild(parent).addChild(skill);
-          }
-        }
-      };
-
+      dataTree = anychart.data.tree(data);
+      disabledSkills = filterSkills(data);
+      skillList = unfilteringSkills(data);
       let chart = anychart.sunburst(dataTree);
+
       chart.calculationMode('parent-independent');
       chart.sort('asc');
 
-      // set the chart title
-      //chart.title("Title");
-
-      // var label = anychart.standalones.label();
-      // label.enabled(true);
-      // label.text('Activities');
-      // label.width('100%');
-      // label.height('100%');
-      // label.fontSize(30);
-      // label.fontColor('#60727b');
-      // label.hAlign('center');
-      // label.vAlign('middle');
-
-      chart.labels().useHtml(true);
       chart.tooltip().useHtml(true);
       chart.labels().useHtml(true);
 
@@ -140,7 +194,7 @@ function renderChart() {
         .format("<h5 style='font-size:16px; margin: 0.25rem 0;'>{%name}</h5><h6 style='font-size:14px; font-weight:400; margin: 0.2rem 0;'>Level: <b>{%value}{groupsSeparator:\\,}</b></h6><h6 style='font-size:14px; font-weight:400; margin: 0.2rem 0;'></b></h6>");
 
       // Set avatar
-      fetch(`http://digitalprofessional.me:5000/getAvatar?id=${cookieId}`)
+      fetch(`http://localhost:5000/getAvatar?id=${cookieId}`)
         .then(data => data.text())
         .then(data => chart.fill({
           src: `../static/data/img/${data}`,
@@ -155,9 +209,8 @@ function renderChart() {
       chart.draw();
       chart.autoRedraw(true);
 
-      redrawChart(filterSkills(data), 0);
-
+      redrawChart();
       createTimeline();
-      loadSkills(unfilteringSkills(data), redrawChart, filterSkills(data));
+      loadSkills();
     });
 }

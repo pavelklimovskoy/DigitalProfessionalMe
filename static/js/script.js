@@ -1,5 +1,4 @@
 //Modal
-
 const modalTrigger = document.querySelectorAll('[data-modal]'),
   modal = document.querySelector('.modal'),
   modalContent = document.querySelector('.modal-content');
@@ -48,21 +47,22 @@ function createModalAddingSkill() {
 
   formButton.addEventListener('click', (e) => {
     e.preventDefault();
-    const urlRequest = `http://digitalprofessional.me:5000/findSkill?skillName=${input.value}`;
+
+    const urlRequest = `http://localhost:5000/findSkill?skillName=${input.value}`;
     fetch(urlRequest)
       .then(response => response.json())
       .then(skillData => {
         console.log(skillData);
+        const ontology = skillData.ontology.split(',')[0].split('>');
+        addSkillToChart(skillData.searchWord, ontology[1], ontology[0], skillData.type, skillData.filling);
         
-        const chart = document.querySelector('.chart');
-        chart.innerHTML = '';
+        skill = {
+          'name': skillData.searchWord,
+          'id': skillData.type,
+          'enabled': true
+        };
 
-        const skillBlock = document.querySelector('.skillsBlock');
-        skillBlock.innerHTML = `
-        <p class="text-center">Skills <button data-modal id="addSkill" class="btn">Add Skill </button></p>
-        `;
-
-        renderChart();
+        addSkill(skill, skillList.length);
         closeModal();
       });
   });
@@ -87,11 +87,13 @@ function createModalAddingSkill() {
 
 function createModalCv() {
   modalContent.innerHTML = '';
+  console.log(disabledSkills);
+  console.log(dataTree);
 
   const element = document.createElement('div');
   element.innerHTML = `
   <span data-close class="close">&times;</span>
-  <form action="http://digitalprofessional.me:5000/uploader" method="POST" enctype="multipart/form-data">
+  <form action="http://localhost:5000/uploader" method="POST" enctype="multipart/form-data">
     <input id="cvFileInput" type="file" name="file">
     <p class="text-center">OR <br> Enter the link (hh.ru): </p>
     <input id="cvStringInput" type="text" name="link">
@@ -100,7 +102,7 @@ function createModalCv() {
   `;
 
   modalContent.append(element);
-  
+
   // const inputFile = document.querySelector('#cvFileInput'),
   //   inputString = document.querySelector('#cvStringInput'),
   //   formButton = document.querySelector('#cvSubmitButtonInput'),
@@ -114,7 +116,7 @@ function createModalCv() {
   //   } else {
   //     data = inputString.value;
   //   }
-    
+
   //   fetch(urlRequest, {
   //     method: 'POST',
   //     body: data

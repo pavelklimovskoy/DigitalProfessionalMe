@@ -9,7 +9,7 @@ function autocomplete(inp) {
         //console.log(val);
 
         if (val.length > 3) {
-            let urlRequest = `http://digitalprofessional.me:5000/InputAutocomplete?skillName=${val}`;
+            let urlRequest = `http://localhost:5000/InputAutocomplete?skillName=${val}`;
             fetch(urlRequest)
                 .then(response => response.json())
                 .then(data => {
