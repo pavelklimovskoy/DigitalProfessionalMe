@@ -1,4 +1,4 @@
-const baseUrl = 'http://digitalprofessional.me:5000'
+const baseUrl = 'http://localhost:5000'
 //Modal
 const modalTrigger = document.querySelectorAll('[data-modal]'),
   modal = document.querySelector('.modal'),

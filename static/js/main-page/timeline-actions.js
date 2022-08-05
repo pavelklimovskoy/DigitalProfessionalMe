@@ -1,4 +1,5 @@
 let debugTimeline = false;
+var timeline;
 
 // Вывод отладочной информации
 function showControllers() {
@@ -41,7 +42,7 @@ function createTimeline() {
         let employer = job["Employer"]["EmployerName"];
 
         let itemContent = "<b>" + employer + "</b>" + "<br>" + position;
-        let tooltip = itemContent
+        let tooltip = employer + "<br>" + position
 
         arrItems.push(
           { id: itemId, 
@@ -104,11 +105,11 @@ function createTimeline() {
       let groups = [
         {
           id: 1,
-          content: "<b>Experience</b>"
+          content: "<b>Experience</b><span> &#128188;</span>"
         },
         {
           id: 2,
-          content: '<b>Courses</b>'
+          content: '<b>Courses </b><span> &#128211;</span>'
         },
         {
           id: 3,
@@ -134,19 +135,31 @@ function createTimeline() {
         }
       };
 
-      let timeline = new vis.Timeline(container, items, groups, options);
+      timeline = new vis.Timeline(container, items, groups, options);
+      timeline.setOptions({height:"400px"})
 
-      let updateEditOptions = function (e) {
-        let changedOption = e.target.name;
-        let options = { editable: {} };
-        options.editable[changedOption] = e.target.checked;
-        timeline.setOptions(options);
-      };
+      timeline.redraw()
 
-      let cbs = document.getElementsByTagName("input");
-      [].forEach.call(cbs, function (cb) {
-        cb.onchange = updateEditOptions;
+      timeline.zoomIn(0.01)
+
+
+    }).finally(() => {
+      timeline.redraw()
       });
-
-    });
 }
+
+
+function waitForDOM () {
+  if (timeline != null) {
+    timeline._redraw()
+    let view_date = new Date()
+    view_date.setFullYear(view_date.getFullYear - 2);
+    timeline.moveTo(view_date);
+  } else {
+    setTimeout(waitForDOM, 300);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(waitForDOM, 300);
+});

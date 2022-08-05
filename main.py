@@ -170,13 +170,18 @@ def password_correct(data: str) -> bool:
     :param data:
     :return:
     """
-    regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
-    pat = re.compile(regex)
+    # regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
+    # pat = re.compile(regex)
+    #
+    # if re.search(pat, data):
+    #     return True
+    # else:
+    #     flash("Wrong password format", category='error')
+    #     return False
 
-    if re.search(pat, data):
+    if 6 < len(data) < 25:
         return True
     else:
-        flash("Wrong password format", category='error')
         return False
 
 
