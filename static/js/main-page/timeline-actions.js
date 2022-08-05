@@ -153,13 +153,21 @@ function waitForDOM () {
   if (timeline != null) {
     timeline._redraw()
     let view_date = new Date()
-    view_date.setFullYear(view_date.getFullYear - 2);
+    view_date.setFullYear(view_date.getFullYear() - 2);
     timeline.moveTo(view_date);
   } else {
     setTimeout(waitForDOM, 300);
   }
 }
 
+// При полной заргрузки страницы происходит обновление Timeline
 document.addEventListener('DOMContentLoaded', function() {
   setTimeout(waitForDOM, 300);
 });
+
+// Перерисовка при изменение размеров окна
+window.addEventListener('resize', function(event) {
+  if (timeline != null) {
+    timeline._redraw()
+  }
+}, true);
