@@ -69,6 +69,7 @@ def upload_avatar():
 # Uploading CV in storage
 @app.route('/uploader', methods=['GET', 'POST'])
 def upload_file():
+    print('upd')
     file_name, cur_user = "", ""
 
     if request.method == 'POST':
@@ -77,7 +78,7 @@ def upload_file():
         if cv_link != '':
             try:
                 file_name = f'hhCv_{summary_cv_count()}.pdf'
-                save_pdf(cv_link, file_name=file_name)
+                save_pdf(cv_link, file_name)
 
                 increment_cv_count()
             except Exception as e:
@@ -88,22 +89,22 @@ def upload_file():
 
             # Локально сохраняем копию CV
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], file_name))
-            
-            increment_cv_count()
 
+            increment_cv_count()
 
         cur_user_id = session['id']
 
         cur_user = find_record('Id', cur_user_id)
 
         if cur_user is not None:
-            rchilli_data = rchilli_parse(fileName=file_name)
-            json_data = json_convert(data=rchilli_data)
+            rchilli_data = rchilli_parse(file_name)
+            json_data = json_convert(rchilli_data)
 
             update_record('Id', cur_user_id, 'jsondata', json_data)
             update_record('Id', cur_user_id, 'rchillidata', rchilli_data)
 
     # Переписать на редирект
+    print(cur_user)
     return render_template('index.html', title='Digital Professional Me', userName=cur_user.name)
 
 
@@ -219,7 +220,6 @@ def password_equal(str1, str2) -> bool:
 
 
 def input_form_correct(input_form) -> bool:
-
     res = name_correct(input_form['name'])
     res &= password_correct(input_form['password'])
     res &= email_correct(input_form['email'])
@@ -326,7 +326,7 @@ def find_skill():
             flag1 = True
 
             for parentSkillType in grandParentSkillType['children']:
-                if ontoloty.split('>')[1] == parentSkillType['name']: # Найден Parent, GrandParent
+                if ontoloty.split('>')[1] == parentSkillType['name']:  # Найден Parent, GrandParent
                     flag2 = True
 
                     shortName = ontoloty.split('>')[-1]
@@ -431,7 +431,7 @@ def find_skill():
     else:
         resp['filling'] = '#4188D2'
 
-    #resp['parentFilling'] = color_calc(1, resp['type'])
+    # resp['parentFilling'] = color_calc(1, resp['type'])
     update_record('Id', cur_user_id, 'jsondata', [cur_user_data])
 
     return resp

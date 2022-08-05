@@ -77,5 +77,5 @@ def skill_autocomplete(skill_name):
         response = requests.request("POST", API_SKILL_AUTOCOMPLETE_URL, headers=headers, data=payload)
         resp = response.json()['SkillAutoComplete']
         return {'options': resp}
-    except:
-        print('skill_autocomplete: ERROR')
+    except Exception as e:
+        print(e)

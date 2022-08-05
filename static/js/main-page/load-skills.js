@@ -41,7 +41,7 @@ function changeSkillState(skillId) {
         let xhr = new XMLHttpRequest();
         xhr.open(
             'GET',
-            `http://digitalprofessional.me:5000/changeSkillState?skillName=${skill.textContent}`,
+            `${baseUrl}/changeSkillState?skillName=${skill.textContent}`,
             true
         );
         xhr.send();

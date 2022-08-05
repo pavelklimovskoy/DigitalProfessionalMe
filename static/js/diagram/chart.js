@@ -154,7 +154,7 @@ function addSkillToChart(skillName, skillParentName, skillGrandParentName, skill
 
 function renderChart() {
   let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '',
-    urlRequest = `http://digitalprofessional.me:5000/getChartJson?id=${cookieId}`;
+    urlRequest = `${baseUrl}/getChartJson?id=${cookieId}`;
 
   anychart.data.loadJsonFile(urlRequest,
     function (data) {
@@ -194,7 +194,7 @@ function renderChart() {
         .format("<h5 style='font-size:16px; margin: 0.25rem 0;'>{%name}</h5><h6 style='font-size:14px; font-weight:400; margin: 0.2rem 0;'>Level: <b>{%value}{groupsSeparator:\\,}</b></h6><h6 style='font-size:14px; font-weight:400; margin: 0.2rem 0;'></b></h6>");
 
       // Set avatar
-      fetch(`http://digitalprofessional.me:5000/getAvatar?id=${cookieId}`)
+      fetch(`${baseUrl}/getAvatar?id=${cookieId}`)
         .then(data => data.text())
         .then(data => chart.fill({
           src: `../static/data/img/${data}`,

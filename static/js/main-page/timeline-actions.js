@@ -24,7 +24,7 @@ function createTimeline() {
   let itemId = 0;
 
   let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '';
-  let urlRequest = `http://digitalprofessional.me:5000/getRchilliJson?id=${cookieId}`;
+  let urlRequest = `${baseUrl}/getRchilliJson?id=${cookieId}`;
 
 
   fetch(urlRequest)
