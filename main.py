@@ -1,9 +1,8 @@
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-import codecs
 from jsonConvert import json_convert, color_calc, timeline_parse
 from flask import render_template, make_response, redirect, url_for, flash, session
 from flask_cors import CORS
-from rchilli import rchilli_parse, skill_search, skill_autocomplete
+from rchilli import rchilli_parse, skill_search, skill_autocomplete, job_autocomplete, job_search
 from mongodb import *
 from analytics import *
 import pdfkit
@@ -259,7 +258,8 @@ def register():
                     flash("Error adding to the database", category='error')
             else:
                 flash("The fields are filled in incorrectly", category='error')
-        except:
+        except Exception as e:
+            print(e)
             flash("Error! Try again", category='error')
 
     return render_template('register.html')
@@ -319,9 +319,23 @@ def change_skill_state():
     return redirect(url_for('index'))
 
 
-@app.route('/InputAutocomplete')
+@app.route('/skillInputAutocomplete')
 def show_input_options():
     return skill_autocomplete(f"{request.args.get('skillName')}")
+
+
+@app.route('/jobInputAutocomplete')
+def show_jobs():
+    return job_autocomplete(f"{request.args.get('jobName')}")
+
+
+@app.route('/findJob')
+def find_jobs():
+    job_name = str(request.args.get('jobName'))
+    #cur_user_id = session['id']
+    #cur_user_data = find_record('Id', cur_user_id).jsondata[0]
+    resp = job_search(job_autocomplete(job_name))
+    return {'requiredSkills': resp}
 
 
 @app.route('/findSkill')

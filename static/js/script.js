@@ -1,5 +1,7 @@
-const baseUrl = 'http://digitalprofessional.me:5000'
+const baseUrl = 'http://localhost:5000'
+
 //Modal
+
 const modalTrigger = document.querySelectorAll('[data-modal]'),
   modal = document.querySelector('.modal'),
   modalContent = document.querySelector('.modal-content');
@@ -19,6 +21,8 @@ function openModal(e) {
     createModalEvidence();
   } else if (eId == 'addSkill') {
     createModalAddingSkill();
+  } else if (eId == 'addGoal') {
+    createModalGoal();
   }
 
   modal.style.display = 'block';
@@ -32,7 +36,7 @@ function createModalAddingSkill() {
   element.innerHTML = `
   <span data-close class="close">&times;</span>
   <form autocomplete="off" action="#">
-    <div class="autocomplete" style="width:300px;">
+    <div style="width:300px;">
       <input id="skillInput" type="text" name="skillName" placeholder="skillName">
     </div>
     <input id="addSkillButton" type="submit">
@@ -44,7 +48,7 @@ function createModalAddingSkill() {
   const input = document.querySelector('#skillInput'),
     formButton = document.querySelector('#addSkillButton');
 
-  autocomplete(input);
+  autocomplete(input, 'skillInputAutocomplete', 'skillName');
 
   formButton.addEventListener('click', (e) => {
     e.preventDefault();
@@ -55,19 +59,57 @@ function createModalAddingSkill() {
       .then(skillData => {
         console.log(skillData);
         const ontology = skillData.ontology.split(',')[0].split('>');
-        addSkillToChart(skillData.searchWord, ontology[1], ontology[0], skillData.type, skillData.filling);
-        
-        skill = {
-          'name': skillData.searchWord,
-          'id': skillData.type,
-          'enabled': true
-        };
+        let skill = addSkillToChart(skillData.searchWord, ontology[1], ontology[0], skillData.type, skillData.filling);
+
+        // skill = {
+        //   'name': skillData.searchWord,
+        //   'id': skillData.type,
+        //   'enabled': true
+        // };
 
         addSkill(skill, skillList.length);
         closeModal();
       });
   });
 }
+
+function createModalGoal() {
+  modalContent.innerHTML = '';
+  //Дата, Название J
+  console.log('132');
+  const element = document.createElement('div');
+  element.innerHTML = `
+  <span data-close class="close">&times;</span>
+  <form autocomplete="off" action="#">
+    <div>
+      <input id="goalJDInput" type="text" name="jobName" placeholder="jobName">
+      <input id="goalDateInput" type="date" name="dateJd" placeholder="dateJd" min="2022-01-01" max="2050-01-01">
+    </div>
+    <input id="submitGoalForm" type="submit">
+  </form>
+  `;
+
+  modalContent.append(element);
+
+  const input = document.querySelector('#goalJDInput'),
+    formButton = document.querySelector('#submitGoalForm');
+
+  autocomplete(input, 'jobInputAutocomplete', 'jobName');
+
+  formButton.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    const urlRequest = `${baseUrl}/findJob?jobName=${input.value}`;
+    fetch(urlRequest)
+      .then(response => response.json())
+      .then(jobData => {
+        console.log('JD', jobData);
+
+        closeModal();
+      });
+  });
+}
+
 
 // function addSkillOnChart(skillName) {
 //   const form = document.querySelector('#addSkillButton');
@@ -77,7 +119,7 @@ function createModalAddingSkill() {
 //     //form.children();
 //     console.log(skillName);
 
-//     const urlRequest = `http://digitalprofessional.me:5000/findSkill?findSkill=${skillName}`;
+//     const urlRequest = `http://${baseUrl}/findSkill?findSkill=${skillName}`;
 //     fetch(urlRequest)
 //       .then(response => response.json())
 //       .then(data => {

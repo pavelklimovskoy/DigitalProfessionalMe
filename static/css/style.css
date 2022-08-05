@@ -120,7 +120,7 @@
   letter-spacing: 3px;
   font-weight: 600;
   color: #524f4e;
-  background: white;
+  background: rgb(221, 220, 226);
   box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
   transition: .3s;
 }

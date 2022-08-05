@@ -53,6 +53,8 @@ function changeSkillState(skillId) {
 // Добавление скилла
 function addSkill(skill, i)
 {
+    console.log(skill);
+
     let skillDiv = document.createElement("div");
 
     if (skill.enabled == false) {
@@ -100,13 +102,12 @@ function addSkill(skill, i)
         if (state == 0) {
             skill.enabled = false;
             disabledSkills.push(skill);
-            redrawChart();
+            disableSkill(skill.name)
         } else {
             skill.enabled = true;
             disabledSkills.pop(skill);
-            redrawChart(skill);
+            enableSkill(skill);
         }
-
     });
 
     // Добавление иконки к кнопке

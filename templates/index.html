@@ -52,18 +52,13 @@
               <ul class="navbar-nav mr-auto mb-3 mb-lg-0">
 
                 <li class="nav-item">
-                  <a href="/" class="nav-link">Home</a>
-                </li>
-
-                <li class="nav-item">
                   <a href="/me" class="nav-link">Me</a>
                 </li>
 
                 <li class="nav-item">
-                  <a href="/about" class="nav-link">About us</a>
+                  <a href="http://digitalprofessional.me" class="nav-link">About us</a>
                 </li>
 
-                
                 <li class="nav-item">
                   <label for="avatar_upload" class="nav-link">Upload avatar</label>
                 </li>
@@ -97,8 +92,9 @@
                 </div>
 
                 <div>
-                  <form action="http://digitalprofessional.me:5000/upload_avatar" method="POST" enctype="multipart/form-data">
-                    <input id="avatar_upload" style="visibility:hidden;display: none" type="file" name="avatar" onchange="this.form.submit()" accept=".jpg, .jpeg, .png">
+                  <form action="http://localhost:5000/upload_avatar" method="POST" enctype="multipart/form-data">
+                    <input id="avatar_upload" style="visibility:hidden;display: none" type="file" name="avatar"
+                      onchange="this.form.submit()" accept=".jpg, .jpeg, .png">
                   </form>
                 </div>
               </div>
@@ -114,6 +110,7 @@
               <div class="row" id="callToAction">
                 <a data-modal href="#" id="parseCV" class="floating-button">Parse/Import Your Résumé</a>
                 <a data-modal href="#" id="parseEvidence" class="floating-button">Add Evidence</a>
+                <a data-modal href="#" id="addGoal" class="floating-button">Add a life goal</a>
               </div>
               <div class="skillsBlock" id="skillsBlock">
                 <p class="text-center">Skills <button data-modal id="addSkill" class="btn">Add Skill </button></p>

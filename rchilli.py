@@ -6,7 +6,9 @@ import os
 # Rchilli API config
 API_PARSE_RESUME_URL = 'https://rest.rchilli.com/RChilliParser/Rchilli/parseResumeBinary'
 API_SKILL_SEARCH_URL = 'https://taxonomy3.rchilli.com/taxonomy/skillsearch'
+API_JOB_SEARCH_URL = 'https://taxonomy3.rchilli.com/taxonomy/jobprofilesearch'
 API_SKILL_AUTOCOMPLETE_URL = 'https://taxonomy3.rchilli.com/taxonomy/autocompleteskill'
+API_JOB_AUTOCOMPLETE_URL = 'https://taxonomy3.rchilli.com/taxonomy/autocompletejobprofile'
 API_RESUME_VERSION = '8.0.0'
 API_TAXONOMY_VERSION = '3.0'
 USER_KEY = os.getenv('RCHILLI_API_KEY')
@@ -77,5 +79,46 @@ def skill_autocomplete(skill_name):
         response = requests.request("POST", API_SKILL_AUTOCOMPLETE_URL, headers=headers, data=payload)
         resp = response.json()['SkillAutoComplete']
         return {'options': resp}
+    except Exception as e:
+        print(e)
+
+
+def job_search(job_name):
+    payload = json.dumps({
+        "ApiKey": USER_KEY,
+        "Version": API_TAXONOMY_VERSION,
+        "Language": "ENG",
+        "Locale": "US",
+        "CustomValues": "",
+        "Keyword": job_name
+    })
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", API_JOB_SEARCH_URL, headers=headers, data=payload)
+    print('response', response.json())
+    resp = response.json()['JobProfile']['JobProfileData']['Skills']
+    print('rr', resp)
+    return resp
+
+
+def job_autocomplete(job_name):
+    payload = json.dumps({
+        "ApiKey": USER_KEY,
+        "Version": API_TAXONOMY_VERSION,
+        "Language": "ENG",
+        "Locale": "US",
+        "CustomValues": "",
+        "Keyword": job_name
+    })
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    try:
+        response = requests.request("POST", API_JOB_AUTOCOMPLETE_URL, headers=headers, data=payload)
+        resp = response.json()
+        return {'options': resp['JobProfileAutoComplete']}
     except Exception as e:
         print(e)

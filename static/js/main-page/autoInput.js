@@ -1,4 +1,4 @@
-function autocomplete(inp) {
+function autocomplete(inp, formUrl, searchKey) {
     /*the autocomplete function takes two arguments,
     the text field element and an array of possible autocompleted values:*/
     let currentFocus;
@@ -9,10 +9,12 @@ function autocomplete(inp) {
         //console.log(val);
 
         if (val.length > 3) {
-            let urlRequest = `${baseUrl}/InputAutocomplete?skillName=${val}`;
+            //let urlRequest = `${baseUrl}/skillInputAutocomplete}?skillName=${val}`;
+            let urlRequest = `${baseUrl}/${formUrl}?${searchKey}=${val}`;
             fetch(urlRequest)
                 .then(response => response.json())
                 .then(data => {
+                    console.log(data);
                     let arr = data.options;
                     /*close any already open lists of autocompleted values*/
                     closeAllLists();
