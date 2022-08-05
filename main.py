@@ -21,7 +21,7 @@ app.config['UPLOAD_IMAGE_FOLDER'] = './static/data/img/'
 app.config.from_object(__name__)
 CORS(app)
 
-client = MongoClient('digitalprofessional.me', 27017)
+client = MongoClient('localhost', 27017)
 db = client['DPM']
 collection = db['users']
 
