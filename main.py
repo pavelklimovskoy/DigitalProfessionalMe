@@ -448,7 +448,6 @@ def find_skill():
     else:
         resp['filling'] = '#4188D2'
 
-    # resp['parentFilling'] = color_calc(1, resp['type'])
     update_record('Id', cur_user_id, 'jsondata', [cur_user_data])
 
     return resp
