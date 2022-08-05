@@ -85,7 +85,7 @@ function createModalGoal() {
       <input id="goalJDInput" type="text" name="jobName" placeholder="jobName">
       <input id="goalDateInput" type="date" name="dateJd" placeholder="dateJd" min="2022-01-01" max="2050-01-01">
     </div>
-    <input id="submitGoalForm" type="submit">
+    <input id="submitGoalForm" type="submit" onclick=add_life_goal()>
   </form>
   `;
 
@@ -186,6 +186,7 @@ modal.addEventListener('click', (e) => {
     closeModal();
   }
 });
+
 
 // Закрытие модального окна по клику на ESC
 document.addEventListener('keydown', (e) => {

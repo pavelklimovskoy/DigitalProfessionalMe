@@ -1,5 +1,6 @@
 let debugTimeline = false;
 var timeline;
+var itemId = 0;
 
 // Вывод отладочной информации
 function showControllers() {
@@ -22,7 +23,7 @@ function createTimeline() {
 
   let arrItems = [];
 
-  let itemId = 0;
+  itemId = 0;
 
   let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '';
   let urlRequest = `${baseUrl}/getTimelineJson?id=${cookieId}`;
@@ -171,3 +172,26 @@ window.addEventListener('resize', function(event) {
     timeline._redraw()
   }
 }, true);
+
+
+// Добавление нового итема
+function add_life_goal()
+{
+
+  let input_date = document.getElementById("goalDateInput").value;
+  let dateEntered = new Date(input_date);
+  let plane_name = document.getElementById("goalJDInput").value;
+
+  let new_item = {
+    id: itemId,
+    start: dateEntered,
+    editable: false,
+    group: 1,
+    content: '<b>' + plane_name + '</b>',
+    title: plane_name
+  };
+
+  timeline.itemsData.add(new_item);
+
+  itemId++;
+}
