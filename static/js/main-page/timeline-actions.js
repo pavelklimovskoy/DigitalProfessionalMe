@@ -25,7 +25,7 @@ function createTimeline() {
   let itemId = 0;
 
   let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '';
-  let urlRequest = `${baseUrl}/getRchilliJson?id=${cookieId}`;
+  let urlRequest = `${baseUrl}/getTimelineJson?id=${cookieId}`;
 
 
   fetch(urlRequest)
@@ -34,12 +34,12 @@ function createTimeline() {
     })
     .then(data => {
       // Обработка опыта работы
-      data["ResumeParserData"]["SegregatedExperience"].forEach(job => {
+      data["experienceEvents"].forEach(job => {
 
-        let endDate = job["EndDate"].split('/').reverse().join('-');
-        let startDate = job["StartDate"].split('/').reverse().join('-');
-        let position = job["JobProfile"]["FormattedName"];
-        let employer = job["Employer"]["EmployerName"];
+        let endDate = job["endDate"].split('/').reverse().join('-');
+        let startDate = job["startDate"].split('/').reverse().join('-');
+        let position = job["position"];
+        let employer = job["employer"];
 
         let itemContent = "<b>" + employer + "</b>" + "<br>" + position;
         let tooltip = employer + "<br>" + position
@@ -58,12 +58,12 @@ function createTimeline() {
       });
 
       // Обработка образования
-      data["ResumeParserData"]["SegregatedQualification"].forEach(study => {
+      data["qualificationEvents"].forEach(study => {
 
         let itemIcon = '<div><img id="111"src="../static/data/img/university.png"></div>';
-        let period = study["FormattedDegreePeriod"];
-        let place = "<div>" + study["Institution"]["Name"] + "</div>" + itemIcon;
-        let tooltip = study["Institution"]["Name"]
+        let period = study["period"];
+        let place = "<div>" + study["name"] + "</div>" + itemIcon;
+        let tooltip = study["name"]
 
         if (period.includes("to") == true) {
           period = period.replace(/\s/g, '');

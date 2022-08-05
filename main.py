@@ -145,6 +145,16 @@ def get_chart_json():
     return jsonify(cur_user.jsondata)
 
 
+# Json для Timeline
+@app.route('/getTimelineJson', methods=['GET', 'POST'])
+# @login_required
+def get_timeline_json():
+    cur_user_id = str(request.args.get('id'))
+    cur_user = find_record('Id', cur_user_id)
+
+    return jsonify(cur_user.timeline_events)
+
+
 # Rchilli Json
 @app.route('/getRchilliJson', methods=['GET', 'POST'])
 def get_rchilli_json():
