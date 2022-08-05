@@ -41,8 +41,17 @@ function createTimeline() {
         let employer = job["Employer"]["EmployerName"];
 
         let itemContent = "<b>" + employer + "</b>" + "<br>" + position;
+        let tooltip = itemContent
 
-        arrItems.push({ id: itemId, content: itemContent, editable: false, start: startDate, end: endDate, group: 1 });
+        arrItems.push(
+          { id: itemId, 
+            content: itemContent, 
+            editable: false,
+            start: startDate, 
+            end: endDate,
+            group: 1,
+            title: tooltip,
+          });
 
         itemId++;
       });
@@ -51,11 +60,9 @@ function createTimeline() {
       data["ResumeParserData"]["SegregatedQualification"].forEach(study => {
 
         let itemIcon = '<div><img id="111"src="../static/data/img/university.png"></div>';
-
         let period = study["FormattedDegreePeriod"];
-        //let place = study["Institution"]["Name"] + itemIcon;
-        //let place = "<span>&#127891; </span>" + study["Institution"]["Name"];
         let place = "<div>" + study["Institution"]["Name"] + "</div>" + itemIcon;
+        let tooltip = study["Institution"]["Name"]
 
         if (period.includes("to") == true) {
           period = period.replace(/\s/g, '');
@@ -63,12 +70,27 @@ function createTimeline() {
           let startDate = period.split("to")[0];
           let endDate = period.split("to")[1];
 
-          arrItems.push({ id: itemId, content: place, editable: false, start: new Date(startDate), end: new Date(endDate), group: 3 });
+          arrItems.push({ 
+              id: itemId, 
+              content: place, 
+              editable: false, 
+              start: new Date(startDate), 
+              end: new Date(endDate), 
+              group: 3, 
+              title: tooltip
+            });
         }
         else {
           period = period.split('/').reverse().join('-');
 
-          arrItems.push({ id: itemId, content: place, editable: false, start: new Date(period), group: 3 });
+          arrItems.push({
+             id: itemId, 
+             content: place, 
+             editable: false, 
+             start: new Date(period), 
+             group: 3,
+             title: tooltip
+            });
         }
 
 

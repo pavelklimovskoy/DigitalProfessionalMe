@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost:5000'
+const baseUrl = 'http://digitalprofessional.me:5000'
 //Modal
 const modalTrigger = document.querySelectorAll('[data-modal]'),
   modal = document.querySelector('.modal'),
@@ -77,7 +77,7 @@ function createModalAddingSkill() {
 //     //form.children();
 //     console.log(skillName);
 
-//     const urlRequest = `http://localhost:5000/findSkill?findSkill=${skillName}`;
+//     const urlRequest = `http://digitalprofessional.me:5000/findSkill?findSkill=${skillName}`;
 //     fetch(urlRequest)
 //       .then(response => response.json())
 //       .then(data => {
@@ -107,7 +107,7 @@ function createModalCv() {
   // const inputFile = document.querySelector('#cvFileInput'),
   //   inputString = document.querySelector('#cvStringInput'),
   //   formButton = document.querySelector('#cvSubmitButtonInput'),
-  //   urlRequest = `http://localhost:5000/uploader`;
+  //   urlRequest = `http://digitalprofessional.me:5000/uploader`;
 
   // formButton.addEventListener('click', (e) => {
   //   e.preventDefault();
