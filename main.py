@@ -46,7 +46,6 @@ def apply_caching(response):
 @login_required
 def upload_avatar():
     cur_user_id = session['id']
-    cur_user = find_record('Id', cur_user_id)
     avatar = request.files['avatar']
     avatar_name = avatar.filename
     image_id = summary_image_count()
@@ -62,7 +61,7 @@ def upload_avatar():
                 increment_image_count()
                 update_record('Id', cur_user_id, 'avatar', file_name)
 
-    return render_template('index.html', title='Digital Professional Me', userName=cur_user.name)
+    return redirect(url_for('index'))
 
 
 # Uploading CV in storage
@@ -104,9 +103,7 @@ def upload_file():
             update_record('Id', cur_user_id, 'rchillidata', rchilli_data)
             update_record('Id', cur_user_id, 'timelineEvents', timeline_events)
 
-    # Переписать на редирект
-    print(cur_user)
-    return render_template('index.html', title='Digital Professional Me', userName=cur_user.name)
+    return redirect(url_for('index'))
 
 
 # Основная страница
@@ -319,7 +316,7 @@ def change_skill_state():
     skill_name = str(request.args.get('skillName'))
     cur_user = disable_skill(cur_user_id, skill_name)
 
-    return render_template('index.html', title='Digital Professional Me', userName=cur_user.name)
+    return redirect(url_for('index'))
 
 
 @app.route('/InputAutocomplete')
@@ -451,7 +448,6 @@ def find_skill():
     else:
         resp['filling'] = '#4188D2'
 
-    # resp['parentFilling'] = color_calc(1, resp['type'])
     update_record('Id', cur_user_id, 'jsondata', [cur_user_data])
 
     return resp
