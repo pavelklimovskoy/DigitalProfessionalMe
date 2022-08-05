@@ -123,3 +123,36 @@ def json_convert(data):
         type['fill'] = filling
 
     return [main_dict]
+
+
+def timeline_parse(data):
+    qualification_events = []
+    experience_events = []
+    certifications = []
+
+    counter = 0
+    for study in data['ResumeParserData']['SegregatedQualification']:
+        event = {'period': study['FormattedDegreePeriod'],
+                 'name': study['Institution']['Name'],
+                 'id': counter}
+        qualification_events.append(event)
+        counter += 1
+
+    counter = 0
+    for job in data['ResumeParserData']['SegregatedExperience']:
+        event = {'endDate': job['EndDate'],
+                 'startDate': job['StartDate'],
+                 'position': job['JobProfile']['FormattedName'],
+                 'employer': job['Employer']['EmployerName'],
+                 'id': counter}
+
+        experience_events.append(event)
+        counter += 1
+
+    main = {
+        'qualificationEvents': qualification_events,
+        'experienceEvents': experience_events,
+        'certifications': certifications
+    }
+
+    return main

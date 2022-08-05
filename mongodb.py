@@ -14,15 +14,17 @@ class Users(UserMixin):
     name = ''
     email = ''
     password = ''
+    timeline_events = {}
     avatar = ''
 
-    def __init__(self, Id, name, email, password, jsondata, rchillidata, avatar):
+    def __init__(self, Id, name, email, password, jsondata, rchillidata, timeline_events, avatar):
         self.Id = Id
         self.name = name
         self.email = email
         self.password = password
         self.jsondata = jsondata
         self.rchillidata = rchillidata
+        self.timeline_events = timeline_events
         self.avatar = avatar
 
     def to_json(self):
@@ -33,6 +35,7 @@ class Users(UserMixin):
             "password": self.password,
             "jsondata": self.jsondata,
             "rchillidata": self.rchillidata,
+            "timelineEvents": self.timeline_events,
             "avatar": self.avatar
         }
 
@@ -61,6 +64,7 @@ def create_record(CurRequest):
                            'password': CurRequest.form['password'],
                            'jsondata': {},
                            'rchillidata': {},
+                           'timelineEvents': {},
                            'avatar': 'user_tmp_example.png'
                            })
 
@@ -74,6 +78,7 @@ def find_record(key, value):
                      password=user['password'],
                      jsondata=user['jsondata'],
                      rchillidata=user['rchillidata'],
+                     timeline_events=user['timelineEvents'],
                      avatar=user['avatar'])
     else:
         return None

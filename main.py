@@ -1,9 +1,8 @@
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import codecs
-from jsonConvert import json_convert, color_calc
+from jsonConvert import json_convert, color_calc, timeline_parse
 from flask import render_template, make_response, redirect, url_for, flash, session
 from flask_cors import CORS
-from jsonConvert import json_convert
 from rchilli import rchilli_parse, skill_search, skill_autocomplete
 from mongodb import *
 from analytics import *
@@ -99,9 +98,11 @@ def upload_file():
         if cur_user is not None:
             rchilli_data = rchilli_parse(file_name)
             json_data = json_convert(rchilli_data)
+            timeline_events = timeline_parse(rchilli_data)
 
             update_record('Id', cur_user_id, 'jsondata', json_data)
             update_record('Id', cur_user_id, 'rchillidata', rchilli_data)
+            update_record('Id', cur_user_id, 'timelineEvents', timeline_events)
 
     # Переписать на редирект
     print(cur_user)
