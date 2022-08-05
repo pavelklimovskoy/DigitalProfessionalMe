@@ -95,7 +95,7 @@ function createModalCv() {
   element.innerHTML = `
   <span data-close class="close">&times;</span>
   <form action="${baseUrl}/uploader" method="POST" enctype="multipart/form-data">
-    <input id="cvFileInput" type="file" name="file">
+    <input id="cvFileInput" type="file" name="file" onchange="this.form.submit()">
     <p class="text-center">OR <br> Enter the link (hh.ru): </p>
     <input id="cvStringInput" type="text" name="link">
     <input id="cvSubmitButtonInput" type="submit" />
