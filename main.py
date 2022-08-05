@@ -232,19 +232,23 @@ def input_form_correct(input_form) -> bool:
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        if input_form_correct(request.form):
+        try:
+            if input_form_correct(request.form):
 
-            # Проверка на существование пользователя в БД
-            cur_user = find_record('email', str(request.form['email']))
-            if cur_user is None:
-                create_record(request)
+                # Проверка на существование пользователя в БД
+                cur_user = find_record('email', str(request.form['email']))
+                if cur_user is None:
+                    create_record(request)
 
-                flash("You have successfully registered", category='success')
-                return redirect(url_for('login'))
+                    flash("You have successfully registered", category='success')
+                    return redirect(url_for('login'))
+                else:
+                    flash("Error adding to the database", category='error')
             else:
-                flash("Error adding to the database", category='error')
-        else:
-            flash("The fields are filled in incorrectly", category='error')
+                flash("The fields are filled in incorrectly", category='error')
+        except:
+            flash("Error! Try again", category='error')
+
     return render_template('register.html')
 
 
