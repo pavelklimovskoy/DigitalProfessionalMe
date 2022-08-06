@@ -1,7 +1,7 @@
 import json
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
-from main import collection
+from main import collection, collection_dataset
 from pymongo import MongoClient
 from flask_login import UserMixin
 import uuid
@@ -100,3 +100,64 @@ def disable_skill(curUserId, skillName):
 
     update_record('Id', curUserId, 'jsondata', [data])
     return user
+
+
+def add_timeline_evidence_event(cur_user_id, job_name, job_deadline):
+    user = find_record('Id', cur_user_id)
+
+    event = {
+        'startDate': job_deadline,
+        'endDate': '',
+        'position': job_name,
+        'employer': '',
+        'id': len(user.timeline_events['experienceEvents'])
+    }
+
+    user.timeline_events['experienceEvents'].append(event)
+
+    update_record('Id', cur_user_id, 'timelineEvents', user.timeline_events)
+
+
+def add_cerificate_event(cur_user_id, name, date):
+    user = find_record('Id', cur_user_id)
+
+    event = {
+        'date': date,
+        'name': name,
+        'id': len(user.timeline_events['certifications'])
+    }
+
+    user.timeline_events['certifications'].append(event)
+
+    update_record('Id', cur_user_id, 'timelineEvents', user.timeline_events)
+
+
+def get_owned_skills(cur_user_id):
+    user_data = find_record('Id', cur_user_id).jsondata[0]['children']
+    skills = []
+
+    for lvl1 in user_data:
+        for lvl2 in lvl1['children']:
+            for lvl3 in lvl2['children']:
+                skills.append(lvl3['name'])
+
+    return skills
+
+
+def get_courses(req_skills):
+    courses = []
+    for course in collection_dataset.find():
+        course_skills = set(course['skills'])
+        skills_union = course_skills & req_skills
+
+        if len(skills_union):
+            print(len(skills_union), skills_union)
+            courses.append({'courseName': course,
+                            'gap': len(skills_union)})
+    # dict_courses.sort(key=lambda x: x[0])
+    #
+    # courses = []
+    # for course in dict_courses:
+    #     print(course[1])
+    #courses = sorted(courses, key=lambda d: d['gap'])
+    return sorted(courses, key=lambda d: d['gap'], reverse=True)

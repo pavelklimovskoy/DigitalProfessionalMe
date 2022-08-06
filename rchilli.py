@@ -46,9 +46,9 @@ def skill_search(skill_name):
 
     response = requests.request("POST", API_SKILL_SEARCH_URL, headers=headers, data=payload)
     resp = response.json()['Skill']['SkillData']
-    print(resp)
+    #print(resp)
     skill_type = str(resp['SkillType']).split('/')
-    print(skill_type)
+    #print(skill_type)
     skill_data = {
         'ontology': resp['SkillOntology'],
         'type': skill_type[0],
@@ -97,9 +97,9 @@ def job_search(job_name):
     }
 
     response = requests.request("POST", API_JOB_SEARCH_URL, headers=headers, data=payload)
-    print('response', response.json())
+    #print('response', response.json())
     resp = response.json()['JobProfile']['JobProfileData']['Skills']
-    print('rr', resp)
+    #print('rr', resp)
     return resp
 
 

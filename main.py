@@ -1,3 +1,6 @@
+import json
+from certificateParser import parse_coursera_url
+from bson import json_util
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from jsonConvert import json_convert, color_calc, timeline_parse
 from flask import render_template, make_response, redirect, url_for, flash, session
@@ -22,6 +25,7 @@ CORS(app)
 client = MongoClient('localhost', 27017)
 db = client['DPM']
 collection = db['users']
+collection_dataset = db['Datasets']
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -66,7 +70,6 @@ def upload_avatar():
 # Uploading CV in storage
 @app.route('/uploader', methods=['GET', 'POST'])
 def upload_file():
-    print('upd')
     file_name, cur_user = "", ""
 
     if request.method == 'POST':
@@ -331,12 +334,40 @@ def show_jobs():
 
 @app.route('/findJob')
 def find_jobs():
-    job_name = str(request.args.get('jobName'))
-    #cur_user_id = session['id']
-    #cur_user_data = find_record('Id', cur_user_id).jsondata[0]
-    resp = job_search(job_autocomplete(job_name))
-    return {'requiredSkills': resp}
+    cur_user_id = session['id']
 
+    job_name = str(request.args.get('jobName'))
+    job_deadline = str(request.args.get('deadline'))
+
+    add_timeline_evidence_event(cur_user_id, job_name, job_deadline)
+    resp = job_search(job_autocomplete(job_name))
+
+    ownend_skills = get_owned_skills(cur_user_id)
+    req_skills = []
+
+    for skill in resp:
+        req_skills.append(skill['Skill'])
+
+    set_owned_skills = set(ownend_skills)
+    set_req_skills = set(req_skills)
+    print('ow', set_owned_skills)
+    print('req', set_req_skills)
+
+    set_different = set_req_skills - set_owned_skills
+    print(set_different)
+
+    courses = get_courses(set_different)
+
+    return json.loads(json_util.dumps({
+        'offeredCourses': courses,
+        'gapSkills': set_different
+    }))
+
+
+@app.route('/parseCertificate')
+def parse_certificate():
+    url = str(request.args.get('url'))
+    return parse_coursera_url(url)
 
 @app.route('/findSkill')
 def find_skill():
@@ -467,5 +498,14 @@ def find_skill():
     return resp
 
 
+@app.route('/saveCertificate')
+def save_certificate():
+    cur_user_id = session['id']
+    date = str(request.args.get('date'))
+    name = str(request.args.get('name'))
+    add_cerificate_event(cur_user_id, name, date)
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000, host="0.0.0.0")
+    #print(parse_coursera_url('https://www.coursera.org/account/accomplishments/verify/5B8JXGAHLS2Y'))

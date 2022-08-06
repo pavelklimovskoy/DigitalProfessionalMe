@@ -1,4 +1,4 @@
-const baseUrl = 'http://digitalprofessional.me:5000'
+const baseUrl = 'http://localhost:5000'
 
 //Modal
 
@@ -85,13 +85,14 @@ function createModalGoal() {
       <input id="goalJDInput" type="text" name="jobName" placeholder="jobName">
       <input id="goalDateInput" type="date" name="dateJd" placeholder="dateJd" min="2022-01-01" max="2050-01-01">
     </div>
-    <input id="submitGoalForm" type="submit" onclick=add_life_goal()>
+    <input id="submitGoalForm" type="submit" onclick=addLifeGoal()>
   </form>
   `;
 
   modalContent.append(element);
 
   const input = document.querySelector('#goalJDInput'),
+    dateInput = document.querySelector('#goalDateInput'),
     formButton = document.querySelector('#submitGoalForm');
 
   autocomplete(input, 'jobInputAutocomplete', 'jobName');
@@ -99,11 +100,58 @@ function createModalGoal() {
   formButton.addEventListener('click', (e) => {
     e.preventDefault();
 
-    const urlRequest = `${baseUrl}/findJob?jobName=${input.value}`;
+    const urlRequest = `${baseUrl}/findJob?jobName=${input.value}&deadline=${dateInput.value}`;
     fetch(urlRequest)
       .then(response => response.json())
-      .then(jobData => {
-        console.log('JD', jobData);
+      .then(data => {
+        console.log('JD', data);
+
+        modalContent.innerHTML = '';
+
+        const element = document.createElement('div');
+        const courses = data.offeredCourses;
+
+        for (let i = 0; i < courses.length; i++) {
+          if (i <= 3) {
+            const courseCard = document.createElement('div');
+            skillReqStr = ``;
+
+            for (let i = 0; i < data.gapSkills.length; i++) {
+              skillReqStr += `${data.gapSkills[i]}, `;
+              if (i >= 9) {
+                break;
+              }
+            }
+
+            skillGetStr = ``;
+
+            for (let i = 0; i < courses[i].courseName.skills.length; i++) {
+              skillReqStr += `${courses[i].courseName.skills[i]}, `;
+            }
+
+            courseCard.innerHTML = `
+            <div class="container"> 
+              <div class="container__text">
+                <h1>${courses[i].courseName.name}</h1>
+                <p>
+                It seems you lack these skills:${skillReqStr})
+                </p>
+                <div class="container__text__timing">
+                  <div class="container__text__timing_time">
+                    <h2>Get Skills</h2>
+                    <a>${skillGetStr}</a>
+                  </div>
+                  
+                  <div class="container__text__timing_time">
+                    <h2>Link</h2>
+                    <a>${courses[i].courseName.url}</a>
+                  </div>
+
+                </div>
+            </div>
+            `;
+          }
+        }
 
         closeModal();
       });
@@ -171,9 +219,37 @@ function createModalEvidence() {
   modalContent.innerHTML = '';
 
   const element = document.createElement('div');
-  element.innerHTML = `TestEvidenceForm`;
+  element.innerHTML = `
+  <span data-close class="close">&times;</span>
+  <form autocomplete="off" action="#">
+    <div style="width:300px;">
+      <input id="evidenceInput" type="text" name="evidenceInput" placeholder="url for coursera">
+    </div>
+    <input id="parseCertificateButton" type="submit">
+  </form>
+  `;
 
   modalContent.append(element);
+
+  console.log(element);
+  const input = document.querySelector('#evidenceInput'),
+    formButton = document.querySelector('#parseCertificateButton');
+  console.log(formButton);
+  formButton.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    const urlRequest = `${baseUrl}/parseCertificate?url=${input.value}`;
+    fetch(urlRequest)
+      .then(response => response.json())
+      .then(ceritificateData => {
+        console.log(ceritificateData);
+
+        addCerificate(ceritificateData);
+
+        closeModal();
+      });
+  });
+
 }
 
 modalTrigger.forEach(item => {

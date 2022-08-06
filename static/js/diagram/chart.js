@@ -92,6 +92,9 @@ function enableSkill(skill) {
 }
 
 function addSkillToChart(skillName, skillParentName, skillGrandParentName, skillType, skillFilling) {
+  console.log(skillName);
+  console.log(skillParentName);
+  console.log(skillType);
   let treeChild = dataTree.search('name', skillName),
     treeParent = dataTree.search('name', skillParentName),
     treeGrandParent = dataTree.search('name', skillGrandParentName);
