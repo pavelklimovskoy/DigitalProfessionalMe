@@ -57,7 +57,6 @@ function createModalAddingSkill() {
     fetch(urlRequest)
       .then(response => response.json())
       .then(skillData => {
-        console.log(skillData);
         const ontology = skillData.ontology.split(',')[0].split('>');
         let skill = addSkillToChart(skillData.searchWord, ontology[1], ontology[0], skillData.type, skillData.filling);
 
@@ -76,7 +75,6 @@ function createModalAddingSkill() {
 function createModalGoal() {
   modalContent.innerHTML = '';
   //Дата, Название J
-  console.log('132');
   const element = document.createElement('div');
   element.innerHTML = `
   <span data-close class="close">&times;</span>
@@ -178,8 +176,6 @@ function createModalGoal() {
 
 function createModalCv() {
   modalContent.innerHTML = '';
-  console.log(disabledSkills);
-  console.log(dataTree);
 
   const element = document.createElement('div');
   element.innerHTML = `
@@ -231,10 +227,8 @@ function createModalEvidence() {
 
   modalContent.append(element);
 
-  console.log(element);
   const input = document.querySelector('#evidenceInput'),
     formButton = document.querySelector('#parseCertificateButton');
-  console.log(formButton);
   formButton.addEventListener('click', (e) => {
     e.preventDefault();
 
