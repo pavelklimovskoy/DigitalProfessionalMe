@@ -30,7 +30,6 @@ function unfilteringSkills(data) {
 function disableSkill(skillName) {
   let child = dataTree.search('name', skillName),
     root = dataTree.search('name', 'Me');
-
   if (child) {
     let parent = child.getParent(),
       grandParent = parent.getParent();
@@ -51,7 +50,6 @@ function enableSkill(skill) {
     treeGrandParent = dataTree.search('name', skill.grandParent),
     root = dataTree.search('name', 'Me');
 
-  console.log(skill);
   if (treeGrandParent) {
     if (treeParent) {
       treeParent.addChild(skill);
@@ -68,7 +66,6 @@ function enableSkill(skill) {
       treeGrandParent.addChild(parent).addChild(skill);
     }
   } else {
-  console.log(skill);
 
     let grandParent = {
       'name': skill.grandParent,
@@ -92,14 +89,10 @@ function enableSkill(skill) {
 }
 
 function addSkillToChart(skillName, skillParentName, skillGrandParentName, skillType, skillFilling) {
-  console.log(skillName);
-  console.log(skillParentName);
-  console.log(skillType);
   let treeChild = dataTree.search('name', skillName),
     treeParent = dataTree.search('name', skillParentName),
     treeGrandParent = dataTree.search('name', skillGrandParentName);
 
-  console.log(treeChild, treeParent, treeGrandParent);
 
   if (!treeChild) {
     let shortName = skillName;
@@ -141,14 +134,11 @@ function addSkillToChart(skillName, skillParentName, skillGrandParentName, skill
 
     if (treeGrandParent) {
       if (treeParent) {
-        console.log('!');
         treeParent.addChild(skill);
       } else {
         treeGrandParent.addChild(parent).addChild(skill);
-        console.log('!!');
       }
     } else {
-      console.log('!!!')
       dataTree.addChild(grandParent).addChild(parent).addChild(skill);
     }
     return skill;
@@ -215,6 +205,6 @@ function renderChart() {
       createTimeline();
       loadSkills();
 
-      disabledSkills.forEach(skill => disableSkill(skill));
+      disabledSkills.forEach(skill => disableSkill(skill.name));
     });
 }
