@@ -509,3 +509,11 @@ def save_certificate():
 if __name__ == "__main__":
     app.run(debug=True, port=5000, host="0.0.0.0")
     #print(parse_coursera_url('https://www.coursera.org/account/accomplishments/verify/5B8JXGAHLS2Y'))
+    # dataset = collection_dataset.find()
+    # skill_set_res = set()
+    # for skill_set in dataset:
+    #
+    #     for skill in skill_set['skills']:
+    #         skill_set_res.add(skill)
+    # #
+    # print(skill_set_res)

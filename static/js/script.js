@@ -1,4 +1,4 @@
-const baseUrl = 'http://digitalprofessional.me:5000'
+const baseUrl = 'http://localhost:5000'
 
 //Modal
 
@@ -57,7 +57,6 @@ function createModalAddingSkill() {
     fetch(urlRequest)
       .then(response => response.json())
       .then(skillData => {
-        console.log(skillData);
         const ontology = skillData.ontology.split(',')[0].split('>');
         let skill = addSkillToChart(skillData.searchWord, ontology[1], ontology[0], skillData.type, skillData.filling);
 
@@ -76,7 +75,6 @@ function createModalAddingSkill() {
 function createModalGoal() {
   modalContent.innerHTML = '';
   //Дата, Название J
-  console.log('132');
   const element = document.createElement('div');
   element.innerHTML = `
   <span data-close class="close">&times;</span>
@@ -106,52 +104,52 @@ function createModalGoal() {
       .then(data => {
         console.log('JD', data);
 
-        modalContent.innerHTML = '';
+        // modalContent.innerHTML = '';
 
-        const element = document.createElement('div');
-        const courses = data.offeredCourses;
+        // const element = document.createElement('div');
+        // const courses = data.offeredCourses;
 
-        for (let i = 0; i < courses.length; i++) {
-          if (i <= 3) {
-            const courseCard = document.createElement('div');
-            skillReqStr = ``;
+        // for (let i = 0; i < courses.length; i++) {
+        //   if (i <= 3) {
+        //     const courseCard = document.createElement('div');
+        //     skillReqStr = ``;
 
-            for (let i = 0; i < data.gapSkills.length; i++) {
-              skillReqStr += `${data.gapSkills[i]}, `;
-              if (i >= 9) {
-                break;
-              }
-            }
+        //     for (let i = 0; i < data.gapSkills.length; i++) {
+        //       skillReqStr += `${data.gapSkills[i]}, `;
+        //       if (i >= 9) {
+        //         break;
+        //       }
+        //     }
 
-            skillGetStr = ``;
+        //     skillGetStr = ``;
 
-            for (let i = 0; i < courses[i].courseName.skills.length; i++) {
-              skillReqStr += `${courses[i].courseName.skills[i]}, `;
-            }
+        //     for (let i = 0; i < courses[i].courseName.skills.length; i++) {
+        //       skillReqStr += `${courses[i].courseName.skills[i]}, `;
+        //     }
 
-            courseCard.innerHTML = `
-            <div class="container"> 
-              <div class="container__text">
-                <h1>${courses[i].courseName.name}</h1>
-                <p>
-                It seems you lack these skills:${skillReqStr})
-                </p>
-                <div class="container__text__timing">
-                  <div class="container__text__timing_time">
-                    <h2>Get Skills</h2>
-                    <a>${skillGetStr}</a>
-                  </div>
+        //     courseCard.innerHTML = `
+        //     <div class="container"> 
+        //       <div class="container__text">
+        //         <h1>${courses[i].courseName.name}</h1>
+        //         <p>
+        //         It seems you lack these skills:${skillReqStr})
+        //         </p>
+        //         <div class="container__text__timing">
+        //           <div class="container__text__timing_time">
+        //             <h2>Get Skills</h2>
+        //             <a>${skillGetStr}</a>
+        //           </div>
                   
-                  <div class="container__text__timing_time">
-                    <h2>Link</h2>
-                    <a>${courses[i].courseName.url}</a>
-                  </div>
+        //           <div class="container__text__timing_time">
+        //             <h2>Link</h2>
+        //             <a>${courses[i].courseName.url}</a>
+        //           </div>
 
-                </div>
-            </div>
-            `;
-          }
-        }
+        //         </div>
+        //     </div>
+        //     `;
+        //   }
+        // }
 
         closeModal();
       });
@@ -178,8 +176,6 @@ function createModalGoal() {
 
 function createModalCv() {
   modalContent.innerHTML = '';
-  console.log(disabledSkills);
-  console.log(dataTree);
 
   const element = document.createElement('div');
   element.innerHTML = `
@@ -231,10 +227,8 @@ function createModalEvidence() {
 
   modalContent.append(element);
 
-  console.log(element);
   const input = document.querySelector('#evidenceInput'),
     formButton = document.querySelector('#parseCertificateButton');
-  console.log(formButton);
   formButton.addEventListener('click', (e) => {
     e.preventDefault();
 
