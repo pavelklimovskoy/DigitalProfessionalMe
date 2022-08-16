@@ -86,7 +86,6 @@ def find_record(key, value):
 
 def disable_skill(curUserId, skillName):
     user = find_record('Id', curUserId)
-
     data = user.jsondata[0]
     for i in data['children']:
         for j in i['children']:

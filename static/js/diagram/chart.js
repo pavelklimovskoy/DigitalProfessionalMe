@@ -1,4 +1,5 @@
 anychart.onDocumentReady(renderChart);
+
 let dataTree, skillList = [], disabledSkills = [];
 
 function filterSkills(data) {
@@ -35,7 +36,6 @@ function disableSkill(skillName) {
       grandParent = parent.getParent();
 
     parent.removeChild(child);
-
     if (!parent.numChildren()) {
       grandParent.removeChild(parent);
       if (!grandParent.numChildren()) {
@@ -93,7 +93,6 @@ function addSkillToChart(skillName, skillParentName, skillGrandParentName, skill
     treeParent = dataTree.search('name', skillParentName),
     treeGrandParent = dataTree.search('name', skillGrandParentName);
 
-
   if (!treeChild) {
     let shortName = skillName;
     // if (skillName.length > 6) {
@@ -141,7 +140,20 @@ function addSkillToChart(skillName, skillParentName, skillGrandParentName, skill
     } else {
       dataTree.addChild(grandParent).addChild(parent).addChild(skill);
     }
+
     return skill;
+  }
+}
+
+function charCalc(n) {
+  if (n <= 22) {
+    return Math.round(n * n * 0.0472029 - 2.1169 * n + 25.8119);
+  }
+  else if (n<=28) {
+    return 2;
+  }
+  else {
+    return 1;
   }
 }
 
@@ -151,9 +163,41 @@ function renderChart() {
 
   anychart.data.loadJsonFile(urlRequest,
     function (data) {
+      console.log(data[0]);
+
+      let userData = data[0].children,
+        totalSkills = 0;
+
+      userData.forEach(skillLvl1 => {
+        skillLvl1.children.forEach(skillLvl2 => {
+          skillLvl2.children.forEach(skillLvl3 => {
+            if (skillLvl3.enabled) {
+              totalSkills++;
+            }
+          });
+        });
+      });
+
+      let maxChars = charCalc(totalSkills);
+      
+
+      userData.forEach(skillLvl1 => {
+        skillLvl1.children.forEach(skillLvl2 => {
+          skillLvl2.children.forEach(skillLvl3 => {
+            if (skillLvl3.name.length > maxChars) {
+              skillLvl3.shortName = `${skillLvl3.name.slice(0, maxChars)}…`;
+            }
+            else {
+              skillLvl3.shortName = skillLvl3.name;
+            }
+          });
+        });
+      });
+
       dataTree = anychart.data.tree(data);
       disabledSkills = filterSkills(data);
       skillList = unfilteringSkills(data);
+
       let chart = anychart.sunburst(dataTree);
 
       chart.calculationMode('parent-independent');
@@ -166,20 +210,19 @@ function renderChart() {
         .level(0)
         .labels()
         .fontFamily("Verdana, sans-serif")
-        .fontWeight(500)
-        .format("<span style='font-size:16px'></span><br><br><span style='font-size:16px'></span>");
+        .format('<span style="font-size:14px; word-break: normal; word-wrap: break-word;">{%name}</span>');
 
       chart
         .level(1)
         .labels()
         .fontFamily("Verdana, sans-serif")
-        .format("<span style='font-size:16px'>{%name}</span>");
+        .format('<span style="font-size:14px; word-break: normal; word-wrap: break-word;">{%name}</span>');
 
       chart
         .level(2)
         .labels()
         .fontFamily("Verdana, sans-serif")
-        .format("<span style='font-size:8px'>{%name}</span>");
+        .format('<span style="font-size:12px; word-break: normal; word-wrap: break-word;">{%name}</span>');
 
       chart
         .tooltip()
@@ -194,9 +237,9 @@ function renderChart() {
           mode: 'fit'
         }));
 
-      chart.labels().format("<span style='font-size: 10px; word-break: normal; word-wrap: break-word;'>{%shortName}</span>");
-      chart.labels().position("circular");
+      chart.labels().format("<span style='font-size:10px; word-break: normal; word-wrap: break-word;'>{%shortName}</span>");
 
+      chart.labels().position("circular");
       chart.container('chartid');
 
       chart.draw();

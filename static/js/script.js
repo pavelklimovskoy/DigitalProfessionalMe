@@ -1,4 +1,4 @@
-const baseUrl = 'http://digitalprofessional.me:5000'
+const baseUrl = 'http://localhost:5000'
 
 //Modal
 
@@ -264,3 +264,20 @@ document.addEventListener('keydown', (e) => {
     closeModal();
   }
 });
+
+
+async function postData(url = '', data = {}) {
+  const response = await fetch(url, {
+      method: 'POST',
+      mode: 'cors',
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer',
+      body: JSON.stringify(data)
+  });
+  return await response.json();
+}

@@ -4,17 +4,18 @@
 }
 
 /* Main Frame style */
-.mainBlock { 
+.mainBlock {
   background: #ffffff;
-  height:auto;
+  height: auto;
   width: 95%;
-  
+
   opacity: 0.8;
-  
+
   border-radius: 16px;
 
-  transform: translate(2.5%, 2%); /* ((100-width)/2, (100-height)/2) */
-  
+  transform: translate(2.5%, 2%);
+  /* ((100-width)/2, (100-height)/2) */
+
   position: absolute;
   z-index: 9999;
 }
@@ -35,12 +36,28 @@
 
 .mainBlock-login {
   background: #ffffff;
-  height:auto;
+  height: auto;
   width: 30%;
   margin-left: 35%;
-  opacity: 0.8;  
+  opacity: 0.8;
   border-radius: 16px;
-  transform: translate(2.5%, 2%); /* ((100-width)/2, (100-height)/2) */
+  transform: translate(2.5%, 2%);
+  /* ((100-width)/2, (100-height)/2) */
+  position: absolute;
+  z-index: 9999;
+  margin-top: 12%;
+  text-align-last: center;
+}
+
+.mainBlock-error {
+  background: #ffffff;
+  height: auto;
+  width: 80%;
+  margin-left: 8%;
+  opacity: 0.8;
+  border-radius: 16px;
+  transform: translate(2.5%, 2%);
+  /* ((100-width)/2, (100-height)/2) */
   position: absolute;
   z-index: 9999;
   margin-top: 12%;
@@ -61,7 +78,7 @@
 
 /* Chart style */
 .chart {
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   width: auto;
   height: 400px;
   margin: 0 auto;
@@ -69,14 +86,14 @@
 
 /* Username-text style */
 #Name {
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-size: larger;
 }
 
 /* Skills-text style */
 #skillsText {
   margin-top: 2%;
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-size: larger;
 
 }
@@ -96,7 +113,7 @@
 /* Call to action block style */
 #callToAction {
   margin-top: 3%;
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-size: larger;
   text-align: center;
   /* display: flex; */
@@ -113,7 +130,7 @@
   border-radius: 45px;
   margin: 10px 20px;
   /*font-family: 'Montserrat', sans-serif;*/
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-size: 11px;
   text-transform: uppercase;
   text-align: center;
@@ -124,6 +141,7 @@
   box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
   transition: .3s;
 }
+
 .floating-button:hover {
   background: #2EE597;
   box-shadow: 0 15px 20px rgba(46, 229, 157, .4);
@@ -132,25 +150,35 @@
 }
 
 .modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
   left: 0;
   top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  overflow: auto;
+  /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0);
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */
 }
 
 /* Modal Content/Box */
 .modal-content {
   background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
+  margin: 15% auto;
+  /* 15% from the top and centered */
   padding: 20px;
   border: 1px solid #888;
-  width: 50%  !important; /* Could be more or less, depending on screen size */
+  width: 50% !important;
+  /* Could be more or less, depending on screen size */
 }
 
 /* .btn {
@@ -194,6 +222,7 @@
   font-size: 28px;
   font-weight: bold;
 }
+
 .close:hover,
 .close:focus {
   color: black;
@@ -205,21 +234,21 @@
 /* Drag'N'Drop Style */
 #drop_zone {
   border: 5px solid blue;
-  width:  200px;
+  width: 200px;
   height: 100px;
 }
 
 /* --------- Scrollbar */
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgb(208,221,230);
+  background-color: rgb(208, 221, 230);
   border: 4px solid transparent;
   border-radius: 8px;
   background-clip: padding-box;
 }
 
-::-webkit-scrollbar-track{
-  background-color: rgb(22,87,132)
+::-webkit-scrollbar-track {
+  background-color: rgb(22, 87, 132)
 }
 
 ::-webkit-scrollbar {

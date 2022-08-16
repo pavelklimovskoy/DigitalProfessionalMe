@@ -57,7 +57,9 @@ function createTimeline() {
               title: tooltip,
             });
 
+          console.log(itemId);
           itemId++;
+
         } else {
           //let startDate = job["startDate"].split('/').reverse().join('-');
           let dateEntered = new Date(job["startDate"]);
@@ -73,6 +75,7 @@ function createTimeline() {
           });
 
           //timeline.itemsData.add(newItem);
+          console.log(itemId);
 
           itemId++;
         }
@@ -114,6 +117,7 @@ function createTimeline() {
             title: tooltip
           });
         }
+        console.log(itemId);
 
         itemId++;
       });
@@ -211,6 +215,8 @@ function addLifeGoal() {
   console.log(dateEntered);
   let planeName = document.getElementById("goalJDInput").value;
 
+  itemId++;
+
   let newItem = {
     id: itemId,
     start: dateEntered,
@@ -221,8 +227,8 @@ function addLifeGoal() {
   };
 
   timeline.itemsData.add(newItem);
+  console.log(itemId);
 
-  itemId++;
 }
 
 
@@ -233,6 +239,9 @@ function addCerificate(ceritificateData) {
     dateEntered = new Date(courseDate),
     courseName = ceritificateData.courseName;
   console.log(dateEntered);
+
+  itemId++;
+
   let newItem = {
     id: itemId,
     start: courseDate,
@@ -242,8 +251,9 @@ function addCerificate(ceritificateData) {
     title: courseName
   };
 
+
   timeline.itemsData.add(newItem);
-  itemId++;
+  console.log(itemId);
 
   const urlRequest = `${baseUrl}/saveCertificate?date=${courseDate}&name=${courseName}`;
   fetch(urlRequest)
@@ -255,28 +265,28 @@ function addCerificate(ceritificateData) {
     });
 }
 
-  // courseSkills.forEach(skill => {
-  //   const skillArr = skill.split(' ');
-  //   for (let i = 0; i < skillArr.length; i++)
-  //     if (skillArr[i].length > 3) {
-  //       console.log(skillArr[i]);
-  //       fetch(`${baseUrl}/skillInputAutocomplete?skillName=${skillArr[i]}`)
-  //         .then(response => await response.json())
-  //         .then(data => {
-  //           console.log(data);
-  //           if (data[0]) {
-  //             const urlRequest = `${baseUrl}/findSkill?skillName=${data[0]}`;
-  //             await fetch(urlRequest)
-  //               .then(response => response.json())
-  //               .then(skillData => {
-  //                 console.log(skillData);
-  //                 const ontology = skillData.ontology.split(',')[0].split('>');
-  //                 let skill = addSkillToChart(skillData.searchWord, ontology[1], ontology[0], skillData.type, skillData.filling);
+// courseSkills.forEach(skill => {
+//   const skillArr = skill.split(' ');
+//   for (let i = 0; i < skillArr.length; i++)
+//     if (skillArr[i].length > 3) {
+//       console.log(skillArr[i]);
+//       fetch(`${baseUrl}/skillInputAutocomplete?skillName=${skillArr[i]}`)
+//         .then(response => await response.json())
+//         .then(data => {
+//           console.log(data);
+//           if (data[0]) {
+//             const urlRequest = `${baseUrl}/findSkill?skillName=${data[0]}`;
+//             await fetch(urlRequest)
+//               .then(response => response.json())
+//               .then(skillData => {
+//                 console.log(skillData);
+//                 const ontology = skillData.ontology.split(',')[0].split('>');
+//                 let skill = addSkillToChart(skillData.searchWord, ontology[1], ontology[0], skillData.type, skillData.filling);
 
-  //                 addSkill(skill, skillList.length);
-  //               });
-  //           }
-  //         });
-  //       break;
-  //     }
-  // });
+//                 addSkill(skill, skillList.length);
+//               });
+//           }
+//         });
+//       break;
+//     }
+// });

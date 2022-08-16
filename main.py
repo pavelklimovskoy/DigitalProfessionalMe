@@ -1,4 +1,3 @@
-import json
 from certificateParser import parse_coursera_url
 from bson import json_util
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -19,6 +18,7 @@ app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY')
 app.config['JSON_AS_ASCII'] = False
 app.config['UPLOAD_FOLDER'] = './static/data/cv/'
 app.config['UPLOAD_IMAGE_FOLDER'] = './static/data/img/'
+app.config['SECURITY_UNAUTHORIZED_VIEW'] = '/login'
 app.config.from_object(__name__)
 CORS(app)
 
@@ -31,6 +31,12 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message = 'Please log in to access the site'
 login_manager.login_message_category = 'success'
+
+
+@app.errorhandler(404)
+@app.errorhandler(401)
+def page_not_found(error):
+    return render_template('notfound.html')
 
 
 @login_manager.user_loader
@@ -107,7 +113,6 @@ def upload_file():
 
     return redirect(url_for('index'))
 
-
 # Основная страница
 @app.route('/')
 @app.route('/me')
@@ -115,22 +120,21 @@ def upload_file():
 def index():
     if session is None or 'id' not in session.keys():
         logout_user()
-        return render_template('login.html')
+        return redirect(url_for('login'))
 
-    cur_user_id = session['id']
+    # cur_user_id = session['id']
+    # cur_user = find_record('Id', cur_user_id)
 
-    cur_user = find_record('Id', cur_user_id)
-
-    return render_template('index.html', title='Digital Professional Me', userName=cur_user.name)
+    return render_template('index.html', title='Digital Professional Me', userName=current_user.name)
 
 
 # Avatar
 @app.route('/getAvatar', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def get_avatar():
+    # print(current_user)
     cur_user_id = str(request.args.get('id'))
     cur_user = find_record('Id', cur_user_id)
-
     return cur_user.avatar
 
 
@@ -280,7 +284,7 @@ def login():
         if cur_user is not None and cur_user.password == request.form['password']:
             rm = True if request.form.get('remainme') else False
 
-            resp = make_response(render_template('index.html', userName=cur_user.name))
+            resp = make_response(redirect(url_for('index')))
 
             resp.set_cookie(key='id', value=str(cur_user.Id))
             session['id'] = cur_user.Id
@@ -299,8 +303,8 @@ def login():
 @login_required
 def logout():
     logout_user()
-
-    resp = make_response(render_template('login.html'))
+    # resp = make_response(red('login.html'))
+    resp = make_response(redirect(url_for('login')))
 
     resp.delete_cookie(key='id')
     session.pop('id', default=None)
@@ -313,13 +317,15 @@ def save_pdf(url, file_name):
     pdfkit.from_url(url, f'./static/data/cv/{file_name}')
 
 
-@app.route('/changeSkillState')
+@app.route('/changeSkillState', methods=['POST', 'GET'])
 def change_skill_state():
     cur_user_id = session['id']
-    skill_name = str(request.args.get('skillName'))
-    disable_skill(cur_user_id, skill_name)
+    #skill_name = str(request.args.get('skillName'))
 
-    return redirect(url_for('index'))
+    skill_name = request.get_json()['skill']
+    disable_skill(cur_user_id, skill_name)
+    return '200'
+    #return redirect(url_for('index'))
 
 
 @app.route('/skillInputAutocomplete')
@@ -368,6 +374,7 @@ def find_jobs():
 def parse_certificate():
     url = str(request.args.get('url'))
     return parse_coursera_url(url)
+
 
 @app.route('/findSkill')
 def find_skill():
@@ -504,11 +511,12 @@ def save_certificate():
     date = str(request.args.get('date'))
     name = str(request.args.get('name'))
     add_cerificate_event(cur_user_id, name, date)
+    return '200'
 
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000, host="0.0.0.0")
-    #print(parse_coursera_url('https://www.coursera.org/account/accomplishments/verify/5B8JXGAHLS2Y'))
+    # print(parse_coursera_url('https://www.coursera.org/account/accomplishments/verify/5B8JXGAHLS2Y'))
     # dataset = collection_dataset.find()
     # skill_set_res = set()
     # for skill_set in dataset:
