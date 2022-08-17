@@ -1,4 +1,4 @@
-from certificateParser import parse_coursera_url
+from certificateParser import parse_coursera_url, parse_stepik_url
 from bson import json_util
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from jsonConvert import json_convert, color_calc, timeline_parse
@@ -373,7 +373,14 @@ def find_jobs():
 @app.route('/parseCertificate')
 def parse_certificate():
     url = str(request.args.get('url'))
-    return parse_coursera_url(url)
+    resp = {}
+    if 'coursera.org' in url:
+        resp = parse_coursera_url(url)
+    elif 'stepik.org' in url:
+        resp = parse_stepik_url(url)
+
+    add_cerificate_event(current_user.Id, resp['courseName'], resp['date'], resp['url'], resp['userName'])
+    return resp
 
 
 @app.route('/findSkill')
@@ -505,13 +512,13 @@ def find_skill():
     return resp
 
 
-@app.route('/saveCertificate')
-def save_certificate():
-    cur_user_id = session['id']
-    date = str(request.args.get('date'))
-    name = str(request.args.get('name'))
-    add_cerificate_event(cur_user_id, name, date)
-    return '200'
+#@app.route('/saveCertificate')
+#def save_certificate():
+    #cur_user_id = session['id']
+    #date = str(request.args.get('date'))
+    #name = str(request.args.get('name'))
+    #add_cerificate_event(cur_user_id, name, date)
+    #return '200'
 
 
 if __name__ == "__main__":

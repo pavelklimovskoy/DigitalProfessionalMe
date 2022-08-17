@@ -125,7 +125,11 @@ function createTimeline() {
       // Обработка сертификатов
       data["certifications"].forEach(certificate => {
         let date = certificate["date"],
-          name = certificate['name'];
+          name = certificate["name"];
+          
+          console.log(date);
+          console.log(name);
+          console.log(new Date(date));
 
         arrItems.push({
           id: itemId,
@@ -135,6 +139,8 @@ function createTimeline() {
           content: '<b>' + name + '</b>',
           title: name
         });
+
+        itemId++;
       });
       let items = new vis.DataSet(arrItems);
 
@@ -228,14 +234,13 @@ function addLifeGoal() {
 
   timeline.itemsData.add(newItem);
   console.log(itemId);
-
 }
 
 
 // Добавление нового Сертификата
 function addCerificate(ceritificateData) {
   const courseDate = ceritificateData.date,
-    courseSkills = ceritificateData.skills,
+    //courseSkills = ceritificateData.skills,
     dateEntered = new Date(courseDate),
     courseName = ceritificateData.courseName;
   console.log(dateEntered);
@@ -255,14 +260,7 @@ function addCerificate(ceritificateData) {
   timeline.itemsData.add(newItem);
   console.log(itemId);
 
-  const urlRequest = `${baseUrl}/saveCertificate?date=${courseDate}&name=${courseName}`;
-  fetch(urlRequest)
-    .then(response => response.json())
-    .then(jobData => {
-      console.log('JD', jobData);
-
-      closeModal();
-    });
+  closeModal();
 }
 
 // courseSkills.forEach(skill => {

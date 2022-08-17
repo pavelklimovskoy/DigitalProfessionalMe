@@ -117,12 +117,14 @@ def add_timeline_evidence_event(cur_user_id, job_name, job_deadline):
     update_record('Id', cur_user_id, 'timelineEvents', user.timeline_events)
 
 
-def add_cerificate_event(cur_user_id, name, date):
+def add_cerificate_event(cur_user_id, name, date, url, user_name):
     user = find_record('Id', cur_user_id)
 
     event = {
         'date': date,
         'name': name,
+        'url': url,
+        'userName': user_name,
         'id': len(user.timeline_events['certifications'])
     }
 

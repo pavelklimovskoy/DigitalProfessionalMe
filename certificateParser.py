@@ -1,5 +1,5 @@
 from urllib.request import urlopen
-import pandas as pd
+import requests
 from bs4 import BeautifulSoup
 
 
@@ -10,7 +10,7 @@ def parse_coursera_url(url):
         div_skills = bs.find_all("ul", {"class": "css-uqope5"})
         div_course_name = bs.find_all("h2", {"class": "course-name"})
         div_date = bs.find_all("div", {"class": "course-details"})
-        #div_company_name = bs.find_all("div", {"h3": "course-name-header"})
+        # div_company_name = bs.find_all("div", {"h3": "course-name-header"})
 
         response = {}
 
@@ -30,6 +30,22 @@ def parse_coursera_url(url):
             if date:
                 response['date'] = date
 
+        response['url'] = ''
+        response['userName'] = ''
         return response
     except Exception as e:
         print(e)
+
+
+def parse_stepik_url(url):
+    certificate_id = url.split('/')[-1]
+    print(certificate_id)
+    req_url = f'https://stepik.org/api/certificates/{certificate_id}'
+    print(req_url)
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    response = requests.request("GET", req_url, headers=headers).json()['certificates'][0]
+    resp = {'date': response['issue_date'], 'url': response['url'], 'userName': response['saved_fullname'],
+            'courseName': response['course_title']}
+    return resp

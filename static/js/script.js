@@ -1,4 +1,5 @@
-const baseUrl = 'http://digitalprofessional.me:5000'
+const baseUrl = `http://${document.location.host}`
+console.log(document.querySelector('#avatar_upload').setAttribute('action', `${baseUrl}/upload_avatar`));
 
 //Modal
 
@@ -219,7 +220,7 @@ function createModalEvidence() {
   <span data-close class="close">&times;</span>
   <form autocomplete="off" action="#">
     <div style="width:300px;">
-      <input id="evidenceInput" type="text" name="evidenceInput" placeholder="url for coursera">
+      <input id="evidenceInput" type="text" name="evidenceInput" placeholder="certificateUrl (stepik, coursera)">
     </div>
     <input id="parseCertificateButton" type="submit">
   </form>
@@ -237,7 +238,6 @@ function createModalEvidence() {
       .then(response => response.json())
       .then(ceritificateData => {
         console.log(ceritificateData);
-
         addCerificate(ceritificateData);
 
         closeModal();
