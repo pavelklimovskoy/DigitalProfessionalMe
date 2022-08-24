@@ -12,3 +12,13 @@
 //document.querySelector("#close").addEventListener("click", function(){
 //    document.querySelector(".popup").style.display = "none";
 //});
+
+
+window.onload = function(){
+    window.sp = new SuperParticles({
+        container: {
+            element: "#particles-js"
+        }
+    })
+  }
+  

@@ -1,8 +1,17 @@
-const baseUrl = `http://${document.location.host}`
+
+window.onload = function(){
+  window.sp = new SuperParticles({
+      container: {
+          element: "#particles-js"
+      }
+  })
+}
+
+const baseUrl = `http://${document.location.host}`;
 console.log(document.querySelector('#avatar_upload').setAttribute('action', `${baseUrl}/upload_avatar`));
 
-//Modal
 
+//Modal
 const modalTrigger = document.querySelectorAll('[data-modal]'),
   modal = document.querySelector('.modal'),
   modalContent = document.querySelector('.modal-content');
@@ -182,7 +191,7 @@ function createModalCv() {
   element.innerHTML = `
   <span data-close class="close">&times;</span>
   <form action="${baseUrl}/uploader" method="POST" enctype="multipart/form-data">
-    <input id="cvFileInput" type="file" name="file" onchange="this.form.submit()">
+    <input id="cvFileInput" type="file" name="file" accept=".pdf, .doc, .docx, .txt, .rtf" onchange="this.form.submit()">
     <p class="text-center">OR <br> Enter the link (hh.ru): </p>
     <input id="cvStringInput" type="text" name="link">
     <input id="cvSubmitButtonInput" type="submit" />
