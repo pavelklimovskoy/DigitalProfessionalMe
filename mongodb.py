@@ -57,16 +57,17 @@ def update_record(findKey, findValue, key, value):
                                    {'$set': {key: value}})
 
 
-def create_record(CurRequest):
-    collection.insert_one({'Id': str(uuid.uuid4()),
-                           'name': CurRequest.form['name'],
-                           'email': CurRequest.form['email'],
-                           'password': CurRequest.form['password'],
-                           'jsondata': {},
-                           'rchillidata': {},
-                           'timelineEvents': {},
-                           'avatar': 'user_tmp_example.png'
-                           })
+def create_record(form):
+    collection.insert_one({
+        'Id': str(uuid.uuid4()),
+        'name': form.name.data,
+        'email': form.email.data,
+        'password': form.password.data,
+        'jsondata': {},
+        'rchillidata': {},
+        'timelineEvents': {},
+        'avatar': 'user_tmp_example.png'
+    })
 
 
 def find_record(key, value):
@@ -160,5 +161,5 @@ def get_courses(req_skills):
     # courses = []
     # for course in dict_courses:
     #     print(course[1])
-    #courses = sorted(courses, key=lambda d: d['gap'])
+    # courses = sorted(courses, key=lambda d: d['gap'])
     return sorted(courses, key=lambda d: d['gap'], reverse=True)

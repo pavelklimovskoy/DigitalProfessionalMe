@@ -11,6 +11,7 @@ import pdfkit
 from werkzeug.utils import secure_filename
 import os
 import re
+from forms import FormRegister, FormLogin
 
 # Flask config
 app = Flask(__name__)
@@ -79,37 +80,43 @@ def upload_file():
     file_name, cur_user = "", ""
 
     if request.method == 'POST':
-        cv_link = request.form['link']
+        try:
+            cv_link = request.form['link']
 
-        if cv_link != '':
-            try:
-                file_name = f'hhCv_{summary_cv_count()}.pdf'
-                save_pdf(cv_link, file_name)
+            if cv_link != '':
+                try:
+                    file_name = f'hhCv_{summary_cv_count()}.pdf'
+                    save_pdf(cv_link, file_name)
+
+                    increment_cv_count()
+                except Exception as e:
+                    print(e)
+            else:
+                file = request.files['file']
+                file_name = secure_filename(file.filename)
+
+                # Локально сохраняем копию CV
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], file_name))
 
                 increment_cv_count()
-            except Exception as e:
-                print(e)
-        else:
-            file = request.files['file']
-            file_name = secure_filename(file.filename)
 
-            # Локально сохраняем копию CV
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], file_name))
+            cur_user_id = session['id']
 
-            increment_cv_count()
+            cur_user = find_record('Id', cur_user_id)
 
-        cur_user_id = session['id']
+            if cur_user is not None:
+                rchilli_data = rchilli_parse(file_name)
+                json_data = json_convert(rchilli_data)
+                timeline_events = timeline_parse(rchilli_data)
 
-        cur_user = find_record('Id', cur_user_id)
+                update_record('Id', cur_user_id, 'jsondata', json_data)
+                update_record('Id', cur_user_id, 'rchillidata', rchilli_data)
+                update_record('Id', cur_user_id, 'timelineEvents', timeline_events)
 
-        if cur_user is not None:
-            rchilli_data = rchilli_parse(file_name)
-            json_data = json_convert(rchilli_data)
-            timeline_events = timeline_parse(rchilli_data)
 
-            update_record('Id', cur_user_id, 'jsondata', json_data)
-            update_record('Id', cur_user_id, 'rchillidata', rchilli_data)
-            update_record('Id', cur_user_id, 'timelineEvents', timeline_events)
+
+        except Exception as e:
+            print(e)    
 
     return redirect(url_for('index'))
 
@@ -172,104 +179,22 @@ def get_rchilli_json():
 def about_us():
     return render_template('aboutus.html', title='About us')
 
-
-# Password validation with regEx
-def password_correct(data: str) -> bool:
-    """
-    Conditions for a valid password are:
-        Should have at least one number.
-        Should have at least one uppercase and one lowercase character.
-        Should have at least one special symbol.
-        Should be between 6 to 20 characters long.
-    :param data:
-    :return:
-    """
-    # regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
-    # pat = re.compile(regex)
-    #
-    # if re.search(pat, data):
-    #     return True
-    # else:
-    #     flash("Wrong password format", category='error')
-    #     return False
-
-    if 6 < len(data) < 25:
-        return True
-    else:
-        return False
-
-
-# Email validation
-def email_correct(email: str) -> bool:
-    """
-    Validation email with regEx
-    :param email:
-    :return:
-    """
-    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-
-    if re.search(regex, email):
-        return True
-    else:
-        flash("Wrong email format", category='error')
-        return False
-
-
-# User's fullname validation
-def name_correct(data: str) -> bool:
-    fullname = data.split()
-
-    check_count = len(fullname) == 2
-    check_name = 2 <= len(fullname[0]) <= 35
-    check_surname = 2 <= len(fullname[1]) <= 35
-
-    if check_name and check_surname and check_count:
-        return True
-    else:
-        flash("Wrong fullname format", category='error')
-        return False
-
-
-def password_equal(str1, str2) -> bool:
-    if str1 == str2:
-        return True
-    else:
-        flash("Passwords not equal", category='error')
-        return False
-
-
-def input_form_correct(input_form) -> bool:
-    res = name_correct(input_form['name'])
-    res &= password_correct(input_form['password'])
-    res &= email_correct(input_form['email'])
-    res &= password_equal(input_form['password'], input_form['password2'])
-
-    return res
-
-
 # Registration
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
-        try:
-            if input_form_correct(request.form):
+    form = FormRegister()
 
-                # Проверка на существование пользователя в БД
-                cur_user = find_record('email', str(request.form['email']))
-                if cur_user is None:
-                    create_record(request)
+    if form.validate_on_submit():
+        user_db = find_record('email', form.email.data)
 
-                    flash("You have successfully registered", category='success')
-                    return redirect(url_for('login'))
-                else:
-                    flash("Error adding to the database", category='error')
-            else:
-                flash("The fields are filled in incorrectly", category='error')
-        except Exception as e:
-            print(e)
-            flash("Error! Try again", category='error')
+        if user_db is None:
+            create_record(form)
+            flash('You have successfully registered', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash('User with such email is already exists', 'error')
 
-    return render_template('register.html')
+    return render_template('register.html', form=form)
 
 
 # Авторизация
@@ -278,24 +203,24 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
 
-    if request.method == 'POST':
-        cur_user = find_record('email', str(request.form['email']))
+    form = FormLogin()
+    if form.validate_on_submit():
+        user_db = find_record('email', form.email.data)
 
-        if cur_user is not None and cur_user.password == request.form['password']:
-            rm = True if request.form.get('remainme') else False
-
+        if user_db is not None and user_db.password == form.password.data:
             resp = make_response(redirect(url_for('index')))
 
-            resp.set_cookie(key='id', value=str(cur_user.Id))
-            session['id'] = cur_user.Id
+            resp.set_cookie(key='id', value=user_db.Id)
+            session['id'] = user_db.Id
 
-            login_user(cur_user, remember=rm)
+            checkbox = True if form.remember.data else False
 
+            login_user(user_db, remember=checkbox)
             return resp
 
         flash("Wrong password or login", 'error')
 
-    return render_template('login.html')
+    return render_template('login.html', form=form)
 
 
 # Деавторизация
@@ -303,13 +228,13 @@ def login():
 @login_required
 def logout():
     logout_user()
-    # resp = make_response(red('login.html'))
     resp = make_response(redirect(url_for('login')))
 
     resp.delete_cookie(key='id')
     session.pop('id', default=None)
 
     flash("You logged out of the profile", 'success')
+
     return resp
 
 
@@ -378,6 +303,8 @@ def parse_certificate():
         resp = parse_coursera_url(url)
     elif 'stepik.org' in url:
         resp = parse_stepik_url(url)
+    #elif 'ude.my' in url or 'udemy.com' in url:
+    #    resp = parse_udemy_url(url)
 
     add_cerificate_event(current_user.Id, resp['courseName'], resp['date'], resp['url'], resp['userName'])
     return resp
@@ -523,6 +450,8 @@ def find_skill():
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000, host="0.0.0.0")
+    #parse_udemy_url('https://www.udemy.com/certificate/UC-7PDXUTCH/')
+
     # print(parse_coursera_url('https://www.coursera.org/account/accomplishments/verify/5B8JXGAHLS2Y'))
     # dataset = collection_dataset.find()
     # skill_set_res = set()

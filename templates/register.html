@@ -26,7 +26,27 @@
     <div class="container">
         <div class="row">
             <form method="POST" action="/register" class="form-contact">
-                <div class="form-group">
+              {{ form.hidden_tag() }}
+
+              {% for field in form if field.name not in ['csrf_token', 'submit'] -%}
+              <p>
+                  {{ field.label() }}
+
+                  {% if field.errors %}
+                      {{ field(class="form-error") }}
+
+                      {% for e in field.errors -%}
+                          {{ e }}
+                      {% endfor %}
+                      
+                  {% else %}
+                      {{ field() }}
+                  {% endif %}
+              </p>
+              {% endfor %}
+
+              <p>{{ form.submit() }}</p>
+                <!-- <div class="form-group">
                     <label for="exampleInputName">Username</label>
                     <input type="text" class="form-control" name="name" placeholder="Username">
                 </div>
@@ -43,7 +63,7 @@
                     <input type="password" class="form-control" name="password2" placeholder="Repeat password">
                 </div>
                 
-                <button type="submit" class="login-button">Register</button>
+                <button type="submit" class="login-button">Register</button> -->
             </form> 
             <br>
         </div>

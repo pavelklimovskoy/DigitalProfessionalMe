@@ -38,14 +38,29 @@ def parse_coursera_url(url):
 
 
 def parse_stepik_url(url):
-    certificate_id = url.split('/')[-1]
-    print(certificate_id)
-    req_url = f'https://stepik.org/api/certificates/{certificate_id}'
-    print(req_url)
-    headers = {
-        'Content-Type': 'application/json'
-    }
-    response = requests.request("GET", req_url, headers=headers).json()['certificates'][0]
-    resp = {'date': response['issue_date'], 'url': response['url'], 'userName': response['saved_fullname'],
-            'courseName': response['course_title']}
-    return resp
+    try:
+        certificate_id = url.split('/')[-1]
+        req_url = f'https://stepik.org/api/certificates/{certificate_id}'
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        response = requests.request("GET", req_url, headers=headers).json()['certificates'][0]
+        resp = {'date': response['issue_date'], 'url': response['url'], 'userName': response['saved_fullname'],
+                'courseName': response['course_title']}
+        return resp
+    except Exception as e:
+        print(e)
+
+
+# def parse_udemy_url(url):
+#     try:
+#         html = urlopen(url)
+#         bs = BeautifulSoup(html.read(), 'html.parser')
+#         print(bs)
+#         url = bs.find_all("img", {"data-purpose": "certificate-img"})
+#         print(url)
+#
+#
+#         #return response
+#     except Exception as e:
+#         print(e)

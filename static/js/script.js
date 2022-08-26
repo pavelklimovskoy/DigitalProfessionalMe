@@ -8,7 +8,7 @@ window.onload = function(){
 }
 
 const baseUrl = `http://${document.location.host}`;
-console.log(document.querySelector('#avatar_upload').setAttribute('action', `${baseUrl}/upload_avatar`));
+document.querySelector('#avatar_upload').setAttribute('action', `${baseUrl}/upload_avatar`);
 
 
 //Modal
@@ -19,7 +19,7 @@ const modalTrigger = document.querySelectorAll('[data-modal]'),
 // Функция закрытия модального окна 
 function closeModal() {
   modal.style.display = 'none';
-  document.body.style.overflow = '';
+  document.body.style.overflow = 'visible';
 }
 
 // Функция открытия модального окна 

@@ -7,7 +7,7 @@
 .mainBlock {
   background: #ffffff;
   height: auto;
-  width: 95%;
+  width: 96%;
 
   opacity: 0.8;
 
@@ -31,6 +31,10 @@
 
 .flash.error {
   border: 1px solid #FF4343;
+  background: #FF9C9C;
+}
+
+.form-error {
   background: #FF9C9C;
 }
 
