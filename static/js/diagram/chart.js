@@ -95,11 +95,6 @@ function addSkillToChart(skillName, skillParentName, skillGrandParentName, skill
 
   if (!treeChild) {
     let shortName = skillName;
-    // if (skillName.length > 6) {
-    //   shortName = `${skillName.slice(0, 6)}...`;
-    // } else {
-    //   shortName = skillName;
-    // }
 
     let grandParent = {
       'name': skillGrandParentName,
@@ -149,7 +144,7 @@ function charCalc(n) {
   if (n <= 22) {
     return Math.round(n * n * 0.0472029 - 2.1169 * n + 25.8119);
   }
-  else if (n<=28) {
+  else if (n <= 28) {
     return 2;
   }
   else {
@@ -163,8 +158,6 @@ function renderChart() {
 
   anychart.data.loadJsonFile(urlRequest,
     function (data) {
-      console.log(data[0]);
-
       let userData = data[0].children,
         totalSkills = 0;
 
@@ -179,7 +172,6 @@ function renderChart() {
       });
 
       let maxChars = charCalc(totalSkills);
-      
 
       userData.forEach(skillLvl1 => {
         skillLvl1.children.forEach(skillLvl2 => {
@@ -210,7 +202,7 @@ function renderChart() {
         .level(0)
         .labels()
         .fontFamily("Verdana, sans-serif")
-        .format('<span style="font-size:14px; word-break: normal; word-wrap: break-word;">{%name}</span>');
+        .format('<span style="font-size:14px; word-break: normal; word-wrap: break-word;"></span>');
 
       chart
         .level(1)
@@ -230,7 +222,7 @@ function renderChart() {
         .format("<h5 style='font-size:16px; margin: 0.25rem 0;'>{%name}</h5><h6 style='font-size:14px; font-weight:400; margin: 0.2rem 0;'>Level: <b>{%value}{groupsSeparator:\\,}</b></h6><h6 style='font-size:14px; font-weight:400; margin: 0.2rem 0;'></b></h6>");
 
       // Set avatar
-      fetch(`${baseUrl}/getAvatar?id=${cookieId}`)
+      fetch(`${baseUrl}/getAvatar`)
         .then(data => data.text())
         .then(data => chart.fill({
           src: `../static/data/img/${data}`,

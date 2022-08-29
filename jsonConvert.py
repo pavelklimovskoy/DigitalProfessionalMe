@@ -80,20 +80,20 @@ def json_convert(data):
                 for skillName in data['ResumeParserData']['SegregatedSkill']:
                     ontology = str(skillName['Ontology']).split('>')
                     if len(ontology) == 3:
-                        short_name = ontology[2]
+                        short_name = skillName['FormattedName']
 
                         if len(short_name) > 5:
-                            short_name = f'{ontology[2][:6]}...'
+                            short_name = f'{short_name[:6]}...'
 
                         skill_self = {
-                            'name': ontology[2], 'id': child_main['id'], 'value': '1',
+                            'name': skillName['FormattedName'], 'id': child_main['id'], 'value': '1',
                             'enabled': True, 'shortName': short_name, 'fill': '',
                             'grandParent': type_skill, 'parent': ontology_main[1]
                         }
 
-                        if ontology[1] == ontology_main[1] and ontology[2] not in skills_array:
+                        if ontology[1] == ontology_main[1] and skillName['FormattedName'] not in skills_array:
                             tmp['children'].append(skill_self)
-                            skills_array.append(ontology[2])
+                            skills_array.append(skillName['FormattedName'])
 
                 if tmp not in child_main['children'] and len(tmp['children']) > 0:
                     child_main['children'].append(tmp)
@@ -122,7 +122,7 @@ def json_convert(data):
 
         type['fill'] = filling
 
-    return [main_dict]
+    return [main_dict], skills_array
 
 
 def timeline_parse(data):

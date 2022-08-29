@@ -27,6 +27,7 @@ client = MongoClient('localhost', 27017)
 db = client['DPM']
 collection = db['users']
 collection_dataset = db['Datasets']
+collection_skills_dataset = db['SkillsDataset']
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -53,9 +54,10 @@ def apply_caching(response):
 
 # Загрузка аватара на сервер
 @app.route('/upload_avatar', methods=['GET', 'POST'])
-@login_required
+@login_required #
 def upload_avatar():
-    cur_user_id = session['id']
+    #cur_user_id = current_user.Id
+    #cur_user_id = session['id']
     avatar = request.files['avatar']
     avatar_name = avatar.filename
     image_id = summary_image_count()
@@ -69,19 +71,21 @@ def upload_avatar():
                 avatar.save(os.path.join(app.config['UPLOAD_IMAGE_FOLDER'], file_name))
 
                 increment_image_count()
-                update_record('Id', cur_user_id, 'avatar', file_name)
+                update_record('Id', current_user.Id, 'avatar', file_name)
 
     return redirect(url_for('index'))
 
 
 # Uploading CV in storage
 @app.route('/uploader', methods=['GET', 'POST'])
+@login_required
 def upload_file():
-    file_name, cur_user = "", ""
+    #file_name, cur_user = "", ""
 
     if request.method == 'POST':
         try:
             cv_link = request.form['link']
+            file_name = ''
 
             if cv_link != '':
                 try:
@@ -100,25 +104,25 @@ def upload_file():
 
                 increment_cv_count()
 
-            cur_user_id = session['id']
-
-            cur_user = find_record('Id', cur_user_id)
+            #cur_user_id = session['id']
+            #cur_user_id = current_user.Id
+            cur_user = find_record('Id', current_user.Id)
 
             if cur_user is not None:
                 rchilli_data = rchilli_parse(file_name)
-                json_data = json_convert(rchilli_data)
+                json_data, skills_array = json_convert(rchilli_data)
                 timeline_events = timeline_parse(rchilli_data)
 
-                update_record('Id', cur_user_id, 'jsondata', json_data)
-                update_record('Id', cur_user_id, 'rchillidata', rchilli_data)
-                update_record('Id', cur_user_id, 'timelineEvents', timeline_events)
+                update_record('Id', current_user.Id, 'jsondata', json_data)
+                update_record('Id', current_user.Id, 'rchillidata', rchilli_data)
+                update_record('Id', current_user.Id, 'timelineEvents', timeline_events)
 
-
-
+                #find_jobs_by_skills(skills_array)
         except Exception as e:
-            print(e)    
+            print(e)
 
     return redirect(url_for('index'))
+
 
 # Основная страница
 @app.route('/')
@@ -129,55 +133,50 @@ def index():
         logout_user()
         return redirect(url_for('login'))
 
-    # cur_user_id = session['id']
-    # cur_user = find_record('Id', cur_user_id)
-
     return render_template('index.html', title='Digital Professional Me', userName=current_user.name)
 
 
 # Avatar
 @app.route('/getAvatar', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def get_avatar():
-    # print(current_user)
-    cur_user_id = str(request.args.get('id'))
-    cur_user = find_record('Id', cur_user_id)
-    return cur_user.avatar
+    return current_user.avatar
 
 
 # Json для Sunburst Chart
 @app.route('/getChartJson', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def get_chart_json():
-    cur_user_id = str(request.args.get('id'))
-    cur_user = find_record('Id', cur_user_id)
-
-    return jsonify(cur_user.jsondata)
+    #cur_user_id = str(request.args.get('id'))
+    #cur_user = find_record('Id', cur_user_id)
+    return jsonify(current_user.jsondata)
 
 
 # Json для Timeline
 @app.route('/getTimelineJson', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def get_timeline_json():
-    cur_user_id = str(request.args.get('id'))
-    cur_user = find_record('Id', cur_user_id)
+    #cur_user_id = str(request.args.get('id'))
+    #cur_user = find_record('Id', cur_user_id)
 
-    return jsonify(cur_user.timeline_events)
+    return jsonify(current_user.timeline_events)
 
 
 # Rchilli Json
 @app.route('/getRchilliJson', methods=['GET', 'POST'])
+@login_required
 def get_rchilli_json():
-    cur_user_id = str(request.args.get('id'))
-    cur_user = find_record('Id', cur_user_id)
+    #cur_user_id = str(request.args.get('id'))
+    #cur_user = find_record('Id', cur_user_id)
 
-    return jsonify(cur_user.rchillidata)
+    return jsonify(current_user.rchillidata)
 
 
 # About page
 @app.route('/about')
 def about_us():
     return render_template('aboutus.html', title='About us')
+
 
 # Registration
 @app.route('/register', methods=['GET', 'POST'])
@@ -244,13 +243,13 @@ def save_pdf(url, file_name):
 
 @app.route('/changeSkillState', methods=['POST', 'GET'])
 def change_skill_state():
-    cur_user_id = session['id']
-    #skill_name = str(request.args.get('skillName'))
+    # cur_user_id = session['id']
+    # skill_name = str(request.args.get('skillName'))
 
     skill_name = request.get_json()['skill']
-    disable_skill(cur_user_id, skill_name)
+    disable_skill(current_user.Id, skill_name)
     return '200'
-    #return redirect(url_for('index'))
+    # return redirect(url_for('index'))
 
 
 @app.route('/skillInputAutocomplete')
@@ -265,15 +264,17 @@ def show_jobs():
 
 @app.route('/findJob')
 def find_jobs():
-    cur_user_id = session['id']
+    #cur_user_id = session['id']
 
     job_name = str(request.args.get('jobName'))
     job_deadline = str(request.args.get('deadline'))
 
-    add_timeline_evidence_event(cur_user_id, job_name, job_deadline)
-    resp = job_search(job_autocomplete(job_name))
+    add_timeline_evidence_event(current_user.Id, job_name, job_deadline)
+    resp = job_search(job_autocomplete(job_name))['Skills']
 
-    ownend_skills = get_owned_skills(cur_user_id)
+    # Проверить, работает ли 
+
+    ownend_skills = get_owned_skills(current_user.Id)
     req_skills = []
 
     for skill in resp:
@@ -298,12 +299,12 @@ def find_jobs():
 @app.route('/parseCertificate')
 def parse_certificate():
     url = str(request.args.get('url'))
-    resp = {}
+    resp = dict()
     if 'coursera.org' in url:
         resp = parse_coursera_url(url)
     elif 'stepik.org' in url:
         resp = parse_stepik_url(url)
-    #elif 'ude.my' in url or 'udemy.com' in url:
+    # elif 'ude.my' in url or 'udemy.com' in url:
     #    resp = parse_udemy_url(url)
 
     add_cerificate_event(current_user.Id, resp['courseName'], resp['date'], resp['url'], resp['userName'])
@@ -313,8 +314,8 @@ def parse_certificate():
 @app.route('/findSkill')
 def find_skill():
     skill_name = str(request.args.get('skillName'))
-    cur_user_id = session['id']
-    cur_user_data = find_record('Id', cur_user_id).jsondata[0]
+    #cur_user_id = session['id']
+    cur_user_data = find_record('Id', current_user.Id).jsondata[0]
 
     resp = skill_search(skill_name)
 
@@ -434,30 +435,69 @@ def find_skill():
     else:
         resp['filling'] = '#4188D2'
 
-    update_record('Id', cur_user_id, 'jsondata', [cur_user_data])
+    update_record('Id', current_user.Id, 'jsondata', [cur_user_data])
 
     return resp
 
 
-#@app.route('/saveCertificate')
-#def save_certificate():
-    #cur_user_id = session['id']
-    #date = str(request.args.get('date'))
-    #name = str(request.args.get('name'))
-    #add_cerificate_event(cur_user_id, name, date)
-    #return '200'
+def find_jobs_by_skills(skills_array):
+    print(skills_array)
+    # jobs = []
+    jobs_ratio = dict()
+    for skill in skills_array:
+        related_jobs = skill_search(skill)['jobs']
+        # print(related_jobs)
+        for job_name in related_jobs:
+            # print(job_name['JobProfile'])
+            # print(job_name['JobProfile'])
+            # job_json = job_search(job_name['JobProfile'])
+            # print(job_json['FormattedJobProfile'])
+            # jobs.append(job_json['FormattedJobProfile'])
+            if job_name['JobProfile'] not in jobs_ratio.keys():
+                jobs_ratio[job_name['JobProfile']] = 1
+            else:
+                jobs_ratio[job_name['JobProfile']] += 1
+
+    # print(jobs)
+    print(dict(sorted(jobs_ratio.items(), key=lambda item: item[1])))
+
+
+# @app.route('/saveCertificate')
+# def save_certificate():
+# cur_user_id = session['id']
+# date = str(request.args.get('date'))
+# name = str(request.args.get('name'))
+# add_cerificate_event(cur_user_id, name, date)
+# return '200'
 
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000, host="0.0.0.0")
-    #parse_udemy_url('https://www.udemy.com/certificate/UC-7PDXUTCH/')
 
-    # print(parse_coursera_url('https://www.coursera.org/account/accomplishments/verify/5B8JXGAHLS2Y'))
-    # dataset = collection_dataset.find()
-    # skill_set_res = set()
-    # for skill_set in dataset:
+
+    # courses_skillset = set()
+    # skills_for_jobs = dict()
+    # for course in collection_dataset.find():
+    #     for skill in course['skills']:
+    #         courses_skillset.add(skill)
+    # print(courses_skillset)
+    # print(len(courses_skillset))
     #
-    #     for skill in skill_set['skills']:
-    #         skill_set_res.add(skill)
-    # #
-    # print(skill_set_res)
+    # cnt = 0
+    # for skill in courses_skillset:
+    #     related_jobs = skill_search(skill)['jobs']
+    #     jobs_list = []
+    #     courses_list = []
+    #     if len(related_jobs) > 0:
+    #         for job_name in related_jobs:
+    #             skills_for_jobs[skill] = job_name['JobProfile']
+    #             jobs_list.append(job_name['JobProfile'])
+    #
+    #         for course in collection_dataset.find():
+    #             if skill in course['skills']:
+    #                 courses_list.append(course['id'])
+    #
+    #         skills_for_jobs[skill] = jobs_list
+    #         cnt+=1
+    #         print(skills_for_jobs[skill], courses_list, cnt)
+    #         add_skill_to_dataset(skill, jobs_list, courses_list, cnt)

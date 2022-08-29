@@ -12,7 +12,7 @@ def parse_coursera_url(url):
         div_date = bs.find_all("div", {"class": "course-details"})
         # div_company_name = bs.find_all("div", {"h3": "course-name-header"})
 
-        response = {}
+        response = dict()
 
         if div_skills:
             children = div_skills[0].find_all("li")

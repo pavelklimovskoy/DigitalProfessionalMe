@@ -1,7 +1,8 @@
+import datetime
 import json
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
-from main import collection, collection_dataset
+from main import collection, collection_dataset, collection_skills_dataset
 from pymongo import MongoClient
 from flask_login import UserMixin
 import uuid
@@ -9,12 +10,12 @@ import uuid
 
 class Users(UserMixin):
     Id = ''
-    jsondata = {}
-    rchillidata = {}
+    jsondata = dict()
+    rchillidata = dict()
     name = ''
     email = ''
     password = ''
-    timeline_events = {}
+    timeline_events = dict()
     avatar = ''
 
     def __init__(self, Id, name, email, password, jsondata, rchillidata, timeline_events, avatar):
@@ -58,14 +59,110 @@ def update_record(findKey, findValue, key, value):
 
 
 def create_record(form):
+    json_data = dict()
+
+    json_data['name'] = 'Me'
+    json_data['children'] = [
+        {
+            'name': 'test1',
+            'id': 'OperationalSkill',
+            'fill': '#4188D2',
+            'parent': 'Me',
+            'children': [
+                {
+                    'name': 'test2',
+                    'id': 'OperationalSkill',
+                    'value': '1',
+                    'fill': '#4188D2',
+                    'parent': 'test1',
+                    'children': [
+                        {
+                            'name': 'test3',
+                            'id': 'OperationalSkill',
+                            'value': '1',
+                            'enabled': True,
+                            'shortName': 'test3',
+                            'fill': '#4188D2',
+                            'grandParent': 'test1',
+                            'parent': 'test2'
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            'name': 'test4',
+            'id': 'SoftSkill',
+            'fill': '#FFB240',
+            'parent': 'Me',
+            'children': [
+                {
+                    'name': 'test5',
+                    'id': 'SoftSkill',
+                    'value': '1',
+                    'fill': '#FFB240',
+                    'parent': 'test4',
+                    'children': [
+                        {
+                            'name': 'test6',
+                            'id': 'SoftSkill',
+                            'value': '1',
+                            'enabled': True,
+                            'shortName': 'test6',
+                            'fill': '#FFB240',
+                            'grandParent': 'test4',
+                            'parent': 'test5'
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            'name': 'test7',
+            'id': 'SoftSkill',
+            'fill': '#FFB240',
+            'parent': 'Me',
+            'children': [
+                {
+                    'name': 'test8',
+                    'id': 'SoftSkill',
+                    'value': '1',
+                    'fill': '#FFB240',
+                    'parent': 'test7',
+                    'children': [
+                        {
+                            'name': 'test9',
+                            'id': 'SoftSkill',
+                            'value': '1',
+                            'enabled': True,
+                            'shortName': 'test9',
+                            'fill': '#FFB240',
+                            'grandParent': 'test7',
+                            'parent': 'test8'
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+
+    timeline_events = dict()
+    timeline_events['qualificationEvents'] = []
+    timeline_events['experienceEvents'] = []
+    timeline_events['certifications'] = [{
+        'date': datetime.datetime.now(),
+        'name': 'Digital Professional Me registration',
+        'id': 0
+    }]
+
     collection.insert_one({
         'Id': str(uuid.uuid4()),
         'name': form.name.data,
         'email': form.email.data,
         'password': form.password.data,
-        'jsondata': {},
-        'rchillidata': {},
-        'timelineEvents': {},
+        'jsondata': [json_data],
+        'rchillidata': dict(),
+        'timelineEvents': timeline_events,
         'avatar': 'user_tmp_example.png'
     })
 
@@ -163,3 +260,11 @@ def get_courses(req_skills):
     #     print(course[1])
     # courses = sorted(courses, key=lambda d: d['gap'])
     return sorted(courses, key=lambda d: d['gap'], reverse=True)
+
+def add_skill_to_dataset(skill_name, jobs, courses, id):
+    collection_skills_dataset.insert_one({
+        'id': id,
+        'skill': skill_name,
+        'relatedJobs': jobs,
+        'relatedCourses': courses
+    })

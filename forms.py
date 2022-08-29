@@ -20,5 +20,6 @@ class FormRegister(FlaskForm):
                              validators=[DataRequired(), Length(min=4, max=32)],
                              render_kw={"placeholder": "Password"})
     password2 = PasswordField('Repeat password ',
-                              validators=[DataRequired(), EqualTo('password', message='Passwords did not match')])
+                              validators=[DataRequired(), EqualTo('password', message='Passwords did not match')],
+                              render_kw={"placeholder": "Repeat password"})
     submit = SubmitField('Sign up')
