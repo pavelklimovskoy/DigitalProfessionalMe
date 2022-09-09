@@ -51,7 +51,6 @@ def parse_stepik_url(url):
     except Exception as e:
         print(e)
 
-
 # def parse_udemy_url(url):
 #     try:
 #         html = urlopen(url)

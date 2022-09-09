@@ -40,13 +40,13 @@ def skill_search(skill_name):
         "CustomValues": "",
         "Keyword": skill_name
     })
+
     headers = {
         'Content-Type': 'application/json'
     }
 
     response = requests.request("POST", API_SKILL_SEARCH_URL, headers=headers, data=payload)
     resp = response.json()['Skill']['SkillData']
-    #print(resp)
     skill_type = str(resp['SkillType']).split('/')
     skill_data = {
         'ontology': resp['SkillOntology'],
@@ -56,10 +56,6 @@ def skill_search(skill_name):
     }
 
     return skill_data
-
-    # resp = json.loads(response.text)
-    # print(resp)
-    # return resp
 
 
 def skill_autocomplete(skill_name):
@@ -71,6 +67,7 @@ def skill_autocomplete(skill_name):
         "CustomValues": "",
         "Keyword": skill_name
     })
+
     headers = {
         'Content-Type': 'application/json'
     }
@@ -92,14 +89,14 @@ def job_search(job_name):
         "CustomValues": "",
         "Keyword": job_name
     })
+
     headers = {
         'Content-Type': 'application/json'
     }
 
     response = requests.request("POST", API_JOB_SEARCH_URL, headers=headers, data=payload)
-    #print('response', response.json())
     resp = response.json()['JobProfile']['JobProfileData']
-    #print('rr', resp)
+
     return resp
 
 
@@ -112,6 +109,7 @@ def job_autocomplete(job_name):
         "CustomValues": "",
         "Keyword": job_name
     })
+
     headers = {
         'Content-Type': 'application/json'
     }

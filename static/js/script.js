@@ -1,11 +1,10 @@
-
-window.onload = function(){
+window.onload = function () {
   window.sp = new SuperParticles({
-      container: {
-          element: "#particles-js"
-      }
-  })
-}
+    container: {
+      element: "#particles-js"
+    }
+  });
+};
 
 const baseUrl = `http://${document.location.host}`;
 document.querySelector('#avatar_upload').setAttribute('action', `${baseUrl}/upload_avatar`);
@@ -39,6 +38,7 @@ function openModal(e) {
   document.body.style.overflow = 'hidden';
 }
 
+// Создание модального окна для добавления скилла
 function createModalAddingSkill() {
   modalContent.innerHTML = '';
 
@@ -63,28 +63,45 @@ function createModalAddingSkill() {
   formButton.addEventListener('click', (e) => {
     e.preventDefault();
 
-    const urlRequest = `${baseUrl}/findSkill?skillName=${input.value}`;
-    fetch(urlRequest)
-      .then(response => response.json())
+    postData(`${baseUrl}/findSkill`, { skill: input.value })
+      .then(response => {
+        console.log(response);
+        return response.json();
+      })
       .then(skillData => {
-        const ontology = skillData.ontology.split(',')[0].split('>');
-        let skill = addSkillToChart(skillData.searchWord, ontology[1], ontology[0], skillData.type, skillData.filling);
-
-        // skill = {
-        //   'name': skillData.searchWord,
-        //   'id': skillData.type,
-        //   'enabled': true
-        // };
+        console.log('op', skillData);
+        const ontology = skillData.ontology.split('>');
+        let skill = addSkillToChart(ontology[ontology.length - 1], ontology[1], ontology[0], skillData.type, skillData.filling);
 
         addSkill(skill, skillList.length);
         closeModal();
       });
+
+
+
+    // const urlRequest = `${baseUrl}/findSkill?skillName=${input.value}`;
+    // fetch(urlRequest)
+    //   .then(response => response.json())
+    //   .then(skillData => {
+    //     const ontology = skillData.ontology.split(',')[0].split('>');
+    //     let skill = addSkillToChart(skillData.searchWord, ontology[1], ontology[0], skillData.type, skillData.filling);
+
+    //     // skill = {
+    //     //   'name': skillData.searchWord,
+    //     //   'id': skillData.type,
+    //     //   'enabled': true
+    //     // };
+
+    //     addSkill(skill, skillList.length);
+    //     closeModal();
+    //   });
   });
 }
 
+// Создание модального окна для добавления цели
 function createModalGoal() {
   modalContent.innerHTML = '';
-  //Дата, Название J
+  //Дата, Название JD
   const element = document.createElement('div');
   element.innerHTML = `
   <span data-close class="close">&times;</span>
@@ -95,15 +112,32 @@ function createModalGoal() {
     </div>
     <input id="submitGoalForm" type="submit" onclick=addLifeGoal()>
   </form>
+  <form autocomplete="off" action="#">
+    <label for="showJobsOptions">Показать возможные работы(Пока просто отправка данных на сервер)</label>
+    <input id="showJobsOptions" type="submit">
+  </form>
   `;
 
   modalContent.append(element);
 
   const input = document.querySelector('#goalJDInput'),
     dateInput = document.querySelector('#goalDateInput'),
-    formButton = document.querySelector('#submitGoalForm');
+    formButton = document.querySelector('#submitGoalForm'),
+    jobOptionsButton = document.querySelector('#showJobsOptions');
 
   autocomplete(input, 'jobInputAutocomplete', 'jobName');
+
+  jobOptionsButton.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    const urlRequest = `${baseUrl}/findJobsOptions`;
+    fetch(urlRequest)
+      .then(response => response.json())
+      .then(data => {
+
+        //closeModal();
+      });
+  });
 
   formButton.addEventListener('click', (e) => {
     e.preventDefault();
@@ -149,7 +183,7 @@ function createModalGoal() {
         //             <h2>Get Skills</h2>
         //             <a>${skillGetStr}</a>
         //           </div>
-                  
+
         //           <div class="container__text__timing_time">
         //             <h2>Link</h2>
         //             <a>${courses[i].courseName.url}</a>
@@ -166,24 +200,7 @@ function createModalGoal() {
   });
 }
 
-
-// function addSkillOnChart(skillName) {
-//   const form = document.querySelector('#addSkillButton');
-
-//   form.addEventListener('click', (e) => {
-//     e.preventDefault();
-//     //form.children();
-//     console.log(skillName);
-
-//     const urlRequest = `http://${baseUrl}/findSkill?findSkill=${skillName}`;
-//     fetch(urlRequest)
-//       .then(response => response.json())
-//       .then(data => {
-//         console.log(data);
-//       });
-//   });
-// }
-
+// Создание модального окна для добавления CV
 function createModalCv() {
   modalContent.innerHTML = '';
 
@@ -221,6 +238,7 @@ function createModalCv() {
   // });
 }
 
+// Создание модального окна для добавления сертификата
 function createModalEvidence() {
   modalContent.innerHTML = '';
 
@@ -255,6 +273,7 @@ function createModalEvidence() {
 
 }
 
+// Назначение цели для кнопки открытия окна
 modalTrigger.forEach(item => {
   item.addEventListener('click', openModal);
 });
@@ -266,7 +285,6 @@ modal.addEventListener('click', (e) => {
   }
 });
 
-
 // Закрытие модального окна по клику на ESC
 document.addEventListener('keydown', (e) => {
   if (e.code === 'Escape' && modal.style.display == 'block') {
@@ -274,19 +292,19 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-
+// Асинхронный POST запрос
 async function postData(url = '', data = {}) {
   const response = await fetch(url, {
-      method: 'POST',
-      mode: 'cors',
-      cache: 'no-cache',
-      credentials: 'same-origin',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      redirect: 'follow',
-      referrerPolicy: 'no-referrer',
-      body: JSON.stringify(data)
-  });
-  return await response.json();
+    method: 'POST',
+    mode: 'cors',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    redirect: 'follow',
+    referrerPolicy: 'no-referrer',
+    body: JSON.stringify(data)
+  })
+  return response;
 }

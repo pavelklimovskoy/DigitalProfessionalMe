@@ -2,6 +2,7 @@ anychart.onDocumentReady(renderChart);
 
 let dataTree, skillList = [], disabledSkills = [];
 
+// Фильтрация включенных скиллов
 function filterSkills(data) {
   data[0].children.forEach(item => {
     item.children.forEach(item => {
@@ -16,6 +17,7 @@ function filterSkills(data) {
   return disabledSkills;
 }
 
+// Получение всех скиллов
 function unfilteringSkills(data) {
   data[0].children.forEach(item => {
     item.children.forEach(item => {
@@ -28,6 +30,7 @@ function unfilteringSkills(data) {
   return skillList;
 }
 
+// Выключение скилла
 function disableSkill(skillName) {
   let child = dataTree.search('name', skillName),
     root = dataTree.search('name', 'Me');
@@ -45,6 +48,7 @@ function disableSkill(skillName) {
   }
 }
 
+// Включение скилла
 function enableSkill(skill) {
   let treeParent = dataTree.search('name', skill.parent),
     treeGrandParent = dataTree.search('name', skill.grandParent),
@@ -88,10 +92,16 @@ function enableSkill(skill) {
   }
 }
 
+// Добавление скилла на диаграмму
 function addSkillToChart(skillName, skillParentName, skillGrandParentName, skillType, skillFilling) {
+  // console.log(skillName, skillName, skillGrandParentName);
+  // console.log(skillType, skillFilling);
   let treeChild = dataTree.search('name', skillName),
     treeParent = dataTree.search('name', skillParentName),
     treeGrandParent = dataTree.search('name', skillGrandParentName);
+  // console.log(treeChild);
+  // console.log(treeParent);
+  // console.log(treeGrandParent);
 
   if (!treeChild) {
     let shortName = skillName;
@@ -133,13 +143,18 @@ function addSkillToChart(skillName, skillParentName, skillGrandParentName, skill
         treeGrandParent.addChild(parent).addChild(skill);
       }
     } else {
-      dataTree.addChild(grandParent).addChild(parent).addChild(skill);
+      console.log(dataTree.search('name', 'Me'));
+      console.log(grandParent);
+      console.log(parent);
+      console.log(skill);
+      dataTree.search('name', 'Me').addChild(grandParent).addChild(parent).addChild(skill);
     }
 
     return skill;
   }
 }
 
+// Подсчет допустимых символов скилла 
 function charCalc(n) {
   if (n <= 22) {
     return Math.round(n * n * 0.0472029 - 2.1169 * n + 25.8119);
@@ -152,6 +167,7 @@ function charCalc(n) {
   }
 }
 
+// Отрисовка диаграммы
 function renderChart() {
   let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '',
     urlRequest = `${baseUrl}/getChartJson?id=${cookieId}`;
@@ -201,24 +217,24 @@ function renderChart() {
       chart
         .level(0)
         .labels()
-        .fontFamily("Verdana, sans-serif")
+        .fontFamily('Verdana, sans-serif')
         .format('<span style="font-size:14px; word-break: normal; word-wrap: break-word;"></span>');
 
       chart
         .level(1)
         .labels()
-        .fontFamily("Verdana, sans-serif")
+        .fontFamily('Verdana, sans-serif')
         .format('<span style="font-size:14px; word-break: normal; word-wrap: break-word;">{%name}</span>');
 
       chart
         .level(2)
         .labels()
-        .fontFamily("Verdana, sans-serif")
+        .fontFamily('Verdana, sans-serif')
         .format('<span style="font-size:12px; word-break: normal; word-wrap: break-word;">{%name}</span>');
 
       chart
         .tooltip()
-        .fontFamily("Verdana, sans-serif")
+        .fontFamily('Verdana, sans-serif')
         .format("<h5 style='font-size:16px; margin: 0.25rem 0;'>{%name}</h5><h6 style='font-size:14px; font-weight:400; margin: 0.2rem 0;'>Level: <b>{%value}{groupsSeparator:\\,}</b></h6><h6 style='font-size:14px; font-weight:400; margin: 0.2rem 0;'></b></h6>");
 
       // Set avatar
@@ -231,8 +247,11 @@ function renderChart() {
 
       chart.labels().format("<span style='font-size:10px; word-break: normal; word-wrap: break-word;'>{%shortName}</span>");
 
-      chart.labels().position("circular");
+      chart.labels().position('circular');
       chart.container('chartid');
+
+      anychart.licenseKey('digitalprofessionalme-be4540c2-fc50f81b');
+      chart.credits().enabled(false);
 
       chart.draw();
       chart.autoRedraw(true);

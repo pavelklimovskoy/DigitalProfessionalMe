@@ -18,33 +18,38 @@ function changeSkillState(skillId) {
 
         if (skillClass != 'disabled-skill') {
             skill.remove();
-
+            
             skill.classList.remove(skillClass);
             skill.classList.add('disabled-skill');
-
+            
+            console.log(skill);
+            skill.childNodes[1].childNodes[0].src = '../static/icons/button-off.png';
             skillBlock.append(skill);
             state = 0;
         }
         else {
             skill.classList.remove('disabled-skill');
-
-            if (skill.id.includes('SoftSkill') || skill.id.includes('Knowledge') || skill.id.includes('BehaviorSkills')) {
+            
+            if (skill.id.includes('SoftSkill') || skill.id.includes('Soft') || skill.id.includes('Knowledge') || skill.id.includes('BehaviorSkills')) {
                 skill.classList.add('soft-skill');
             } else {
                 skill.classList.add('hard-skill');
             }
-
+            
+            console.log(skill);
             try {
                 skill.remove();
+                skill.childNodes[1].childNodes[0].src = '../static/icons/button-on.png';
                 document.querySelectorAll('.disabled-skill')[0].before(skill);
             }
             catch {
+                skill.childNodes[1].childNodes[0].src = '../static/icons/button-on.png';
                 skillBlock.append(skill);
             }
-
+            
             state = 1;
         }
-
+        
         // Переключение состояния скилла в БД
         postData(`${baseUrl}/changeSkillState`, { skill: skill.textContent });
     }
@@ -121,9 +126,19 @@ function addSkill(skill, i) {
 
 
     // Создание иконки переключения
-    let iconButton = document.createElement('i');
-    iconButton.className = 'fa fa-refresh';
-    iconButton.style = 'color:white!important';
+    let iconButton;
+    iconButton = document.createElement('img');
+    if (skill.enabled) {
+        iconButton.src = '../static/icons/button-on.png';
+    }
+    else {
+        iconButton.src = '../static/icons/button-off.png';
+    }
+    iconButton.style.height =  '1rem';
+    console.log(iconButton);
+    //let iconButton = document.createElement('i');
+    //iconButton.className = 'fa fa-refresh';
+    //iconButton.style = 'color:white!important';
 
     // Создание кнопки переключения
     let delButton = document.createElement('button');
@@ -165,7 +180,7 @@ function addSkill(skill, i) {
 
 // Загрузка скиллов
 function loadSkills() {
-    enabled = skillList.filter(skill => skill.enabled),
+    let enabled = skillList.filter(skill => skill.enabled),
         disabled = skillList.filter(skill => !skill.enabled),
         i = 0;
 

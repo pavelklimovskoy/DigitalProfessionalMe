@@ -1,47 +1,43 @@
 import datetime
-import json
-from flask import Flask, request, jsonify
-from flask_pymongo import PyMongo
-from main import collection, collection_dataset, collection_skills_dataset
-from pymongo import MongoClient
+from main import collection_users, collection_dataset, collection_skills_dataset
 from flask_login import UserMixin
 import uuid
 
 
 class Users(UserMixin):
-    Id = ''
-    jsondata = dict()
-    rchillidata = dict()
+    id = ''
+    json_data = dict()
+    rchilli_data = dict()
     name = ''
     email = ''
     password = ''
     timeline_events = dict()
     avatar = ''
 
-    def __init__(self, Id, name, email, password, jsondata, rchillidata, timeline_events, avatar):
-        self.Id = Id
+    def __init__(self, id, name, email, password, json_data, rchilli_data, timeline_events, avatar):
+        self.id = id
         self.name = name
         self.email = email
         self.password = password
-        self.jsondata = jsondata
-        self.rchillidata = rchillidata
+        self.json_data = json_data
+        self.rchilli_data = rchilli_data
         self.timeline_events = timeline_events
         self.avatar = avatar
 
     def to_json(self):
         return {
-            "Id": self.Id,
+            "id": self.id,
             "name": self.name,
             "email": self.email,
             "password": self.password,
-            "jsondata": self.jsondata,
-            "rchillidata": self.rchillidata,
+            "jsondata": self.json_data,
+            "rchillidata": self.rchilli_data,
             "timelineEvents": self.timeline_events,
             "avatar": self.avatar
         }
 
     def get_id(self):
-        return self.Id
+        return self.id
 
     def is_authenticated(self):
         return True
@@ -54,7 +50,7 @@ class Users(UserMixin):
 
 
 def update_record(findKey, findValue, key, value):
-    collection.find_one_and_update({findKey: findValue},
+    collection_users.find_one_and_update({findKey: findValue},
                                    {'$set': {key: value}})
 
 
@@ -155,8 +151,8 @@ def create_record(form):
         'id': 0
     }]
 
-    collection.insert_one({
-        'Id': str(uuid.uuid4()),
+    collection_users.insert_one({
+        'id': str(uuid.uuid4()),
         'name': form.name.data,
         'email': form.email.data,
         'password': form.password.data,
@@ -168,14 +164,14 @@ def create_record(form):
 
 
 def find_record(key, value):
-    user = collection.find_one({key: value})
+    user = collection_users.find_one({key: value})
     if user is not None:
-        return Users(Id=user['Id'],
+        return Users(id=user['id'],
                      name=user['name'],
                      email=user['email'],
                      password=user['password'],
-                     jsondata=user['jsondata'],
-                     rchillidata=user['rchillidata'],
+                     json_data=user['jsondata'],
+                     rchilli_data=user['rchillidata'],
                      timeline_events=user['timelineEvents'],
                      avatar=user['avatar'])
     else:
@@ -183,8 +179,8 @@ def find_record(key, value):
 
 
 def disable_skill(curUserId, skillName):
-    user = find_record('Id', curUserId)
-    data = user.jsondata[0]
+    user = find_record('id', curUserId)
+    data = user.json_data[0]
     for i in data['children']:
         for j in i['children']:
             for k in j['children']:
@@ -195,12 +191,12 @@ def disable_skill(curUserId, skillName):
                         k['enabled'] = True
                     break
 
-    update_record('Id', curUserId, 'jsondata', [data])
+    update_record('id', curUserId, 'jsondata', [data])
     return user
 
 
-def add_timeline_evidence_event(cur_user_id, job_name, job_deadline):
-    user = find_record('Id', cur_user_id)
+def add_timeline_evidence_event(user_id, job_name, job_deadline):
+    user = find_record('id', user_id)
 
     event = {
         'startDate': job_deadline,
@@ -212,11 +208,11 @@ def add_timeline_evidence_event(cur_user_id, job_name, job_deadline):
 
     user.timeline_events['experienceEvents'].append(event)
 
-    update_record('Id', cur_user_id, 'timelineEvents', user.timeline_events)
+    update_record('id', user_id, 'timelineEvents', user.timeline_events)
 
 
-def add_cerificate_event(cur_user_id, name, date, url, user_name):
-    user = find_record('Id', cur_user_id)
+def add_certificate_event(user_id, name, date, url, user_name):
+    user = find_record('id', user_id)
 
     event = {
         'date': date,
@@ -228,11 +224,11 @@ def add_cerificate_event(cur_user_id, name, date, url, user_name):
 
     user.timeline_events['certifications'].append(event)
 
-    update_record('Id', cur_user_id, 'timelineEvents', user.timeline_events)
+    update_record('id', user_id, 'timelineEvents', user.timeline_events)
 
 
-def get_owned_skills(cur_user_id):
-    user_data = find_record('Id', cur_user_id).jsondata[0]['children']
+def get_owned_skills(user_id):
+    user_data = find_record('id', user_id).json_data[0]['children']
     skills = []
 
     for lvl1 in user_data:
@@ -268,3 +264,6 @@ def add_skill_to_dataset(skill_name, jobs, courses, id):
         'relatedJobs': jobs,
         'relatedCourses': courses
     })
+
+def get_skill_from_dataset(skill_name):
+    return collection_skills_dataset.find_one({'skill': skill_name})

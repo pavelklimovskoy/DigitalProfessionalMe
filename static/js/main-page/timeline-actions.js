@@ -57,7 +57,7 @@ function createTimeline() {
               title: tooltip,
             });
 
-          console.log(itemId);
+          //console.log(itemId);
           itemId++;
 
         } else {
@@ -117,7 +117,7 @@ function createTimeline() {
             title: tooltip
           });
         }
-        console.log(itemId);
+        //console.log(itemId);
 
         itemId++;
       });
@@ -191,6 +191,7 @@ function createTimeline() {
     });
 }
 
+// Ожидание загрузки DOM
 function waitForDOM() {
   if (timeline != null) {
     timeline._redraw()
@@ -235,7 +236,6 @@ function addLifeGoal() {
   timeline.itemsData.add(newItem);
   console.log(itemId);
 }
-
 
 // Добавление нового Сертификата
 function addCerificate(ceritificateData) {

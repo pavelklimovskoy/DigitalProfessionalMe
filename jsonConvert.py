@@ -1,7 +1,7 @@
 import json
 
 # Soft Types of skills
-soft_types = ['SoftSkill', 'Knowledge', 'Soft', 'Tool']
+soft_types = ['SoftSkill', 'Knowledge', 'Soft', 'BehaviorSkills']
 
 # Colors for skills
 hard_colors = ['#4188D2', '#3272B5', '#235C97', '#144679', '#05305B']  # 1-2, 3-4, 5-6, 7-8, >= 9
