@@ -112,7 +112,8 @@
       <div class="form-group text-center">
         <label for="exampleInputName">Имя</label>
         <input name="name" type="text" class="form-control" id="exampleInputName" placeholder="Ваше имя">
-        <button type="submit" id="feedbackFormButton" class=" btn btn-primary row text-center" style="margin-top: 1rem">Отправить
+        <button type="submit" id="feedbackFormButton" class=" btn btn-primary row text-center"
+          style="margin-top: 1rem">Отправить
           данные</button>
       </div>
     </form>
@@ -162,7 +163,25 @@
   <!-- Scripts -->
   <script src="https://pixijs.download/dev-graphics-batch-pool/pixi.js"></script>
   <script src="../static/js/SuperParticles.js"></script>
-  <script src="../static/js/script.js" type="text/javascript"></script>
+  <!-- <script src="../static/js/script.js" type="text/javascript"></script> -->
+  <script>
+    // Feedback form
+    document.querySelector('#feedbackFormButton').addEventListener('click', (e) => {
+      e.preventDefault();
+
+      let email = document.querySelector('#exampleInputEmail').value,
+        name = document.querySelector('#exampleInputName').value,
+        urlRequest = `digitalprofessional.me:5000/about`;
+
+      console.log(urlRequest);
+      postData(urlRequest, { email: email, name: name })
+        .then(response => {
+          document.querySelector('#feebdackForm').reset();
+          console.log(response);
+          return response.json();
+        })
+    });
+  </script>
 </body>
 
 </html>
