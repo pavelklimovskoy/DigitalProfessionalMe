@@ -7,7 +7,12 @@ window.onload = function () {
 };
 
 const baseUrl = `http://${document.location.host}`;
-document.querySelector('#avatar_upload').setAttribute('action', `${baseUrl}/upload_avatar`);
+try{ 
+  document.querySelector('#avatar_upload').setAttribute('action', `${baseUrl}/upload_avatar`);
+}
+catch {
+  console.log('no avatar');
+}
 
 // Feedback form
 document.querySelector('#feedbackFormButton').addEventListener('click', (e) => {
@@ -16,6 +21,7 @@ document.querySelector('#feedbackFormButton').addEventListener('click', (e) => {
   let email = document.querySelector('#exampleInputEmail').value,
     name = document.querySelector('#exampleInputName').value,
     urlRequest = `digitalprofessional.me:5000/about`;
+
   console.log(urlRequest);
   postData(urlRequest, { email: email, name: name })
     .then(response => {
