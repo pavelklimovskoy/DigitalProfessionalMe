@@ -78,10 +78,6 @@
 <body>
   <!-- Canvas with main content -->
   <div class="mainBlock">
-    {% for cat, msg in get_flashed_messages(True) %}
-    <div class="flash {{cat}}">{{msg}}</div>
-    {% endfor %}
-
     <div class="hello">
       <p>
         <!-- Hello!<br>
@@ -107,7 +103,7 @@
       
     </div> -->
 
-    <form method="POST" action="/addFeedback" class="container col-md-2 form-control">
+    <form method="POST" class="container col-md-2 form-control" id="feebdackForm">
       <div class="form-group text-center">
         <label for="exampleInputEmail">Email</label>
         <input name="email" type="email" class="form-control" id="exampleInputEmail" aria-describedby="emailHelp"
@@ -116,7 +112,8 @@
       <div class="form-group text-center">
         <label for="exampleInputName">Имя</label>
         <input name="name" type="text" class="form-control" id="exampleInputName" placeholder="Ваше имя">
-        <button type="submit" class=" btn btn-primary row text-center" style="margin-top: 1rem">Отправить данные</button>
+        <button type="submit" id="feedbackFormButton" class=" btn btn-primary row text-center" style="margin-top: 1rem">Отправить
+          данные</button>
       </div>
     </form>
 

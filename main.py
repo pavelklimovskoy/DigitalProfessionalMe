@@ -160,8 +160,18 @@ def get_rchilli_json():
 
 
 # About page
-@app.route('/about')
+@app.route('/about', methods=['POST', 'GET'])
 def about_us():
+    if request.method == 'POST':
+        email = request.form['email']
+        name = request.form['name']
+        print(email)
+        print(name)
+        collection_feedback.insert_one({
+            'email': email,
+            'name': name
+        })
+
     return render_template('aboutus.html', title='About us')
 
 
@@ -238,13 +248,13 @@ def change_skill_state():
 @app.route('/skillInputAutocomplete', methods=['POST'])
 def show_input_options():
     return skill_autocomplete(request.get_json()['skillName'])
-    #return skill_autocomplete(f'{request.args.get("skillName")}')
+    # return skill_autocomplete(f'{request.args.get("skillName")}')
 
 
 @app.route('/jobInputAutocomplete', methods=['POST'])
 def show_jobs():
     return skill_autocomplete(request.get_json()['jobName'])
-    #return job_autocomplete(f'{request.args.get("jobName")}')
+    # return job_autocomplete(f'{request.args.get("jobName")}')
 
 
 @app.route('/findJob', methods=['POST'])
@@ -283,7 +293,7 @@ def find_jobs():
 
 @app.route('/parseCertificate', methods=['POST'])
 def parse_certificate():
-    #url = str(request.args.get('url'))
+    # url = str(request.args.get('url'))
     url = request.get_json()['url']
     resp = dict()
     if 'coursera.org' in url:
@@ -474,7 +484,6 @@ def find_jobs_by_skills():
         'matchedJob': matched_job
     }))
 
-
     # return json.loads(json_util.dumps({
     #     'offeredCourses': courses,
     #     'gapSkills': set_different
@@ -491,21 +500,6 @@ def find_jobs_by_skills():
     #             jobs_ratio[job_name['JobProfile']] += 1
     #
     # print(dict(sorted(jobs_ratio.items(), key=lambda item: item[1])))
-
-
-@app.route('/addFeedback', methods=['POST'])
-def add_feedback():
-    email = request.form['email']
-    name = request.form['name']
-
-    collection_feedback.insert_one({
-        'email': email,
-        'name': name
-    })
-
-    flash('Спасибо за уделенное время :)', 'success')
-
-    return redirect(url_for('about_us'))
 
 
 if __name__ == '__main__':

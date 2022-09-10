@@ -9,6 +9,21 @@ window.onload = function () {
 const baseUrl = `http://${document.location.host}`;
 document.querySelector('#avatar_upload').setAttribute('action', `${baseUrl}/upload_avatar`);
 
+// Feedback form
+document.querySelector('#feedbackFormButton').addEventListener('click', (e) => {
+  e.preventDefault();
+
+  let email = document.querySelector('#exampleInputEmail').value,
+    name = document.querySelector('#exampleInputName').value,
+    urlRequest = `digitalprofessional.me:5000/about`;
+  console.log(urlRequest);
+  postData(urlRequest, { email: email, name: name })
+    .then(response => {
+      document.querySelector('#feebdackForm').reset();
+      console.log(response);
+      return response.json();
+    })
+});
 
 //Modal
 const modalTrigger = document.querySelectorAll('[data-modal]'),
