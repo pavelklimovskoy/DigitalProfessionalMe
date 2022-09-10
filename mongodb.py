@@ -5,6 +5,7 @@ import uuid
 
 
 class Users(UserMixin):
+    # переписать на str()
     id = ''
     json_data = dict()
     rchilli_data = dict()
@@ -241,21 +242,23 @@ def get_owned_skills(user_id):
 
 def get_courses(req_skills):
     courses = []
+
     for course in collection_dataset.find():
         course_skills = set(course['skills'])
         skills_union = course_skills & req_skills
 
         if len(skills_union):
-            print(len(skills_union), skills_union)
-            courses.append({'courseName': course,
-                            'gap': len(skills_union)})
+            print(len(skills_union), skills_union, course['name'], course['url'])
+            courses.append({'courseData': course,
+                            'gapLength': len(skills_union),
+                            'gapSkills': skills_union})
     # dict_courses.sort(key=lambda x: x[0])
     #
     # courses = []
     # for course in dict_courses:
     #     print(course[1])
     # courses = sorted(courses, key=lambda d: d['gap'])
-    return sorted(courses, key=lambda d: d['gap'], reverse=True)
+    return sorted(courses, key=lambda d: d['gapLength'], reverse=True)
 
 def add_skill_to_dataset(skill_name, jobs, courses, id):
     collection_skills_dataset.insert_one({

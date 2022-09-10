@@ -29,6 +29,7 @@ db = client['DPM']
 collection_users = db['users']
 collection_dataset = db['Datasets']
 collection_skills_dataset = db['SkillsDataset']
+collection_feedback = db['Feedback']
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -234,25 +235,27 @@ def change_skill_state():
     return '200'
 
 
-@app.route('/skillInputAutocomplete')
+@app.route('/skillInputAutocomplete', methods=['POST'])
 def show_input_options():
-    return skill_autocomplete(f'{request.args.get("skillName")}')
+    return skill_autocomplete(request.get_json()['skillName'])
+    #return skill_autocomplete(f'{request.args.get("skillName")}')
 
 
-@app.route('/jobInputAutocomplete')
+@app.route('/jobInputAutocomplete', methods=['POST'])
 def show_jobs():
-    return job_autocomplete(f'{request.args.get("jobName")}')
+    return skill_autocomplete(request.get_json()['jobName'])
+    #return job_autocomplete(f'{request.args.get("jobName")}')
 
 
-@app.route('/findJob')
+@app.route('/findJob', methods=['POST'])
 def find_jobs():
-    job_name = str(request.args.get('jobName'))
-    job_deadline = str(request.args.get('deadline'))
-
+    job_name = request.get_json()['jobName']
+    job_deadline = request.get_json()['deadline']
+    print(job_name)
     add_timeline_evidence_event(current_user.id, job_name, job_deadline)
     resp = job_search(job_autocomplete(job_name))['Skills']
 
-    # Проверить, работает ли 
+    print(resp)
 
     owned_skills = get_owned_skills(current_user.id)
     req_skills = []
@@ -262,23 +265,26 @@ def find_jobs():
 
     set_owned_skills = set(owned_skills)
     set_req_skills = set(req_skills)
-    print('ow', set_owned_skills)
-    print('req', set_req_skills)
+    print('owned skills', set_owned_skills)
+    print('required skills', set_req_skills)
 
     set_different = set_req_skills - set_owned_skills
-    print(set_different)
+    print('skillGap', set_different)
 
     courses = get_courses(set_different)
+    print(courses)
 
     return json.loads(json_util.dumps({
         'offeredCourses': courses,
-        'gapSkills': set_different
+        'gapSkills': set_different,
+        'deadline': job_deadline
     }))
 
 
-@app.route('/parseCertificate')
+@app.route('/parseCertificate', methods=['POST'])
 def parse_certificate():
-    url = str(request.args.get('url'))
+    #url = str(request.args.get('url'))
+    url = request.get_json()['url']
     resp = dict()
     if 'coursera.org' in url:
         resp = parse_coursera_url(url)
@@ -296,11 +302,9 @@ def find_skill():
     soft_types = ['SoftSkill', 'Knowledge', 'Soft', 'BehaviorSkills']
 
     skill_name = request.get_json()['skill']
-    print(skill_name)
     cur_user_data = find_record('id', current_user.id).json_data[0]
 
     resp = skill_search(skill_name)
-    print(resp)
     ontoloty = resp['ontology']
 
     flag1 = False
@@ -425,26 +429,56 @@ def find_skill():
 @app.route('/findJobsOptions', methods=['GET'])
 @login_required
 def find_jobs_by_skills():
-    skills_array = get_owned_skills(current_user.id)
-    print(skills_array)
+    set_owned_skills = set(get_owned_skills(current_user.id))
+    print(set_owned_skills)
     related_jobs = dict()
     cnt = 0
+    mx = 0
+    matched_job = str()
 
-    for skill in skills_array:
+    for skill in set_owned_skills:
         skill_data = get_skill_from_dataset(skill)
         if skill_data is not None:
-            cnt += 1
-
             for job in skill_data['relatedJobs']:
                 if job in related_jobs.keys():
                     related_jobs[job] += 1
                 else:
                     related_jobs[job] = 1
 
-    print(dict(sorted(related_jobs.items(), key=lambda item: item[1])))
+                if related_jobs[job] > mx:
+                    mx = related_jobs[job]
+                    matched_job = job
+
+    print(matched_job)
+
+    print(dict(sorted(related_jobs.items(), key=lambda item: item[1]), reverse=True))
     print(len(related_jobs))
     print(cnt)
-    return '200'
+
+    job_data = job_search(job_autocomplete(matched_job))['Skills']
+    set_req_skills = set()
+    for skill in job_data:
+        set_req_skills.add(skill['Skill'])
+    print(set_req_skills)
+    set_different = set_req_skills - set_owned_skills
+    print('skillGap', set_different)
+
+    courses = get_courses(set_different)
+    print(courses)
+    print(set_owned_skills)
+    print(set_req_skills)
+    print(set_different)
+    return json.loads(json_util.dumps({
+        'offeredCourses': courses,
+        'gapSkills': set_different,
+        'matchedJob': matched_job
+    }))
+
+
+    # return json.loads(json_util.dumps({
+    #     'offeredCourses': courses,
+    #     'gapSkills': set_different
+    # }))
 
     # Поиск 'задела'
     # jobs_ratio = dict()
@@ -459,8 +493,23 @@ def find_jobs_by_skills():
     # print(dict(sorted(jobs_ratio.items(), key=lambda item: item[1])))
 
 
+@app.route('/addFeedback', methods=['POST'])
+def add_feedback():
+    email = request.form['email']
+    name = request.form['name']
+
+    collection_feedback.insert_one({
+        'email': email,
+        'name': name
+    })
+
+    flash('Спасибо за уделенное время :)', 'success')
+
+    return redirect(url_for('about_us'))
+
+
 if __name__ == '__main__':
-    #print(skill_search(('C++')))
+    # print(skill_search(('C++')))
     app.run(debug=True, port=5000, host='0.0.0.0')
     # import pandas as pd
     # skill_full_set = set()

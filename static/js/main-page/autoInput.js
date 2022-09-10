@@ -10,8 +10,16 @@ function autocomplete(inp, formUrl, searchKey) {
 
         if (val.length > 3) {
             //let urlRequest = `${baseUrl}/skillInputAutocomplete}?skillName=${val}`;
-            let urlRequest = `${baseUrl}/${formUrl}?${searchKey}=${val}`;
-            fetch(urlRequest)
+            //let urlRequest = `${baseUrl}/${formUrl}?${searchKey}=${val}`;
+            let urlRequest = `${baseUrl}/${formUrl}`, data;
+            if (searchKey == 'skillName') {
+                data = { skillName: val };
+            }
+            else if (searchKey == 'jobName') {
+                data = { jobName: val }
+            }
+            //fetch(urlRequest)
+            postData(urlRequest, data)
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);

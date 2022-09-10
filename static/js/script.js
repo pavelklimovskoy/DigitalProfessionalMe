@@ -43,15 +43,30 @@ function createModalAddingSkill() {
   modalContent.innerHTML = '';
 
   const element = document.createElement('div');
+
   element.innerHTML = `
   <span data-close class="close">&times;</span>
   <form autocomplete="off" action="#">
-    <div style="width:300px;">
-      <input id="skillInput" type="text" name="skillName" placeholder="skillName">
-    </div>
-    <input id="addSkillButton" type="submit">
+    <input style="width: 20rem" class="text-center" id="skillInput" type="text" name="skillName" placeholder="skillName">
+    <br>
+    <br>
+    <input class="btn btn-primary row text-center" id="addSkillButton" type="submit" />
   </form>
   `;
+  element.classList.add('text-center');
+  // modalContent.innerHTML = '';
+
+  // const element = document.createElement('div');
+  // element.innerHTML = `
+  // <span data-close class="close">&times;</span>
+  // <form autocomplete="off" action="#">
+  //   <div style="width:300px;">
+  //     <input id="skillInput" type="text" name="skillName" placeholder="skillName">
+  //   </div>
+  //   <input id="addSkillButton" type="submit">
+  // </form>
+  // `;
+  // element.classList.add('text-center');
 
   modalContent.append(element);
 
@@ -101,8 +116,8 @@ function createModalAddingSkill() {
 // Создание модального окна для добавления цели
 function createModalGoal() {
   modalContent.innerHTML = '';
-  //Дата, Название JD
   const element = document.createElement('div');
+
   element.innerHTML = `
   <span data-close class="close">&times;</span>
   <form autocomplete="off" action="#">
@@ -110,13 +125,18 @@ function createModalGoal() {
       <input id="goalJDInput" type="text" name="jobName" placeholder="jobName">
       <input id="goalDateInput" type="date" name="dateJd" placeholder="dateJd" min="2022-01-01" max="2050-01-01">
     </div>
-    <input id="submitGoalForm" type="submit" onclick=addLifeGoal()>
+    <br>
+    <input class="btn btn-primary row text-center" id="submitGoalForm" type="submit" onclick=addLifeGoal()>
   </form>
+  <br>
   <form autocomplete="off" action="#">
-    <label for="showJobsOptions">Показать возможные работы(Пока просто отправка данных на сервер)</label>
-    <input id="showJobsOptions" type="submit">
+    <label for="showJobsOptions">Показать подходящие курсы</label>
+    <br>
+    <input class="btn btn-primary row text-center" id="showJobsOptions" type="submit">
   </form>
   `;
+
+  element.classList.add('text-center');
 
   modalContent.append(element);
 
@@ -134,69 +154,142 @@ function createModalGoal() {
     fetch(urlRequest)
       .then(response => response.json())
       .then(data => {
-
-        //closeModal();
+        showRelatedCourses(data, data.matchedJob);
       });
   });
 
   formButton.addEventListener('click', (e) => {
     e.preventDefault();
 
-    const urlRequest = `${baseUrl}/findJob?jobName=${input.value}&deadline=${dateInput.value}`;
-    fetch(urlRequest)
-      .then(response => response.json())
+    postData(`${baseUrl}/findJob`, { jobName: input.value, deadline: dateInput.value })
+      .then(response => {
+        console.log(response);
+        return response.json();
+      })
       .then(data => {
-        console.log('JD', data);
-
+        showRelatedCourses(data);
+        // console.log('JD', data);
         // modalContent.innerHTML = '';
 
-        // const element = document.createElement('div');
-        // const courses = data.offeredCourses;
-
-        // for (let i = 0; i < courses.length; i++) {
-        //   if (i <= 3) {
-        //     const courseCard = document.createElement('div');
-        //     skillReqStr = ``;
-
-        //     for (let i = 0; i < data.gapSkills.length; i++) {
-        //       skillReqStr += `${data.gapSkills[i]}, `;
-        //       if (i >= 9) {
-        //         break;
-        //       }
+        // let gapSkills = [],
+        //   relatedCourses = [];
+        // data.offeredCourses.forEach(course => {
+        //   course.gapSkills.forEach(skill => {
+        //     if (!(gapSkills.includes(skill)) && !(relatedCourses.includes(course.courseData)) && relatedCourses.length < 4) {
+        //       gapSkills.push(skill)
+        //       relatedCourses.push(course.courseData);
         //     }
+        //   })
+        // });
 
-        //     skillGetStr = ``;
+        // console.log(gapSkills);
+        // console.log(relatedCourses);
 
-        //     for (let i = 0; i < courses[i].courseName.skills.length; i++) {
-        //       skillReqStr += `${courses[i].courseName.skills[i]}, `;
-        //     }
+        // modalContent.style = 'width: 100% !important';
 
-        //     courseCard.innerHTML = `
-        //     <div class="container"> 
-        //       <div class="container__text">
-        //         <h1>${courses[i].courseName.name}</h1>
-        //         <p>
-        //         It seems you lack these skills:${skillReqStr})
-        //         </p>
-        //         <div class="container__text__timing">
-        //           <div class="container__text__timing_time">
-        //             <h2>Get Skills</h2>
-        //             <a>${skillGetStr}</a>
-        //           </div>
+        // const rowForCards = document.createElement('div');
+        // rowForCards.classList.add('row');
+        // modalContent.append(rowForCards);
 
-        //           <div class="container__text__timing_time">
-        //             <h2>Link</h2>
-        //             <a>${courses[i].courseName.url}</a>
-        //           </div>
-
+        // relatedCourses.forEach((course, i) => {
+        //   const courseCard = document.createElement('div');
+        //   courseCard.innerHTML = `
+        //   <div class="card text-center" style="width: 18rem;">
+        //     <img class="card-img-top" src="../static/icons/coursera.jpg" alt="Coursera logo image">
+        //       <div class="card-body">
+        //         <a href="${course.url}"><h5 class="card-title">${course.name}</h5></a>
+        //         <!-- <p class="card-text">Описание курса</p> -->
+        //       </div>
+        //       <ul class="list-group list-group-flush" id="courseSkillBlock-${i}">
+        //       </ul>
+        //       <div class="card-body" id="card-footer-${i}">
+        //         <!-- <a href="${course.url}" class="card-link">Ссылка на курс</a> -->
+        //         <input class="btn btn-primary row text-center" id="addCourseToTimeline-${i}" type="submit" value="Добавить на timeline">
         //         </div>
-        //     </div>
-        //     `;
-        //   }
-        // }
+        //   </div>
+        //   `;
+        //   courseCard.classList.add('col-3');
+        //   rowForCards.append(courseCard);
 
-        closeModal();
+        //   course.skills.forEach((skill, j) => {
+        //     if (j < 5) {
+        //       const skillItem = document.createElement('li');
+        //       skillItem.classList.add('list-group-item');
+        //       skillItem.textContent = skill;
+
+        //       document.querySelector(`#courseSkillBlock-${i}`).append(skillItem);
+        //     }
+        //   });
+
+        //   document.querySelector(`#addCourseToTimeline-${i}`).addEventListener('click', () => {
+        //     addCerificate({
+        //       skills: course.skills,
+        //       courseName: course.name,
+        //       date: data.deadline,
+        //       url: '',
+        //       userName: ''
+        //     });
+
+        //     document.querySelector(`#addCourseToTimeline-${i}`).remove();
+        //     document.querySelector(`#card-footer-${i}`).remove();
+        //   });
+        // });
       });
+
+    // fetch(urlRequest)
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     console.log('JD', data);
+
+    //     // modalContent.innerHTML = '';
+
+    //     // const element = document.createElement('div');
+    //     // const courses = data.offeredCourses;
+
+    //     // for (let i = 0; i < courses.length; i++) {
+    //     //   if (i <= 3) {
+    //     //     const courseCard = document.createElement('div');
+    //     //     skillReqStr = ``;
+
+    //     //     for (let i = 0; i < data.gapSkills.length; i++) {
+    //     //       skillReqStr += `${data.gapSkills[i]}, `;
+    //     //       if (i >= 9) {
+    //     //         break;
+    //     //       }
+    //     //     }
+
+    //     //     skillGetStr = ``;
+
+    //     //     for (let i = 0; i < courses[i].courseName.skills.length; i++) {
+    //     //       skillReqStr += `${courses[i].courseName.skills[i]}, `;
+    //     //     }
+
+    //     //     courseCard.innerHTML = `
+    //     //     <div class="container"> 
+    //     //       <div class="container__text">
+    //     //         <h1>${courses[i].courseName.name}</h1>
+    //     //         <p>
+    //     //         It seems you lack these skills:${skillReqStr})
+    //     //         </p>
+    //     //         <div class="container__text__timing">
+    //     //           <div class="container__text__timing_time">
+    //     //             <h2>Get Skills</h2>
+    //     //             <a>${skillGetStr}</a>
+    //     //           </div>
+
+    //     //           <div class="container__text__timing_time">
+    //     //             <h2>Link</h2>
+    //     //             <a>${courses[i].courseName.url}</a>
+    //     //           </div>
+
+    //     //         </div>
+    //     //     </div>
+    //     //     `;
+    //     //   }
+    //     // }
+
+    //     closeModal();
+    //   });
   });
 }
 
@@ -211,9 +304,12 @@ function createModalCv() {
     <input id="cvFileInput" type="file" name="file" accept=".pdf, .doc, .docx, .txt, .rtf" onchange="this.form.submit()">
     <p class="text-center">OR <br> Enter the link (hh.ru): </p>
     <input id="cvStringInput" type="text" name="link">
-    <input id="cvSubmitButtonInput" type="submit" />
+    <br>
+    <br>
+    <input class="btn btn-primary row text-center" id="cvSubmitButtonInput" type="submit" />
   </form>
   `;
+  element.classList.add('text-center');
 
   modalContent.append(element);
 
@@ -243,15 +339,17 @@ function createModalEvidence() {
   modalContent.innerHTML = '';
 
   const element = document.createElement('div');
+
   element.innerHTML = `
   <span data-close class="close">&times;</span>
   <form autocomplete="off" action="#">
-    <div style="width:300px;">
-      <input id="evidenceInput" type="text" name="evidenceInput" placeholder="certificateUrl (stepik, coursera)">
-    </div>
-    <input id="parseCertificateButton" type="submit">
+    <input style="width: 20rem" class="text-center" id="evidenceInput" type="text" name="evidenceInput" placeholder="certificateUrl (stepik, coursera)">
+    <br>
+    <br>
+    <input class="btn btn-primary row text-center" id="parseCertificateButton" type="submit" />
   </form>
   `;
+  element.classList.add('text-center');
 
   modalContent.append(element);
 
@@ -260,8 +358,8 @@ function createModalEvidence() {
   formButton.addEventListener('click', (e) => {
     e.preventDefault();
 
-    const urlRequest = `${baseUrl}/parseCertificate?url=${input.value}`;
-    fetch(urlRequest)
+    const urlRequest = `${baseUrl}/parseCertificate`;
+    postData(urlRequest, { url: input.value })
       .then(response => response.json())
       .then(ceritificateData => {
         console.log(ceritificateData);
@@ -270,7 +368,6 @@ function createModalEvidence() {
         closeModal();
       });
   });
-
 }
 
 // Назначение цели для кнопки открытия окна
@@ -307,4 +404,81 @@ async function postData(url = '', data = {}) {
     body: JSON.stringify(data)
   })
   return response;
+}
+
+function showRelatedCourses(data, matchedJob = '') {
+  console.log('JD', data);
+  modalContent.innerHTML = '';
+
+  let gapSkills = [],
+    relatedCourses = [];
+  data.offeredCourses.forEach(course => {
+    course.gapSkills.forEach(skill => {
+      if (!(gapSkills.includes(skill)) && !(relatedCourses.includes(course.courseData)) && relatedCourses.length < 4) {
+        gapSkills.push(skill)
+        relatedCourses.push(course.courseData);
+      }
+    })
+  });
+
+  console.log(gapSkills);
+  console.log(relatedCourses);
+
+  modalContent.style = 'width: 100% !important';
+
+  const rowForCards = document.createElement('div');
+  rowForCards.classList.add('row');
+  modalContent.append(rowForCards);
+
+  relatedCourses.forEach((course, i) => {
+    const courseCard = document.createElement('div');
+    courseCard.innerHTML = `
+    <div class="card text-center" style="width: 18rem;">
+      <img class="card-img-top" src="../static/icons/coursera.jpg" alt="Coursera logo image">
+        <div class="card-body">
+          <a href="${course.url}"><h5 class="card-title">${course.name}</h5></a>
+          <!-- <p class="card-text">Описание курса</p> -->
+        </div>
+        <ul class="list-group list-group-flush" id="courseSkillBlock-${i}">
+        </ul>
+        <div class="card-body" id="card-footer-${i}">
+          <!-- <a href="${course.url}" class="card-link">Ссылка на курс</a> -->
+          <input class="btn btn-primary row text-center" id="addCourseToTimeline-${i}" type="submit" value="Добавить на timeline">
+          </div>
+    </div>
+    `;
+    courseCard.classList.add('col-3');
+    rowForCards.append(courseCard);
+
+    course.skills.forEach((skill, j) => {
+      if (j < 5) {
+        const skillItem = document.createElement('li');
+        skillItem.classList.add('list-group-item');
+        skillItem.textContent = skill;
+
+        document.querySelector(`#courseSkillBlock-${i}`).append(skillItem);
+      }
+    });
+
+    if (matchedJob) {
+      const jobText = document.createElement('p');
+      jobText.textContent = `Наиболее подходящая профессия: ${matchedJob}`;
+      document.querySelector(`#card-footer-${i}`).append(jobText);
+    }
+
+    document.querySelector(`#addCourseToTimeline-${i}`).addEventListener('click', () => {
+      addCerificate({
+        skills: course.skills,
+        courseName: course.name,
+        date: data.deadline,
+        url: '',
+        userName: ''
+      });
+
+      document.querySelector(`#addCourseToTimeline-${i}`).remove();
+      if (!matchedJob) {
+        document.querySelector(`#card-footer-${i}`).remove();
+      }
+    });
+  });
 }

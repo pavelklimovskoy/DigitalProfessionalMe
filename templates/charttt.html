@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>BCT Sunburst Chart 17</title>
+    <link href="https://playground.anychart.com/docs/samples/BCT_Sunburst_Chart_17/iframe" rel="canonical">
+    <meta content="Sunburst Chart" name="keywords">
+    <meta content="AnyChart - JavaScript Charts designed to be embedded and integrated" name="description">
+    <!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
+    <link href="https://cdn.anychart.com/releases/8.11.0/css/anychart-ui.min.css?hcode=a0c21fc77e1449cc86299c5faa067dc4"
+        rel="stylesheet" type="text/css">
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        label {
+            display: inline-block;
+            margin: 10px 0 0 10px;
+        }
+
+        #container {
+            position: absolute;
+            width: 100%;
+            top: 35px;
+            bottom: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script
+        src="https://cdn.anychart.com/releases/8.11.0/js/anychart-base.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
+    <script
+        src="https://cdn.anychart.com/releases/8.11.0/js/anychart-sunburst.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
+    <script
+        src="https://cdn.anychart.com/releases/8.11.0/js/anychart-exports.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
+    <script
+        src="https://cdn.anychart.com/releases/8.11.0/js/anychart-ui.min.js?hcode=a0c21fc77e1449cc86299c5faa067dc4"></script>
+    <script type="text/javascript">anychart.onDocumentReady(function () {
+
+            // create data
+            var data = [
+                {
+                    name: "", children: [
+                        {
+                            name: "Career Planning", children: [
+                                { name: "Career Development" },
+                                { name: "Relationship Building" }
+                            ]
+                        },
+                        {
+                            name: "Soft Skills", fill:"#FFB240", children: [
+                                { name: "Attentiveness", fill:'#FFB240' },
+                                { name: "Creativity" , fill:'#FFB240'},
+                                { name: "Psychology", fill:'#FFB240' }
+                            ]
+                        },
+                        {
+                            name: "Management", fill: '#ee794e', children: [
+                                {name: "Human Resource Management", fill:'#ee794e'},
+                                {name: "Event Management", fill:'#ee794e'}
+                            ]
+                        }
+                    ]
+                }
+            ];
+
+            // create a chart and set the data
+            chart = anychart.sunburst(data, "as-tree");
+
+            // set the position of labels
+            chart.labels().position("circular");
+
+
+
+            // set the container id
+            chart.container("container");
+
+            // initiate drawing the chart
+            chart.draw();
+        });
+    </script>
+</body>
+
+</html>

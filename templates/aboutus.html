@@ -1,99 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title>Digital Professional Me</title>
 
   <meta charset="utf-8">
   <meta name="description" content="DPM - Choose Your Career Paths">
-  <meta name="viewport" content="width=device-width, height=device-height initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  
-    
+  <meta name="viewport"
+    content="width=device-width, height=device-height initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
   <link rel="stylesheet" href="../static/css/style.css" media="screen">
   <link rel="stylesheet" href="../static/css/style-particles.css" media="screen">
-  <link rel ="stylesheet" href="../static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../static/css/bootstrap.min.css">
   <style>
-    .hello{
+    .hello {
       margin-top: 2%;
       margin-bottom: 5%;
-      font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      font-family: Andale Mono, monospace;
       font-size: 25px;
       text-align: center;
       /* display: flex; */
       justify-content: center;
     }
 
-    .person-info{
+    .person-info {
       margin-top: 5%;
-      font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      font-family: Andale Mono, monospace;
       font-size: 20px;
       text-align: center;
       /* display: flex; */
       justify-content: center;
     }
 
-    .a{
+    .a {
       margin-top: 5%;
-      font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
       font-size: 20px;
       text-align: center;
       /* display: flex; */
-      justify-content: center; 
+      justify-content: center;
     }
 
-  .container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  }
+    .flash {
+      text-align: center;
+      padding: 10px;
+    }
 
-  .item {
-    flex: 0 1 calc(100%/3 - 20px*2);
-    margin: 20px;
-  }
+    .flash.success {
+      border: 1px solid #21DB56;
+      background: #AEFFC5;
+    }
 
-  .item-box {
-    width: 100%;
-    text-align: center; 
-  }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-  .item-box img {
-    border-radius: 100%;
-    width: 50%;
-  }
+    .item {
+      flex: 0 1 calc(100%/3 - 20px*2);
+      margin: 20px;
+    }
 
+    .item-box {
+      width: 100%;
+      text-align: center;
+    }
+
+    .item-box img {
+      border-radius: 100%;
+      width: 50%;
+    }
   </style>
 </head>
 
 <body>
   <!-- Canvas with main content -->
   <div class="mainBlock">
+    {% for cat, msg in get_flashed_messages(True) %}
+    <div class="flash {{cat}}">{{msg}}</div>
+    {% endfor %}
 
     <div class="hello">
       <p>
-        Hello!<br>
+        <!-- Hello!<br>
         We are Digital Professional Me™!<br>
-        The project is still in progress, but you're welcome to contact us!
+        The project is still in progress, but you're welcome to contact us! -->
+        Привет!<br>
+        Мы — <strong>Digital Professional Me™</strong>!<br>
+        Проект находится в стадии разработки, но мы будем рады, если вы свяжетесь с нами!
       </p>
     </div>
 
-    <div class="container">
+    <!-- <div class="row text-center">
+      <form method="POST" action="/addFeedback" class="container col-4">
+        
+        <label class="container col-6" for="exampleInputEmail">Email</label>
+        <input class="container col-6" type="text" name="name" id="exampleInputEmail">
 
+        <label class="container col-6" for="exampleInputUsername">Имя</label>
+        <input class="container col-6" type="text" name="name" id="exampleInputUsername">
+
+        <button type="submit" class="btn btn-success mt-3">Отправить данные</button>
+      </form>
+      
+    </div> -->
+
+    <form method="POST" action="/addFeedback" class="container col-md-2 form-control">
+      <div class="form-group text-center">
+        <label for="exampleInputEmail">Email</label>
+        <input name="email" type="email" class="form-control" id="exampleInputEmail" aria-describedby="emailHelp"
+          placeholder="Ваш email">
+      </div>
+      <div class="form-group text-center">
+        <label for="exampleInputName">Имя</label>
+        <input name="name" type="text" class="form-control" id="exampleInputName" placeholder="Ваше имя">
+        <button type="submit" class=" btn btn-primary row text-center" style="margin-top: 1rem">Отправить данные</button>
+      </div>
+    </form>
+
+    <div class="container">
       <div class="item">
         <div class="item-box">
-          <img src="../static/data/img/Alexander.png" alt=""/>
+          <img src="../static/data/img/Alexander.png" alt="" />
           <p class="person-info">
-            Alexander Fedorov<br>
+            <!-- Alexander Fedorov<br> -->
+            <strong>Александр Федоров</strong><br>
             Tech Co-Founder<br>
             <a href="mailto:alefe@sfedu.ru">alefe@sfedu.ru</a>
           </p>
         </div>
       </div>
-      
+
       <div class="item">
         <div class="item-box">
           <img src="../static/data/img/Alexey.png" alt="" />
           <p class="person-info">
-            Alexey Tselykh<br>
+            <!-- Alexey Tselykh<br> -->
+            <strong>Алексей Целых</strong><br>
             CEO & Founder<br>
             <a href="mailto:tselykh@sfedu.ru">tselykh@sfedu.ru</a>
           </p>
@@ -102,25 +147,25 @@
 
       <div class="item">
         <div class="item-box">
-          <img src="../static/data/img/Pavel.png" alt=""/>
+          <img src="../static/data/img/Pavel.png" alt="" />
           <p class="person-info">
-            Pavel Klimovskoy<br>
+            <!-- Pavel Klimovskoy<br> -->
+            <strong>Павел Климовской</strong><br>
             Tech Co-Founder<br>
             <a href="mailto:klimovskoy@sfedu.ru">klimovskoy@sfedu.ru</a>
           </p>
         </div>
       </div>
-
     </div>
-
   </div>
-    
+
   <!-- particles.js container -->
   <div id="particles-js"></div>
-  
+
   <!-- Scripts -->
   <script src="https://pixijs.download/dev-graphics-batch-pool/pixi.js"></script>
   <script src="../static/js/SuperParticles.js"></script>
   <script src="../static/js/script.js" type="text/javascript"></script>
 </body>
+
 </html>

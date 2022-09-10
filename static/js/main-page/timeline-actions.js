@@ -258,9 +258,9 @@ function addCerificate(ceritificateData) {
 
 
   timeline.itemsData.add(newItem);
-  console.log(itemId);
+  //console.log(itemId);
 
-  closeModal();
+  //closeModal();
 }
 
 // courseSkills.forEach(skill => {
