@@ -163,8 +163,8 @@ def get_rchilli_json():
 @app.route('/about', methods=['POST', 'GET'])
 def about_us():
     if request.method == 'POST':
-        email = request.form['email']
-        name = request.form['name']
+        email = request.get_json()['email']
+        name = request.get_json()['name']
         print(email)
         print(name)
         collection_feedback.insert_one({
