@@ -162,16 +162,6 @@ def get_rchilli_json():
 # About page
 @app.route('/about', methods=['POST', 'GET'])
 def about_us():
-    if request.method == 'POST':
-        email = request.get_json()['email']
-        name = request.get_json()['name']
-        print(email)
-        print(name)
-        collection_feedback.insert_one({
-            'email': email,
-            'name': name
-        })
-
     return render_template('aboutus.html', title='About us')
 
 
@@ -248,13 +238,11 @@ def change_skill_state():
 @app.route('/skillInputAutocomplete', methods=['POST'])
 def show_input_options():
     return skill_autocomplete(request.get_json()['skillName'])
-    # return skill_autocomplete(f'{request.args.get("skillName")}')
 
 
 @app.route('/jobInputAutocomplete', methods=['POST'])
 def show_jobs():
-    return skill_autocomplete(request.get_json()['jobName'])
-    # return job_autocomplete(f'{request.args.get("jobName")}')
+    return job_autocomplete(request.get_json()['jobName'])
 
 
 @app.route('/findJob', methods=['POST'])
@@ -293,15 +281,13 @@ def find_jobs():
 
 @app.route('/parseCertificate', methods=['POST'])
 def parse_certificate():
-    # url = str(request.args.get('url'))
     url = request.get_json()['url']
     resp = dict()
+
     if 'coursera.org' in url:
         resp = parse_coursera_url(url)
     elif 'stepik.org' in url:
         resp = parse_stepik_url(url)
-    # elif 'ude.my' in url or 'udemy.com' in url:
-    #    resp = parse_udemy_url(url)
 
     add_certificate_event(current_user.id, resp['courseName'], resp['date'], resp['url'], resp['userName'])
     return resp
@@ -440,11 +426,9 @@ def find_skill():
 @login_required
 def find_jobs_by_skills():
     set_owned_skills = set(get_owned_skills(current_user.id))
-    print(set_owned_skills)
     related_jobs = dict()
-    cnt = 0
-    mx = 0
     matched_job = str()
+    mx = 0
 
     for skill in set_owned_skills:
         skill_data = get_skill_from_dataset(skill)
@@ -459,25 +443,22 @@ def find_jobs_by_skills():
                     mx = related_jobs[job]
                     matched_job = job
 
-    print(matched_job)
-
-    print(dict(sorted(related_jobs.items(), key=lambda item: item[1]), reverse=True))
-    print(len(related_jobs))
-    print(cnt)
-
     job_data = job_search(job_autocomplete(matched_job))['Skills']
     set_req_skills = set()
+
     for skill in job_data:
         set_req_skills.add(skill['Skill'])
-    print(set_req_skills)
-    set_different = set_req_skills - set_owned_skills
-    print('skillGap', set_different)
+
+    #set_different = set_req_skills - set_owned_skills
+    set_different = set_owned_skills - set_req_skills
 
     courses = get_courses(set_different)
+
     print(courses)
     print(set_owned_skills)
     print(set_req_skills)
     print(set_different)
+
     return json.loads(json_util.dumps({
         'offeredCourses': courses,
         'gapSkills': set_different,
@@ -503,17 +484,17 @@ def find_jobs_by_skills():
 
 
 if __name__ == '__main__':
-    # print(skill_search(('C++')))
     app.run(debug=True, port=5000, host='0.0.0.0')
+
     # import pandas as pd
     # skill_full_set = set()
     # for course in collection_dataset.find():
     #     course_skills = set(course['skills'])
     #     for skill in course_skills:
-    #         #if skill == 'develop social welfare policy analysis and reform proposals':
-    #         #    print(course)
+    #         if skill == 'Organizational Theory':
+    #             print(course)
     #         skill_full_set.add(skill)
-    #
+
     # skill_full_array = []
     # for skill in skill_full_set:
     #     skill_full_array.append(skill)

@@ -4,15 +4,35 @@ window.onload = function () {
       element: "#particles-js"
     }
   });
+
+  document.querySelector('#toggleDisabledSkills').checked = (localStorage.getItem('showDisabledSkills') == 'true');
 };
 
 const baseUrl = `http://${document.location.host}`;
-try{ 
+try {
   document.querySelector('#avatar_upload').setAttribute('action', `${baseUrl}/upload_avatar`);
 }
 catch {
   console.log('no avatar');
 }
+
+document.querySelector('#toggleDisabledSkills').addEventListener('click', () => {
+  if (document.querySelector('#toggleDisabledSkills').checked == true) {
+    localStorage.setItem('showDisabledSkills', true);
+    
+    document.querySelectorAll('.disabled-skill').forEach(skill => {
+      skill.remove();
+    });
+  } else {
+    localStorage.setItem('showDisabledSkills', false);
+
+    let disabled = skillList.filter(skill => !skill.enabled), i = 0;
+    console.log(disabled);
+    disabled.forEach((skill) => { addSkill(skill, i); i++ });
+  }
+});
+
+
 //Modal
 const modalTrigger = document.querySelectorAll('[data-modal]'),
   modal = document.querySelector('.modal'),
@@ -423,7 +443,7 @@ function showRelatedCourses(data, matchedJob = '') {
       }
     })
   });
-
+      
   console.log(gapSkills);
   console.log(relatedCourses);
 

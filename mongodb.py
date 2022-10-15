@@ -52,7 +52,7 @@ class Users(UserMixin):
 
 def update_record(findKey, findValue, key, value):
     collection_users.find_one_and_update({findKey: findValue},
-                                   {'$set': {key: value}})
+                                         {'$set': {key: value}})
 
 
 def create_record(form):
@@ -248,17 +248,12 @@ def get_courses(req_skills):
         skills_union = course_skills & req_skills
 
         if len(skills_union):
-            print(len(skills_union), skills_union, course['name'], course['url'])
+            # print(len(skills_union), skills_union, course['name'], course['url'])
             courses.append({'courseData': course,
                             'gapLength': len(skills_union),
                             'gapSkills': skills_union})
-    # dict_courses.sort(key=lambda x: x[0])
-    #
-    # courses = []
-    # for course in dict_courses:
-    #     print(course[1])
-    # courses = sorted(courses, key=lambda d: d['gap'])
     return sorted(courses, key=lambda d: d['gapLength'], reverse=True)
+
 
 def add_skill_to_dataset(skill_name, jobs, courses, id):
     collection_skills_dataset.insert_one({
@@ -267,6 +262,7 @@ def add_skill_to_dataset(skill_name, jobs, courses, id):
         'relatedJobs': jobs,
         'relatedCourses': courses
     })
+
 
 def get_skill_from_dataset(skill_name):
     return collection_skills_dataset.find_one({'skill': skill_name})

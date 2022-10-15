@@ -18,24 +18,28 @@ function changeSkillState(skillId) {
 
         if (skillClass != 'disabled-skill') {
             skill.remove();
-            
+
             skill.classList.remove(skillClass);
             skill.classList.add('disabled-skill');
-            
+
             console.log(skill);
             skill.childNodes[1].childNodes[0].src = '../static/icons/button-off.png';
-            skillBlock.append(skill);
+
+            if (localStorage.getItem('showDisabledSkills') == 'false') {
+                skillBlock.append(skill);
+            }
+
             state = 0;
         }
         else {
             skill.classList.remove('disabled-skill');
-            
+
             if (skill.id.includes('SoftSkill') || skill.id.includes('Soft') || skill.id.includes('Knowledge') || skill.id.includes('BehaviorSkills')) {
                 skill.classList.add('soft-skill');
             } else {
                 skill.classList.add('hard-skill');
             }
-            
+
             console.log(skill);
             try {
                 skill.remove();
@@ -46,10 +50,10 @@ function changeSkillState(skillId) {
                 skill.childNodes[1].childNodes[0].src = '../static/icons/button-on.png';
                 skillBlock.append(skill);
             }
-            
+
             state = 1;
         }
-        
+
         // Переключение состояния скилла в БД
         postData(`${baseUrl}/changeSkillState`, { skill: skill.textContent });
     }
@@ -134,8 +138,7 @@ function addSkill(skill, i) {
     else {
         iconButton.src = '../static/icons/button-off.png';
     }
-    iconButton.style.height =  '1rem';
-    console.log(iconButton);
+    iconButton.style.height = '1rem';
     //let iconButton = document.createElement('i');
     //iconButton.className = 'fa fa-refresh';
     //iconButton.style = 'color:white!important';
@@ -190,6 +193,8 @@ function loadSkills() {
     enabled.forEach(
         (skill) => { addSkill(skill, i); i++ });
 
-    disabled.forEach(
-        (skill) => { addSkill(skill, i); i++ });
+    if (localStorage.getItem('showDisabledSkills') == 'false') {
+        disabled.forEach(
+            (skill) => { addSkill(skill, i); i++ });
+    }
 }
