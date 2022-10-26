@@ -19,7 +19,7 @@ catch {
 document.querySelector('#toggleDisabledSkills').addEventListener('click', () => {
   if (document.querySelector('#toggleDisabledSkills').checked == true) {
     localStorage.setItem('showDisabledSkills', true);
-    
+
     document.querySelectorAll('.disabled-skill').forEach(skill => {
       skill.remove();
     });
@@ -145,14 +145,16 @@ function createModalGoal() {
   <span data-close class="close">&times;</span>
   <form autocomplete="off" action="#">
     <div>
+      <h3 class="justify-content-center">Укажите профессию</h3>
       <input id="goalJDInput" type="text" name="jobName" placeholder="jobName">
       <input id="goalDateInput" type="date" name="dateJd" placeholder="dateJd" min="2022-01-01" max="2050-01-01">
     </div>
     <br>
     <input class="btn btn-primary row text-center" id="submitGoalForm" type="submit" onclick=addLifeGoal()>
   </form>
-  <br>
+    <br>
   <form autocomplete="off" action="#">
+    <h3 class="justify-content-center">Получить персональную рекомендацию</h3>
     <label for="showJobsOptions">Показать подходящие курсы</label>
     <br>
     <input class="btn btn-primary row text-center" id="showJobsOptions" type="submit">
@@ -443,7 +445,7 @@ function showRelatedCourses(data, matchedJob = '') {
       }
     })
   });
-      
+
   console.log(gapSkills);
   console.log(relatedCourses);
 

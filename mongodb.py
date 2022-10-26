@@ -6,16 +6,17 @@ import uuid
 
 class Users(UserMixin):
     # переписать на str()
-    id = ''
+    id = str()
     json_data = dict()
     rchilli_data = dict()
-    name = ''
-    email = ''
-    password = ''
+    name = str()
+    language = str()
+    email = str()
+    password = str()
     timeline_events = dict()
-    avatar = ''
+    avatar = str()
 
-    def __init__(self, id, name, email, password, json_data, rchilli_data, timeline_events, avatar):
+    def __init__(self, id, language, name, email, password, json_data, rchilli_data, timeline_events, avatar):
         self.id = id
         self.name = name
         self.email = email
@@ -24,11 +25,13 @@ class Users(UserMixin):
         self.rchilli_data = rchilli_data
         self.timeline_events = timeline_events
         self.avatar = avatar
+        self.language = language
 
     def to_json(self):
         return {
             "id": self.id,
             "name": self.name,
+            "language": self.language,
             "email": self.email,
             "password": self.password,
             "jsondata": self.json_data,
@@ -154,6 +157,7 @@ def create_record(form):
 
     collection_users.insert_one({
         'id': str(uuid.uuid4()),
+        'language': '',
         'name': form.name.data,
         'email': form.email.data,
         'password': form.password.data,
@@ -168,6 +172,7 @@ def find_record(key, value):
     user = collection_users.find_one({key: value})
     if user is not None:
         return Users(id=user['id'],
+                     language=user['language'],
                      name=user['name'],
                      email=user['email'],
                      password=user['password'],

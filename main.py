@@ -109,6 +109,8 @@ def upload_file():
                 json_data, skills_array = json_convert(rchilli_data)
                 timeline_events = timeline_parse(rchilli_data)
 
+                update_record('id', current_user.id, 'language',
+                              rchilli_data['ResumeParserData']['ResumeLanguage']['LanguageCode'])
                 update_record('id', current_user.id, 'jsondata', json_data)
                 update_record('id', current_user.id, 'rchillidata', rchilli_data)
                 update_record('id', current_user.id, 'timelineEvents', timeline_events)
@@ -142,6 +144,7 @@ def get_avatar():
 @app.route('/getChartJson', methods=['GET', 'POST'])
 @login_required
 def get_chart_json():
+    print(current_user.language)
     return jsonify(current_user.json_data)
 
 
@@ -449,8 +452,8 @@ def find_jobs_by_skills():
     for skill in job_data:
         set_req_skills.add(skill['Skill'])
 
-    #set_different = set_req_skills - set_owned_skills
-    set_different = set_owned_skills - set_req_skills
+    set_different = set_req_skills - set_owned_skills
+    #set_different = set_owned_skills - set_req_skills
 
     courses = get_courses(set_different)
 
