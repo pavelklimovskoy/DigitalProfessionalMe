@@ -155,11 +155,18 @@ def get_timeline_json():
     return jsonify(current_user.timeline_events)
 
 
-# Rchilli Json
+# Get Rchilli Json
 @app.route('/getRchilliJson', methods=['GET', 'POST'])
 @login_required
 def get_rchilli_json():
     return jsonify(current_user.rchilli_data)
+
+
+# Get Skills from Rchilli Json
+@app.route('/getRchilliSkills', methods=['GET', 'POST'])
+@login_required
+def get_rchilli_skills():
+    return jsonify(current_user.rchilli_data['ResumeParserData']['SegregatedSkill'])
 
 
 # About page

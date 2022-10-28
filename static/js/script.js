@@ -26,12 +26,10 @@ document.querySelector('#toggleDisabledSkills').addEventListener('click', () => 
   } else {
     localStorage.setItem('showDisabledSkills', false);
 
-    let disabled = skillList.filter(skill => !skill.enabled), i = 0;
-    console.log(disabled);
-    disabled.forEach((skill) => { addSkill(skill, i); i++ });
+    let disabled = skillList.filter(skill => !skill.enabled);
+    disabled.forEach((skill, i) => addSkill(skill, i));
   }
 });
-
 
 //Modal
 const modalTrigger = document.querySelectorAll('[data-modal]'),
@@ -96,7 +94,7 @@ function createModalAddingSkill() {
   const input = document.querySelector('#skillInput'),
     formButton = document.querySelector('#addSkillButton');
 
-  autocomplete(input, 'skillInputAutocomplete', 'skillName');
+  autocompleteInput(input, 'skillInputAutocomplete', 'skillName');
 
   formButton.addEventListener('click', (e) => {
     e.preventDefault();
@@ -114,25 +112,6 @@ function createModalAddingSkill() {
         addSkill(skill, skillList.length);
         closeModal();
       });
-
-
-
-    // const urlRequest = `${baseUrl}/findSkill?skillName=${input.value}`;
-    // fetch(urlRequest)
-    //   .then(response => response.json())
-    //   .then(skillData => {
-    //     const ontology = skillData.ontology.split(',')[0].split('>');
-    //     let skill = addSkillToChart(skillData.searchWord, ontology[1], ontology[0], skillData.type, skillData.filling);
-
-    //     // skill = {
-    //     //   'name': skillData.searchWord,
-    //     //   'id': skillData.type,
-    //     //   'enabled': true
-    //     // };
-
-    //     addSkill(skill, skillList.length);
-    //     closeModal();
-    //   });
   });
 }
 
@@ -170,7 +149,7 @@ function createModalGoal() {
     formButton = document.querySelector('#submitGoalForm'),
     jobOptionsButton = document.querySelector('#showJobsOptions');
 
-  autocomplete(input, 'jobInputAutocomplete', 'jobName');
+  autocompleteInput(input, 'jobInputAutocomplete', 'jobName');
 
   jobOptionsButton.addEventListener('click', (e) => {
     e.preventDefault();
@@ -427,7 +406,7 @@ async function postData(url = '', data = {}) {
     redirect: 'follow',
     referrerPolicy: 'no-referrer',
     body: JSON.stringify(data)
-  })
+  });
   return response;
 }
 

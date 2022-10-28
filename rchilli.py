@@ -28,6 +28,10 @@ def rchilli_parse(file_name):
     response = requests.post(API_PARSE_RESUME_URL, data=body, headers=headers)
     resp = json.loads(response.text)
 
+    resp['ResumeParserData'].pop('DetailResume')
+    resp['ResumeParserData'].pop('HtmlResume')
+    resp['ResumeParserData'].pop('TemplateOutput')
+
     return resp
 
 

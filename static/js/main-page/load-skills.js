@@ -1,5 +1,5 @@
-let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '',
-    skillBlock = document.querySelector('#skillsBlock');
+//let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '',
+let skillBlock = document.querySelector('#skillsBlock');
 
 // Смена состояний скиллов
 function changeSkillState(skillId) {
@@ -184,17 +184,126 @@ function addSkill(skill, i) {
 // Загрузка скиллов
 function loadSkills() {
     let enabled = skillList.filter(skill => skill.enabled),
-        disabled = skillList.filter(skill => !skill.enabled),
-        i = 0;
+        disabled = skillList.filter(skill => !skill.enabled);
 
     enabled.sort();
     disabled.sort();
 
-    enabled.forEach(
-        (skill) => { addSkill(skill, i); i++ });
+    enabled.forEach((skill, i) => addSkill(skill, i));
 
     if (localStorage.getItem('showDisabledSkills') == 'false') {
-        disabled.forEach(
-            (skill) => { addSkill(skill, i); i++ });
+        disabled.forEach((skill, i) => addSkill(skill, i));
     }
+}
+
+
+// Просчет веса скиллов
+function calcSkillsWeight() {
+    const urlRequest = `${baseUrl}/getRchilliSkills`;
+    postData(urlRequest)
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            let skillsSize = data.length;
+            let skillsWeights = {};
+            let skillsIn = {};
+            let skillsLastUsed = {};
+            let skillsExp = {};
+
+            data.map(skill => {
+                const skillName = skill.FormattedName;
+                if (skillName != '') {
+                    if (skillName in skillsIn) {
+                        skillsIn[skillName] += 1;
+                    }
+                    else {
+                        skillsIn[skillName] = 1;
+                    }
+                }
+            });
+
+            console.log('Количество вхождений: ', skillsIn);
+
+            data.map(skill => {
+                const skillName = skill.FormattedName;
+                if (skillName != '') {
+                    if (skillName in skillsWeights) {
+                        skillsWeights[skillName] += (1 / skillsSize);
+                    }
+                    else {
+                        skillsWeights[skillName] = (1 / skillsSize);
+                    }
+
+                    const n = +skill.ExperienceInMonths;
+                    if (n) {
+                        // switch (true) {
+                        //     case (n <= 6):
+                        //         skillsWeights[skillName] += 0.1;
+                        //         break;
+                        //     case (n <= 12):
+                        //         skillsWeights[skillName] += 0.25;
+                        //         break;
+                        //     case (n > 12):
+                        //         skillsWeights[skillName] += 0.5;
+                        //         break;
+                        // }
+
+                        if (skillName in skillsExp) {
+                            skillsExp[skillName] = Math.max(skillsExp[skillName], n);
+                        }
+                        else {
+                            skillsExp[skillName] = n;
+                        }
+                    }
+                    if (skill.LastUsed != "") {
+                        const nowDate = new Date();
+                        const m = skill.LastUsed.slice(3, 5),
+                            d = skill.LastUsed.slice(0, 2),
+                            y = skill.LastUsed.slice(-4);
+
+                        const endDate = new Date(`${m}.${d}.${y}`);
+                        const diff = nowDate - endDate;
+
+                        const hours = Math.floor(diff / 3.6e6);
+                        const mDiff = Math.trunc(hours / 730);
+
+                        // if (mDiff <= 12) {
+                        //     skillsWeights[skillName] += 0.25;
+                        // }
+                        if (skillName in skillsLastUsed) {
+                            skillsLastUsed[skillName] = Math.min(skillsLastUsed[skillName], mDiff);
+                        }
+                        else {
+                            skillsLastUsed[skillName] = mDiff;
+                        }
+                    }
+                }
+            });
+
+            for (let key in skillsLastUsed) {
+                if (skillsLastUsed[key] <= 12) {
+                    skillsWeights[key] += 0.25;
+                }
+            }
+
+            for (let key in skillsExp) {
+                switch (true) {
+                    case (skillsExp[key] <= 6):
+                        skillsWeights[key] += 0.1;
+                        break;
+                    case (skillsExp[key] <= 12):
+                        skillsWeights[key] += 0.25;
+                        break;
+                    case (skillsExp[key] > 12):
+                        skillsWeights[key] += 0.5;
+                        break;
+                }
+            }
+
+            console.log('Минимальная разница текущей даты и последней даты использования скилла: ', skillsLastUsed);
+            console.log('Максимальное количество месяцев использования скилла: ', skillsExp);
+            console.log('Веса: ', skillsWeights);
+        });
 }

@@ -169,8 +169,8 @@ function charCalc(n) {
 
 // Отрисовка диаграммы
 function renderChart() {
-  let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '',
-    urlRequest = `${baseUrl}/getChartJson?id=${cookieId}`;
+  //let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '',
+  let urlRequest = `${baseUrl}/getChartJson`;
 
   anychart.data.loadJsonFile(urlRequest,
     function (data) {
@@ -258,6 +258,7 @@ function renderChart() {
 
       createTimeline();
       loadSkills();
+      calcSkillsWeight();
 
       disabledSkills.forEach(skill => disableSkill(skill.name));
     });

@@ -25,8 +25,8 @@ function createTimeline() {
 
   itemId = 0;
 
-  let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '';
-  let urlRequest = `${baseUrl}/getTimelineJson?id=${cookieId}`;
+  //let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '';
+  let urlRequest = `${baseUrl}/getTimelineJson`;
 
 
   fetch(urlRequest)
@@ -126,10 +126,10 @@ function createTimeline() {
       data["certifications"].forEach(certificate => {
         let date = certificate["date"],
           name = certificate["name"];
-          
-          console.log(date);
-          console.log(name);
-          console.log(new Date(date));
+
+        console.log(date);
+        console.log(name);
+        console.log(new Date(date));
 
         arrItems.push({
           id: itemId,
