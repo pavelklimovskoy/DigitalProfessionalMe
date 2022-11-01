@@ -257,8 +257,8 @@ function renderChart() {
       chart.autoRedraw(true);
 
       createTimeline();
-      loadSkills();
-      calcSkillsWeight();
+      //loadSkills(); 
+      calcSkillsWeightAndShowIt();
 
       disabledSkills.forEach(skill => disableSkill(skill.name));
     });

@@ -1,12 +1,11 @@
 import json
 
 # Soft Types of skills
-soft_types = ['SoftSkill', 'Knowledge', 'Soft', 'BehaviorSkills']
+soft_types = ['SoftSkill', 'Knowledge', 'Soft']
 
 # Colors for skills
 hard_colors = ['#4188D2', '#3272B5', '#235C97', '#144679', '#05305B']  # 1-2, 3-4, 5-6, 7-8, >= 9
 soft_colors = ['#FFB240', '#D99632', '#B27923', '#8C5C14', '#653F05']  # 1-2, 3-4, 5-6, 7-8, >= 9
-
 
 # Определение цвета для сектора
 def color_calc(check, skill_type):
@@ -87,7 +86,7 @@ def json_convert(data):
 
                         skill_self = {
                             'name': skillName['FormattedName'], 'id': child_main['id'], 'value': '1',
-                            'enabled': True, 'shortName': short_name, 'fill': '',
+                            'enabled': False, 'shortName': short_name, 'fill': '',
                             'grandParent': type_skill, 'parent': ontology_main[1]
                         }
 

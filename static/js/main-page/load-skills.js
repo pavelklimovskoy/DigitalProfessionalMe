@@ -182,23 +182,45 @@ function addSkill(skill, i) {
 }
 
 // Загрузка скиллов
-function loadSkills() {
+function loadSkills(topSkills = 0) {
     let enabled = skillList.filter(skill => skill.enabled),
         disabled = skillList.filter(skill => !skill.enabled);
 
+    //console.log(disabled);
+
+    //console.log(enabled);
+
+    if (topSkills) {
+        topSkills.forEach(skill => {
+            if (skill) {
+                const elemE = enabled.find(skillObj => skillObj.name == skill[0]);
+                const elemD = disabled.find(skillObj => skillObj.name == skill[0]);
+                //console.log(elemD);
+
+                if (!elemE && elemD) {
+                    enabled.push(elemD);
+                    disabled.pop(elemD);
+                    elemD.enabled = true;
+                    enableSkill(elemD);
+                }
+            }
+        });
+    }
     enabled.sort();
     disabled.sort();
 
-    enabled.forEach((skill, i) => addSkill(skill, i));
+    let i = 0;
+
+    enabled.forEach(skill => { addSkill(skill, i); i++; });
 
     if (localStorage.getItem('showDisabledSkills') == 'false') {
-        disabled.forEach((skill, i) => addSkill(skill, i));
+        disabled.forEach(skill => { addSkill(skill, i); i++; });
     }
 }
 
 
 // Просчет веса скиллов
-function calcSkillsWeight() {
+function calcSkillsWeightAndShowIt() {
     const urlRequest = `${baseUrl}/getRchilliSkills`;
     postData(urlRequest)
         .then(response => {
@@ -305,5 +327,18 @@ function calcSkillsWeight() {
             console.log('Минимальная разница текущей даты и последней даты использования скилла: ', skillsLastUsed);
             console.log('Максимальное количество месяцев использования скилла: ', skillsExp);
             console.log('Веса: ', skillsWeights);
+
+            let topSkills = Object.keys(skillsWeights).map(function (key) {
+                return [key, skillsWeights[key]];
+            });
+
+            topSkills.sort(function (first, second) {
+                return second[1] - first[1];
+            });
+
+            loadSkills(topSkills.slice(0, Math.min(10, topSkills.length)));
+
+            console.log(topSkills.slice(0, 10));
+            //console.log(topSkills[0][0]);
         });
 }

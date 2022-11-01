@@ -9,6 +9,7 @@ window.onload = function () {
 };
 
 const baseUrl = `http://${document.location.host}`;
+
 try {
   document.querySelector('#avatar_upload').setAttribute('action', `${baseUrl}/upload_avatar`);
 }
@@ -16,22 +17,27 @@ catch {
   console.log('no avatar');
 }
 
-document.querySelector('#toggleDisabledSkills').addEventListener('click', () => {
-  if (document.querySelector('#toggleDisabledSkills').checked == true) {
-    localStorage.setItem('showDisabledSkills', true);
+try {
+  document.querySelector('#toggleDisabledSkills').addEventListener('click', () => {
+    if (document.querySelector('#toggleDisabledSkills').checked == true) {
+      localStorage.setItem('showDisabledSkills', true);
 
-    document.querySelectorAll('.disabled-skill').forEach(skill => {
-      skill.remove();
-    });
-  } else {
-    localStorage.setItem('showDisabledSkills', false);
+      document.querySelectorAll('.disabled-skill').forEach(skill => {
+        skill.remove();
+      });
+    } else {
+      localStorage.setItem('showDisabledSkills', false);
 
-    let disabled = skillList.filter(skill => !skill.enabled);
-    disabled.forEach((skill, i) => addSkill(skill, i));
-  }
-});
+      let disabled = skillList.filter(skill => !skill.enabled);
+      disabled.forEach((skill, i) => addSkill(skill, i));
+    }
+  });
+}
+catch {
+  console.log('no toggle checkbox');
+}
 
-//Modal
+//Modal windows
 const modalTrigger = document.querySelectorAll('[data-modal]'),
   modal = document.querySelector('.modal'),
   modalContent = document.querySelector('.modal-content');
@@ -410,6 +416,7 @@ async function postData(url = '', data = {}) {
   return response;
 }
 
+// Отображение подходящих курсов
 function showRelatedCourses(data, matchedJob = '') {
   console.log('JD', data);
   modalContent.innerHTML = '';

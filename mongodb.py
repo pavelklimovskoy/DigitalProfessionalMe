@@ -5,7 +5,6 @@ import uuid
 
 
 class Users(UserMixin):
-    # переписать на str()
     id = str()
     json_data = dict()
     rchilli_data = dict()
