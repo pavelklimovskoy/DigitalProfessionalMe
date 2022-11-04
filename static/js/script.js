@@ -328,7 +328,7 @@ function createModalCv() {
     const urlRequest = `${baseUrl}/uploader`;
     console.log(urlRequest);
 
-    postFormData('http://localhost:5000/uploader', {
+    postFormData(urlRequest, {
       file: inputFile.files[0],
       queryURL: inputString.value
     })
