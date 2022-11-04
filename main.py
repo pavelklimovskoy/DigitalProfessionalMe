@@ -84,7 +84,6 @@ def upload_file():
         try:
             cv_link = request.form['link']
             file_name = ''
-
             if cv_link != '':
                 try:
                     file_name = f'hhCv_{summary_cv_count()}.pdf'
@@ -114,7 +113,7 @@ def upload_file():
                 update_record('id', current_user.id, 'jsondata', json_data)
                 update_record('id', current_user.id, 'rchillidata', rchilli_data)
                 update_record('id', current_user.id, 'timelineEvents', timeline_events)
-
+                return '200'
         except Exception as e:
             print(e)
 

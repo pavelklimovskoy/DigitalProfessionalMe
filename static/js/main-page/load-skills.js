@@ -25,7 +25,7 @@ function changeSkillState(skillId) {
             console.log(skill);
             skill.childNodes[1].childNodes[0].src = '../static/icons/button-off.png';
 
-            if (localStorage.getItem('showDisabledSkills') == 'false') {
+            if (localStorage.getItem('hideDisabledSkills') == 'false') {
                 skillBlock.append(skill);
             }
 
@@ -167,7 +167,7 @@ function addSkill(skill, i) {
         if (state == 0) {
             skill.enabled = false;
             disabledSkills.push(skill);
-            disableSkill(skill.name)
+            disableSkill(skill.name);
         } else {
             skill.enabled = true;
             disabledSkills.pop(skill);
@@ -182,15 +182,18 @@ function addSkill(skill, i) {
 }
 
 // Загрузка скиллов
-function loadSkills(topSkills = 0) {
+function loadSkills(topSkills = '') {
+    console.log(skillList);
+
     let enabled = skillList.filter(skill => skill.enabled),
-        disabled = skillList.filter(skill => !skill.enabled);
+        disabled = skillList.filter(skill => (skill.enabled === false));
 
-    //console.log(disabled);
+    console.log(disabled);
 
-    //console.log(enabled);
+    console.log(enabled);
+    console.log(topSkills);
 
-    if (topSkills) {
+    if (topSkills && localStorage.getItem('isCVUploadedFirstly') == 'true') {
         topSkills.forEach(skill => {
             if (skill) {
                 const elemE = enabled.find(skillObj => skillObj.name == skill[0]);
@@ -198,14 +201,18 @@ function loadSkills(topSkills = 0) {
                 //console.log(elemD);
 
                 if (!elemE && elemD) {
-                    enabled.push(elemD);
                     disabled.pop(elemD);
                     elemD.enabled = true;
+                    enabled.push(elemD);
                     enableSkill(elemD);
+                    // Переключение состояния скилла в БД
+                    postData(`${baseUrl}/changeSkillState`, { skill: skill[0] });
                 }
             }
         });
+        localStorage.setItem('isCVUploadedFirstly', 'false');
     }
+
     enabled.sort();
     disabled.sort();
 
@@ -213,8 +220,8 @@ function loadSkills(topSkills = 0) {
 
     enabled.forEach(skill => { addSkill(skill, i); i++; });
 
-    if (localStorage.getItem('showDisabledSkills') == 'false') {
-        disabled.forEach(skill => { addSkill(skill, i); i++; });
+    if (localStorage.getItem('hideDisabledSkills') == 'false') {
+        showDisabledSkills();
     }
 }
 
@@ -338,7 +345,7 @@ function calcSkillsWeightAndShowIt() {
 
             loadSkills(topSkills.slice(0, Math.min(10, topSkills.length)));
 
-            console.log(topSkills.slice(0, 10));
+            //console.log(topSkills.slice(0, 10));
             //console.log(topSkills[0][0]);
         });
 }

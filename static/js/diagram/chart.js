@@ -156,6 +156,7 @@ function addSkillToChart(skillName, skillParentName, skillGrandParentName, skill
 
 // Подсчет допустимых символов скилла 
 function charCalc(n) {
+  console.log(n);
   if (n <= 22) {
     return Math.round(n * n * 0.0472029 - 2.1169 * n + 25.8119);
   }
@@ -257,7 +258,6 @@ function renderChart() {
       chart.autoRedraw(true);
 
       createTimeline();
-      //loadSkills(); 
       calcSkillsWeightAndShowIt();
 
       disabledSkills.forEach(skill => disableSkill(skill.name));

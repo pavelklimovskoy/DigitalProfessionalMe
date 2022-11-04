@@ -5,36 +5,32 @@ window.onload = function () {
     }
   });
 
-  document.querySelector('#toggleDisabledSkills').checked = (localStorage.getItem('showDisabledSkills') == 'true');
+  if (localStorage.getItem('hideDisabledSkills') !== null) {
+    document.querySelector('#toggleDisabledSkills').checked = (localStorage.getItem('hideDisabledSkills') == 'true');
+  }
+  else {
+    localStorage.setItem('hideDisabledSkills', 'true');
+    document.querySelector('#toggleDisabledSkills').checked = true;
+  }
+
+  if (localStorage.getItem('isCVUploadedFirstly') === null) {
+    localStorage.setItem('isCVUploadedFirstly', 'true');
+  }
 };
 
 const baseUrl = `http://${document.location.host}`;
 
-try {
-  document.querySelector('#avatar_upload').setAttribute('action', `${baseUrl}/upload_avatar`);
-}
-catch {
-  console.log('no avatar');
-}
-
-try {
-  document.querySelector('#toggleDisabledSkills').addEventListener('click', () => {
-    if (document.querySelector('#toggleDisabledSkills').checked == true) {
-      localStorage.setItem('showDisabledSkills', true);
-
-      document.querySelectorAll('.disabled-skill').forEach(skill => {
-        skill.remove();
-      });
-    } else {
-      localStorage.setItem('showDisabledSkills', false);
-
-      let disabled = skillList.filter(skill => !skill.enabled);
-      disabled.forEach((skill, i) => addSkill(skill, i));
-    }
+function hideDisabledSkills() {
+  document.querySelectorAll('.disabled-skill').forEach(skill => {
+    skill.remove();
   });
 }
-catch {
-  console.log('no toggle checkbox');
+
+function showDisabledSkills() {
+  let disabled = skillList.filter(skill => !skill.enabled);
+  let enabled = skillList.filter(skill => skill.enabled);
+  let i = enabled.length;
+  disabled.forEach(skill => { addSkill(skill, i); i++; });
 }
 
 //Modal windows
@@ -306,13 +302,12 @@ function createModalGoal() {
 // Создание модального окна для добавления CV
 function createModalCv() {
   modalContent.innerHTML = '';
-
   const element = document.createElement('div');
   element.innerHTML = `
   <span data-close class="close">&times;</span>
-  <form action="${baseUrl}/uploader" method="POST" enctype="multipart/form-data">
-    <input id="cvFileInput" type="file" name="file" accept=".pdf, .doc, .docx, .txt, .rtf" onchange="this.form.submit()">
-    <p class="text-center">OR <br> Enter the link (hh.ru): </p>
+  <form action="" method="POST" enctype="multipart/form-data">
+    <input id="cvFileInput" type="file" name="file" accept=".pdf, .doc, .docx, .txt, .rtf"> 
+    <p class="text-center"> OR <br> Enter the link (hh.ru): </p>
     <input id="cvStringInput" type="text" name="link">
     <br>
     <br>
@@ -323,25 +318,28 @@ function createModalCv() {
 
   modalContent.append(element);
 
-  // const inputFile = document.querySelector('#cvFileInput'),
-  //   inputString = document.querySelector('#cvStringInput'),
-  //   formButton = document.querySelector('#cvSubmitButtonInput'),
-  //   urlRequest = `http://digitalprofessional.me:5000/uploader`;
+  const inputFile = document.querySelector('#cvFileInput'),
+    inputString = document.querySelector('#cvStringInput'),
+    formButton = document.querySelector('#cvSubmitButtonInput');
 
-  // formButton.addEventListener('click', (e) => {
-  //   e.preventDefault();
-  //   let data;
-  //   if (inputFile.files.length && !inputString.value) {
-  //     data = inputFile.files[0];
-  //   } else {
-  //     data = inputString.value;
-  //   }
+  formButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    console.log(inputFile.files[0]);
+    const urlRequest = `${baseUrl}/uploader`;
+    console.log(urlRequest);
 
-  //   fetch(urlRequest, {
-  //     method: 'POST',
-  //     body: data
-  //   });
-  // });
+    postFormData('http://localhost:5000/uploader', {
+      file: inputFile.files[0],
+      queryURL: inputString.value
+    })
+      .then(response => response.json())
+      .then(data => {
+        document.querySelector('#toggleDisabledSkills').checked = true;
+        localStorage.setItem('hideDisabledSkills', 'true');
+        localStorage.setItem('isCVUploadedFirstly', 'true');
+        location.reload();
+      });
+  });
 }
 
 // Создание модального окна для добавления сертификата
@@ -399,7 +397,22 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Асинхронный POST запрос
+try {
+  document.querySelector('#toggleDisabledSkills').addEventListener('click', () => {
+    if (document.querySelector('#toggleDisabledSkills').checked == true) {
+      hideDisabledSkills();
+      localStorage.setItem('hideDisabledSkills', 'true');
+    } else {
+      showDisabledSkills();
+      localStorage.setItem('hideDisabledSkills', 'false');
+    }
+  });
+}
+catch {
+  console.log('no toggle checkbox');
+}
+
+// Асинхронный POST запрос c jsonData
 async function postData(url = '', data = {}) {
   const response = await fetch(url, {
     method: 'POST',
@@ -412,6 +425,34 @@ async function postData(url = '', data = {}) {
     redirect: 'follow',
     referrerPolicy: 'no-referrer',
     body: JSON.stringify(data)
+  });
+  return response;
+}
+
+try {
+  document.querySelector('#avatar_upload').setAttribute('action', `${baseUrl}/upload_avatar`);
+}
+catch {
+  console.log('no avatar');
+}
+
+// Асинхронный POST запрос c формой
+async function postFormData(url = '', data = {}) {
+  let formData = new FormData();
+  console.log(data);
+  if (data.queryURL != '') {
+    formData.append('link', queryURL);
+    formData.append('file', '');
+  }
+  else {
+    formData.append('link', '');
+    formData.append('file', data.file);
+  }
+  console.log(formData);
+
+  const response = await fetch(url, {
+    method: 'POST',
+    body: formData
   });
   return response;
 }
