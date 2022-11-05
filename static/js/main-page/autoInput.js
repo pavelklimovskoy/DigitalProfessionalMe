@@ -1,4 +1,4 @@
-function autocomplete(inp, formUrl, searchKey) {
+function autocompleteInput(inp, formUrl, searchKey) {
     /*the autocomplete function takes two arguments,
     the text field element and an array of possible autocompleted values:*/
     let currentFocus;
