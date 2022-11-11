@@ -8,7 +8,7 @@ function autocompleteInput(inp, formUrl, searchKey) {
         let val = this.value;
         //console.log(val);
 
-        if (val.length > 3) {
+        if (val.length > 2) {
             //let urlRequest = `${baseUrl}/skillInputAutocomplete}?skillName=${val}`;
             //let urlRequest = `${baseUrl}/${formUrl}?${searchKey}=${val}`;
             let urlRequest = `${baseUrl}/${formUrl}`, data;

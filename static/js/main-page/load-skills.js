@@ -235,117 +235,119 @@ function calcSkillsWeightAndShowIt() {
         })
         .then(data => {
             console.log(data);
-            let skillsSize = data.length;
-            let skillsWeights = {};
-            let skillsIn = {};
-            let skillsLastUsed = {};
-            let skillsExp = {};
+            if (data != 404) {
+                let skillsSize = data.length;
+                let skillsWeights = {};
+                let skillsIn = {};
+                let skillsLastUsed = {};
+                let skillsExp = {};
 
-            data.map(skill => {
-                const skillName = skill.FormattedName;
-                if (skillName != '') {
-                    if (skillName in skillsIn) {
-                        skillsIn[skillName] += 1;
-                    }
-                    else {
-                        skillsIn[skillName] = 1;
-                    }
-                }
-            });
-
-            console.log('Количество вхождений: ', skillsIn);
-
-            data.map(skill => {
-                const skillName = skill.FormattedName;
-                if (skillName != '') {
-                    if (skillName in skillsWeights) {
-                        skillsWeights[skillName] += (1 / skillsSize);
-                    }
-                    else {
-                        skillsWeights[skillName] = (1 / skillsSize);
-                    }
-
-                    const n = +skill.ExperienceInMonths;
-                    if (n) {
-                        // switch (true) {
-                        //     case (n <= 6):
-                        //         skillsWeights[skillName] += 0.1;
-                        //         break;
-                        //     case (n <= 12):
-                        //         skillsWeights[skillName] += 0.25;
-                        //         break;
-                        //     case (n > 12):
-                        //         skillsWeights[skillName] += 0.5;
-                        //         break;
-                        // }
-
-                        if (skillName in skillsExp) {
-                            skillsExp[skillName] = Math.max(skillsExp[skillName], n);
+                data.map(skill => {
+                    const skillName = skill.FormattedName;
+                    if (skillName != '') {
+                        if (skillName in skillsIn) {
+                            skillsIn[skillName] += 1;
                         }
                         else {
-                            skillsExp[skillName] = n;
+                            skillsIn[skillName] = 1;
                         }
                     }
-                    if (skill.LastUsed != "") {
-                        const nowDate = new Date();
-                        const m = skill.LastUsed.slice(3, 5),
-                            d = skill.LastUsed.slice(0, 2),
-                            y = skill.LastUsed.slice(-4);
+                });
 
-                        const endDate = new Date(`${m}.${d}.${y}`);
-                        const diff = nowDate - endDate;
+                console.log('Количество вхождений: ', skillsIn);
 
-                        const hours = Math.floor(diff / 3.6e6);
-                        const mDiff = Math.trunc(hours / 730);
-
-                        // if (mDiff <= 12) {
-                        //     skillsWeights[skillName] += 0.25;
-                        // }
-                        if (skillName in skillsLastUsed) {
-                            skillsLastUsed[skillName] = Math.min(skillsLastUsed[skillName], mDiff);
+                data.map(skill => {
+                    const skillName = skill.FormattedName;
+                    if (skillName != '') {
+                        if (skillName in skillsWeights) {
+                            skillsWeights[skillName] += (1 / skillsSize);
                         }
                         else {
-                            skillsLastUsed[skillName] = mDiff;
+                            skillsWeights[skillName] = (1 / skillsSize);
+                        }
+
+                        const n = +skill.ExperienceInMonths;
+                        if (n) {
+                            // switch (true) {
+                            //     case (n <= 6):
+                            //         skillsWeights[skillName] += 0.1;
+                            //         break;
+                            //     case (n <= 12):
+                            //         skillsWeights[skillName] += 0.25;
+                            //         break;
+                            //     case (n > 12):
+                            //         skillsWeights[skillName] += 0.5;
+                            //         break;
+                            // }
+
+                            if (skillName in skillsExp) {
+                                skillsExp[skillName] = Math.max(skillsExp[skillName], n);
+                            }
+                            else {
+                                skillsExp[skillName] = n;
+                            }
+                        }
+                        if (skill.LastUsed != "") {
+                            const nowDate = new Date();
+                            const m = skill.LastUsed.slice(3, 5),
+                                d = skill.LastUsed.slice(0, 2),
+                                y = skill.LastUsed.slice(-4);
+
+                            const endDate = new Date(`${m}.${d}.${y}`);
+                            const diff = nowDate - endDate;
+
+                            const hours = Math.floor(diff / 3.6e6);
+                            const mDiff = Math.trunc(hours / 730);
+
+                            // if (mDiff <= 12) {
+                            //     skillsWeights[skillName] += 0.25;
+                            // }
+                            if (skillName in skillsLastUsed) {
+                                skillsLastUsed[skillName] = Math.min(skillsLastUsed[skillName], mDiff);
+                            }
+                            else {
+                                skillsLastUsed[skillName] = mDiff;
+                            }
                         }
                     }
-                }
-            });
+                });
 
-            for (let key in skillsLastUsed) {
-                if (skillsLastUsed[key] <= 12) {
-                    skillsWeights[key] += 0.25;
-                }
-            }
-
-            for (let key in skillsExp) {
-                switch (true) {
-                    case (skillsExp[key] <= 6):
-                        skillsWeights[key] += 0.1;
-                        break;
-                    case (skillsExp[key] <= 12):
+                for (let key in skillsLastUsed) {
+                    if (skillsLastUsed[key] <= 12) {
                         skillsWeights[key] += 0.25;
-                        break;
-                    case (skillsExp[key] > 12):
-                        skillsWeights[key] += 0.5;
-                        break;
+                    }
                 }
+
+                for (let key in skillsExp) {
+                    switch (true) {
+                        case (skillsExp[key] <= 6):
+                            skillsWeights[key] += 0.1;
+                            break;
+                        case (skillsExp[key] <= 12):
+                            skillsWeights[key] += 0.25;
+                            break;
+                        case (skillsExp[key] > 12):
+                            skillsWeights[key] += 0.5;
+                            break;
+                    }
+                }
+
+                console.log('Минимальная разница текущей даты и последней даты использования скилла: ', skillsLastUsed);
+                console.log('Максимальное количество месяцев использования скилла: ', skillsExp);
+                console.log('Веса: ', skillsWeights);
+
+                let topSkills = Object.keys(skillsWeights).map(function (key) {
+                    return [key, skillsWeights[key]];
+                });
+
+                topSkills.sort(function (first, second) {
+                    return second[1] - first[1];
+                });
+
+                loadSkills(topSkills.slice(0, Math.min(10, topSkills.length)));
+
+                //console.log(topSkills.slice(0, 10));
+                //console.log(topSkills[0][0]);
             }
-
-            console.log('Минимальная разница текущей даты и последней даты использования скилла: ', skillsLastUsed);
-            console.log('Максимальное количество месяцев использования скилла: ', skillsExp);
-            console.log('Веса: ', skillsWeights);
-
-            let topSkills = Object.keys(skillsWeights).map(function (key) {
-                return [key, skillsWeights[key]];
-            });
-
-            topSkills.sort(function (first, second) {
-                return second[1] - first[1];
-            });
-
-            loadSkills(topSkills.slice(0, Math.min(10, topSkills.length)));
-
-            //console.log(topSkills.slice(0, 10));
-            //console.log(topSkills[0][0]);
         });
 }

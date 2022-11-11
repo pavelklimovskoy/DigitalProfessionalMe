@@ -165,8 +165,11 @@ def get_rchilli_json():
 @app.route('/getRchilliSkills', methods=['GET', 'POST'])
 @login_required
 def get_rchilli_skills():
-    return jsonify(current_user.rchilli_data['ResumeParserData']['SegregatedSkill'])
-
+    try:
+        return jsonify(current_user.rchilli_data['ResumeParserData']['SegregatedSkill'])
+    except Exception as e:
+        print(e)
+        return '404'
 
 # About page
 @app.route('/about', methods=['POST', 'GET'])

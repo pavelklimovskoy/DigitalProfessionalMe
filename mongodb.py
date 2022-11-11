@@ -61,89 +61,7 @@ def create_record(form):
     json_data = dict()
 
     json_data['name'] = 'Me'
-    json_data['children'] = [
-        {
-            'name': 'test1',
-            'id': 'OperationalSkill',
-            'fill': '#4188D2',
-            'parent': 'Me',
-            'children': [
-                {
-                    'name': 'test2',
-                    'id': 'OperationalSkill',
-                    'value': '1',
-                    'fill': '#4188D2',
-                    'parent': 'test1',
-                    'children': [
-                        {
-                            'name': 'test3',
-                            'id': 'OperationalSkill',
-                            'value': '1',
-                            'enabled': True,
-                            'shortName': 'test3',
-                            'fill': '#4188D2',
-                            'grandParent': 'test1',
-                            'parent': 'test2'
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            'name': 'test4',
-            'id': 'SoftSkill',
-            'fill': '#FFB240',
-            'parent': 'Me',
-            'children': [
-                {
-                    'name': 'test5',
-                    'id': 'SoftSkill',
-                    'value': '1',
-                    'fill': '#FFB240',
-                    'parent': 'test4',
-                    'children': [
-                        {
-                            'name': 'test6',
-                            'id': 'SoftSkill',
-                            'value': '1',
-                            'enabled': True,
-                            'shortName': 'test6',
-                            'fill': '#FFB240',
-                            'grandParent': 'test4',
-                            'parent': 'test5'
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            'name': 'test7',
-            'id': 'SoftSkill',
-            'fill': '#FFB240',
-            'parent': 'Me',
-            'children': [
-                {
-                    'name': 'test8',
-                    'id': 'SoftSkill',
-                    'value': '1',
-                    'fill': '#FFB240',
-                    'parent': 'test7',
-                    'children': [
-                        {
-                            'name': 'test9',
-                            'id': 'SoftSkill',
-                            'value': '1',
-                            'enabled': True,
-                            'shortName': 'test9',
-                            'fill': '#FFB240',
-                            'grandParent': 'test7',
-                            'parent': 'test8'
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
+    json_data['children'] = []
 
     timeline_events = dict()
     timeline_events['qualificationEvents'] = []
@@ -154,14 +72,57 @@ def create_record(form):
         'id': 0
     }]
 
+    rchilli_data = dict()
+    rchilli_data['ResumeParserData'] = {}
+    rchilli_data['ResumeParserData']['SegregatedSkill'] = [{
+        'Type': 'OperationalSkill',
+        'Skill': 'Skills Profiling',
+        'FormattedName': 'Skills Profiling',
+        'Alias': '',
+        'Ontology': 'Information>Skills>Skills Profiling',
+        'Evidence': 'ExperienceSection',
+        'LastUsed': '',
+        'ExperienceInMonths': 1
+    }]
+
+    json_data['children'] = [
+        {
+            'name': 'Information',
+            'id': 'OperationalSkill',
+            'fill': '#4188D2',
+            'parent': 'Me',
+            'children': [
+                {
+                    'name': 'Skills',
+                    'id': 'OperationalSkill',
+                    'value': '1',
+                    'fill': '#4188D2',
+                    'parent': 'Information',
+                    'children': [
+                        {
+                            'name': 'Skills Profiling',
+                            'id': 'OperationalSkill',
+                            'value': '1',
+                            'enabled': True,
+                            'shortName': 'Skills Profiling',
+                            'fill': '#4188D2',
+                            'grandParent': 'Information',
+                            'parent': 'Skills'
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+
     collection_users.insert_one({
         'id': str(uuid.uuid4()),
-        'language': '',
+        'language': 'en',
         'name': form.name.data,
         'email': form.email.data,
         'password': form.password.data,
         'jsondata': [json_data],
-        'rchillidata': dict(),
+        'rchillidata': rchilli_data,
         'timelineEvents': timeline_events,
         'avatar': 'user_tmp_example.png'
     })
