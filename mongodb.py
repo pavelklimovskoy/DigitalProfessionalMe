@@ -14,8 +14,10 @@ class Users(UserMixin):
     password = str()
     timeline_events = dict()
     avatar = str()
+    recommendation_click_counter = 0
 
-    def __init__(self, id, language, name, email, password, json_data, rchilli_data, timeline_events, avatar):
+    # Переделать все с recommendation_click_counter
+    def __init__(self, id, language, name, email, password, json_data, rchilli_data, timeline_events, avatar, recommendation_click_counter):
         self.id = id
         self.name = name
         self.email = email
@@ -25,6 +27,7 @@ class Users(UserMixin):
         self.timeline_events = timeline_events
         self.avatar = avatar
         self.language = language
+        self.recommendation_click_counter = recommendation_click_counter
 
     def to_json(self):
         return {
@@ -36,7 +39,8 @@ class Users(UserMixin):
             "jsondata": self.json_data,
             "rchillidata": self.rchilli_data,
             "timelineEvents": self.timeline_events,
-            "avatar": self.avatar
+            "avatar": self.avatar,
+            "recommendationClickCounter": self.recommendation_click_counter
         }
 
     def get_id(self):
@@ -124,7 +128,8 @@ def create_record(form):
         'jsondata': [json_data],
         'rchillidata': rchilli_data,
         'timelineEvents': timeline_events,
-        'avatar': 'user_tmp_example.png'
+        'avatar': 'user_tmp_example.png',
+        'recommendationClickCounter': 0
     })
 
 
@@ -139,7 +144,8 @@ def find_record(key, value):
                      json_data=user['jsondata'],
                      rchilli_data=user['rchillidata'],
                      timeline_events=user['timelineEvents'],
-                     avatar=user['avatar'])
+                     avatar=user['avatar'],
+                     recommendation_click_counter=user['recommendationClickCounter'])
     else:
         return None
 
@@ -231,3 +237,7 @@ def add_skill_to_dataset(skill_name, jobs, courses, id):
 
 def get_skill_from_dataset(skill_name):
     return collection_skills_dataset.find_one({'skill': skill_name})
+
+def update_recommendation_clicks(user_id):
+    count = collection_users.find_one({'id': user_id})['recommendationClickCounter']
+    collection_users.find_one_and_update({'id': user_id}, {'$set': {"recommendationClickCounter": count + 1}})

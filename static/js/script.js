@@ -174,128 +174,7 @@ function createModalGoal() {
       })
       .then(data => {
         showRelatedCourses(data);
-        // console.log('JD', data);
-        // modalContent.innerHTML = '';
-
-        // let gapSkills = [],
-        //   relatedCourses = [];
-        // data.offeredCourses.forEach(course => {
-        //   course.gapSkills.forEach(skill => {
-        //     if (!(gapSkills.includes(skill)) && !(relatedCourses.includes(course.courseData)) && relatedCourses.length < 4) {
-        //       gapSkills.push(skill)
-        //       relatedCourses.push(course.courseData);
-        //     }
-        //   })
-        // });
-
-        // console.log(gapSkills);
-        // console.log(relatedCourses);
-
-        // modalContent.style = 'width: 100% !important';
-
-        // const rowForCards = document.createElement('div');
-        // rowForCards.classList.add('row');
-        // modalContent.append(rowForCards);
-
-        // relatedCourses.forEach((course, i) => {
-        //   const courseCard = document.createElement('div');
-        //   courseCard.innerHTML = `
-        //   <div class="card text-center" style="width: 18rem;">
-        //     <img class="card-img-top" src="../static/icons/coursera.jpg" alt="Coursera logo image">
-        //       <div class="card-body">
-        //         <a href="${course.url}"><h5 class="card-title">${course.name}</h5></a>
-        //         <!-- <p class="card-text">Описание курса</p> -->
-        //       </div>
-        //       <ul class="list-group list-group-flush" id="courseSkillBlock-${i}">
-        //       </ul>
-        //       <div class="card-body" id="card-footer-${i}">
-        //         <!-- <a href="${course.url}" class="card-link">Ссылка на курс</a> -->
-        //         <input class="btn btn-primary row text-center" id="addCourseToTimeline-${i}" type="submit" value="Добавить на timeline">
-        //         </div>
-        //   </div>
-        //   `;
-        //   courseCard.classList.add('col-3');
-        //   rowForCards.append(courseCard);
-
-        //   course.skills.forEach((skill, j) => {
-        //     if (j < 5) {
-        //       const skillItem = document.createElement('li');
-        //       skillItem.classList.add('list-group-item');
-        //       skillItem.textContent = skill;
-
-        //       document.querySelector(`#courseSkillBlock-${i}`).append(skillItem);
-        //     }
-        //   });
-
-        //   document.querySelector(`#addCourseToTimeline-${i}`).addEventListener('click', () => {
-        //     addCerificate({
-        //       skills: course.skills,
-        //       courseName: course.name,
-        //       date: data.deadline,
-        //       url: '',
-        //       userName: ''
-        //     });
-
-        //     document.querySelector(`#addCourseToTimeline-${i}`).remove();
-        //     document.querySelector(`#card-footer-${i}`).remove();
-        //   });
-        // });
       });
-
-    // fetch(urlRequest)
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     console.log('JD', data);
-
-    //     // modalContent.innerHTML = '';
-
-    //     // const element = document.createElement('div');
-    //     // const courses = data.offeredCourses;
-
-    //     // for (let i = 0; i < courses.length; i++) {
-    //     //   if (i <= 3) {
-    //     //     const courseCard = document.createElement('div');
-    //     //     skillReqStr = ``;
-
-    //     //     for (let i = 0; i < data.gapSkills.length; i++) {
-    //     //       skillReqStr += `${data.gapSkills[i]}, `;
-    //     //       if (i >= 9) {
-    //     //         break;
-    //     //       }
-    //     //     }
-
-    //     //     skillGetStr = ``;
-
-    //     //     for (let i = 0; i < courses[i].courseName.skills.length; i++) {
-    //     //       skillReqStr += `${courses[i].courseName.skills[i]}, `;
-    //     //     }
-
-    //     //     courseCard.innerHTML = `
-    //     //     <div class="container"> 
-    //     //       <div class="container__text">
-    //     //         <h1>${courses[i].courseName.name}</h1>
-    //     //         <p>
-    //     //         It seems you lack these skills:${skillReqStr})
-    //     //         </p>
-    //     //         <div class="container__text__timing">
-    //     //           <div class="container__text__timing_time">
-    //     //             <h2>Get Skills</h2>
-    //     //             <a>${skillGetStr}</a>
-    //     //           </div>
-
-    //     //           <div class="container__text__timing_time">
-    //     //             <h2>Link</h2>
-    //     //             <a>${courses[i].courseName.url}</a>
-    //     //           </div>
-
-    //     //         </div>
-    //     //     </div>
-    //     //     `;
-    //     //   }
-    //     // }
-
-    //     closeModal();
-    //   });
   });
 }
 
@@ -467,10 +346,10 @@ function showRelatedCourses(data, matchedJob = '') {
   data.offeredCourses.forEach(course => {
     course.gapSkills.forEach(skill => {
       if (!(gapSkills.includes(skill)) && !(relatedCourses.includes(course.courseData)) && relatedCourses.length < 4) {
-        gapSkills.push(skill)
+        gapSkills.push(skill);
         relatedCourses.push(course.courseData);
       }
-    })
+    });
   });
 
   console.log(gapSkills);
@@ -488,7 +367,7 @@ function showRelatedCourses(data, matchedJob = '') {
     <div class="card text-center" style="width: 18rem;">
       <img class="card-img-top" src="../static/icons/coursera.jpg" alt="Coursera logo image">
         <div class="card-body">
-          <a href="${course.url}"><h5 class="card-title">${course.name}</h5></a>
+          <a id="courseLink"href="${course.url}"><h5 class="card-title">${course.name}</h5></a>
           <!-- <p class="card-text">Описание курса</p> -->
         </div>
         <ul class="list-group list-group-flush" id="courseSkillBlock-${i}">
@@ -533,4 +412,11 @@ function showRelatedCourses(data, matchedJob = '') {
       }
     });
   });
+
+  document.querySelectorAll(`#courseLink`)
+    .forEach(courseLink => {
+      courseLink.addEventListener('click', () => {
+        fetch(`${baseUrl}/handleRecommendationClick`);
+      });
+    });
 }

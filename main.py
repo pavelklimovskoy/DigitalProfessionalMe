@@ -495,6 +495,13 @@ def find_jobs_by_skills():
     # print(dict(sorted(jobs_ratio.items(), key=lambda item: item[1])))
 
 
+@app.route('/handleRecommendationClick', methods=['GET', 'POST'])
+@login_required
+def handleRecommendationClick():
+    update_recommendation_clicks(current_user.id)
+    print('recomend')
+    return '200'
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0')
 
