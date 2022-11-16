@@ -461,8 +461,8 @@ def find_jobs_by_skills():
     for skill in job_data:
         set_req_skills.add(skill['Skill'])
 
-    set_different = set_req_skills - set_owned_skills
-    #set_different = set_owned_skills - set_req_skills
+    #set_different = set_req_skills - set_owned_skills
+    set_different = set_owned_skills - set_req_skills
 
     courses = get_courses(set_different)
 
