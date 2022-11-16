@@ -320,7 +320,7 @@ async function postFormData(url = '', data = {}) {
   let formData = new FormData();
   console.log(data);
   if (data.queryURL != '') {
-    formData.append('link', queryURL);
+    formData.append('link', data.queryURL);
     formData.append('file', '');
   }
   else {
