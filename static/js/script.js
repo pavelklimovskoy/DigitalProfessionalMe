@@ -418,5 +418,9 @@ function showRelatedCourses(data, matchedJob = '') {
       courseLink.addEventListener('click', () => {
         fetch(`${baseUrl}/handleRecommendationClick`);
       });
+
+      courseLink.addEventListener('contextmenu', () => {
+        fetch(`${baseUrl}/handleRecommendationClick`);
+      });
     });
 }

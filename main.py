@@ -143,7 +143,7 @@ def get_avatar():
 @app.route('/getChartJson', methods=['GET', 'POST'])
 @login_required
 def get_chart_json():
-    print(current_user.language)
+    #print(current_user.language)
     return jsonify(current_user.json_data)
 
 
@@ -261,11 +261,11 @@ def show_jobs():
 def find_jobs():
     job_name = request.get_json()['jobName']
     job_deadline = request.get_json()['deadline']
-    print(job_name)
+    #print(job_name)
     add_timeline_evidence_event(current_user.id, job_name, job_deadline)
     resp = job_search(job_autocomplete(job_name))['Skills']
 
-    print(resp)
+    #print(resp)
 
     owned_skills = get_owned_skills(current_user.id)
     req_skills = []
@@ -275,14 +275,14 @@ def find_jobs():
 
     set_owned_skills = set(owned_skills)
     set_req_skills = set(req_skills)
-    print('owned skills', set_owned_skills)
-    print('required skills', set_req_skills)
+    #print('owned skills', set_owned_skills)
+    #print('required skills', set_req_skills)
 
     set_different = set_req_skills - set_owned_skills
-    print('skillGap', set_different)
+    #print('skillGap', set_different)
 
     courses = get_courses(set_different)
-    print(courses)
+    #print(courses)
 
     return json.loads(json_util.dumps({
         'offeredCourses': courses,
@@ -466,10 +466,10 @@ def find_jobs_by_skills():
 
     courses = get_courses(set_different)
 
-    print(courses)
-    print(set_owned_skills)
-    print(set_req_skills)
-    print(set_different)
+    #print(courses)
+    #print(set_owned_skills)
+    #print(set_req_skills)
+    #print(set_different)
 
     return json.loads(json_util.dumps({
         'offeredCourses': courses,
@@ -499,7 +499,6 @@ def find_jobs_by_skills():
 @login_required
 def handleRecommendationClick():
     update_recommendation_clicks(current_user.id)
-    print('recomend')
     return '200'
 
 if __name__ == '__main__':
