@@ -503,7 +503,48 @@ def handleRecommendationClick():
     return '200'
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000, host='0.0.0.0')
+    app.run(debug=False, port=5000, host='0.0.0.0')
+    # import pandas as pd
+    #
+    # with open('users.json', 'r', encoding='utf-8') as f:
+    #     src = json.load(f)
+    #
+    # #print(src)
+    # userscnt =0
+    # cv_set = set()
+    # for user in src:
+    #     userscnt+=1
+    #     #print(user)
+    #     #print(user['rchillidata']['ResumeParserData']['SegregatedSkill'])
+    #
+    #     for user_skills in user['rchillidata']['ResumeParserData']['SegregatedSkill']:
+    #         ontology = user_skills['Ontology'].split('>')
+    #         cv_set.add(user_skills['Ontology'])
+    #
+    # lvla = []
+    # lvlb = []
+    # lvlc = []
+    # lvld = []
+    # for ont in cv_set:
+    #     ontology = ont.split('>')
+    #     if len(ontology) == 3:
+    #         lvla.append(ontology[0])
+    #         lvlb.append(ontology[1])
+    #         lvlc.append(ontology[2])
+    #         lvld.append('-')
+    #     elif len(ontology) == 4:
+    #         lvla.append(ontology[0])
+    #         lvlb.append(ontology[1])
+    #         lvlc.append(ontology[2])
+    #         lvld.append(ontology[3])
+    #
+    #     print(ontology)
+    #
+    # df = pd.DataFrame({'level A': lvla, 'Level B': lvlb, 'Level C': lvlc, 'Level D':lvld})
+    # with pd.ExcelWriter("skillset.xlsx") as writer:
+    #     df.to_excel(writer, index=False)
+
+#######################################
 
     # import pandas as pd
     # skill_full_set = set()

@@ -16,7 +16,6 @@ class Users(UserMixin):
     avatar = str()
     recommendation_click_counter = 0
 
-    # Переделать все с recommendation_click_counter
     def __init__(self, id, language, name, email, password, json_data, rchilli_data, timeline_events, avatar, recommendation_click_counter):
         self.id = id
         self.name = name
