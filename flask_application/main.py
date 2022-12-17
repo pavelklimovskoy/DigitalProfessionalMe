@@ -497,4 +497,4 @@ if __name__ == '__main__':
     if __debug__:
         app.run(debug=True, port=5000, host='0.0.0.0')
     else:
-        serve(app, port=80, host="0.0.0.0")
+        serve(app, port=5000, host="0.0.0.0")
