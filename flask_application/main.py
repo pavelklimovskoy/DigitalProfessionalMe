@@ -181,8 +181,8 @@ def get_rchilli_skills():
 # About page
 @app.route('/about', methods=['POST', 'GET'])
 def about_us():
-    return redirect('http://digitalprofessional.me')
-    #return render_template('aboutus.html', title='About us')
+    #return redirect('http://digitalprofessional.me')
+    return render_template('aboutus.html', title='About us')
 
 
 # Registration
