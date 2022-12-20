@@ -126,6 +126,11 @@ def upload_file():
 
     return redirect(url_for('index'))
 
+# Новая страница логинки
+@app.route('/newlogin')
+def newLogin():
+    return render_template('login_new.html', title='Digital Professional Me')
+
 
 # Основная страница
 @app.route('/')
