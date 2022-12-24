@@ -130,8 +130,8 @@ def auth():
 
 
 # Основная страница
+#@app.route('/me')
 @app.route('/')
-@app.route('/me')
 @login_required
 def index():
     if session is None:

@@ -18,8 +18,8 @@ window.onload = function () {
   }
 };
 
-const baseUrl = `http://${document.location.host}`;
-//const baseUrl = `${document.location.protocol}//${document.location.host}`;
+//const baseUrl = `http://${document.location.host}`;
+const baseUrl = `${document.location.protocol}//${document.location.host}`;
 
 function hideDisabledSkills() {
   document.querySelectorAll('.disabled-skill').forEach(skill => {
