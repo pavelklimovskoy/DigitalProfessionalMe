@@ -60,7 +60,7 @@ def update_record(findKey, findValue, key, value):
                                          {'$set': {key: value}})
 
 
-def create_record(form):
+def create_record(name, email, password):
     json_data = dict()
 
     json_data['name'] = 'Me'
@@ -121,15 +121,19 @@ def create_record(form):
     collection_users.insert_one({
         'id': str(uuid.uuid4()),
         'language': 'en',
-        'name': form.name.data,
-        'email': form.email.data,
-        'password': form.password.data,
+        'name': name,
+        'email': email,
+        'password': password,
         'jsondata': [json_data],
         'rchillidata': rchilli_data,
         'timelineEvents': timeline_events,
         'avatar': 'user_tmp_example.png',
         'recommendationClickCounter': 0
     })
+
+    new_user = find_record("email", email)
+    print(new_user)
+    return new_user
 
 
 def find_record(key, value):

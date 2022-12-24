@@ -1,4 +1,3 @@
-//let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '',
 let skillBlock = document.querySelector('#skillsBlock');
 
 // Смена состояний скиллов

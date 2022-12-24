@@ -25,7 +25,6 @@ function createTimeline() {
 
   itemId = 0;
 
-  //let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '';
   let urlRequest = `${baseUrl}/getTimelineJson`;
 
 

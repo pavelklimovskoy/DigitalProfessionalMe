@@ -170,7 +170,6 @@ function charCalc(n) {
 
 // Отрисовка диаграммы
 function renderChart() {
-  //let cookieId = document.cookie.match('(^|;)\\s*' + 'id' + '\\s*=\\s*([^;]+)')?.pop() || '',
   let urlRequest = `${baseUrl}/getChartJson`;
 
   anychart.data.loadJsonFile(urlRequest,
