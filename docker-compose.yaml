@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  mongo:
+    image: 'mongo'
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    networks:
+      - webapp-network
+    volumes:
+      - '~/mongo:/data/db'
+
+  main:
+    depends_on:
+      - 'mongo'
+    links:
+      - 'mongo'
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '5000:5000'
+    networks:
+      - webapp-network
+
+volumes:
+  mongo:
+networks:
+  webapp-network:
+    driver: bridge  

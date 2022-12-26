@@ -25,8 +25,9 @@ app.config['SECURITY_UNAUTHORIZED_VIEW'] = '/auth'
 app.config.from_object(__name__)
 CORS(app)
 
-client = MongoClient('localhost', 27017)
+client = MongoClient('mongodb://root:example@mongo', 27017)
 db = client['DPM']
+client.server_info()
 collection_users = db['users']
 collection_dataset = db['Datasets']
 collection_skills_dataset = db['SkillsDataset']
