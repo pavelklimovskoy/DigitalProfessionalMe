@@ -241,15 +241,19 @@ def login():
 
         user = find_record('email', email)
         if user:
+            print(f'User is found. Email={email}.')
             hashed_password = user.password
             if password == hashed_password:
+                print(f'User password is accepted. Email={email}.')
                 #checkbox = True if json_data["check"] else False
                 session["logged_in"] = True
                 login_user(user, remember=checkbox)
                 return redirect(url_for("index"))
             else:
+                print(f'User password is rejected. Email={email}.')
                 return redirect(url_for("auth"))
         else:
+            print(f'User is not found. Email={email}.')
             return redirect(url_for("auth"))
     else:
         return redirect(url_for("auth"))
@@ -517,4 +521,6 @@ if __name__ == '__main__':
     if __debug__:
         app.run(debug=True, port=5000, host='0.0.0.0')
     else:
+        from werkzeug.middleware.proxy_fix import ProxyFix
+        app.wsgi_app = ProxyFix(app.wsgi_app)
         serve(app, port=5000, host="0.0.0.0")

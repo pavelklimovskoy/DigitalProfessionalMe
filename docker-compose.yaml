@@ -26,6 +26,18 @@ services:
     networks:
       - webapp-network
 
+  nginx:
+    depends_on:
+      - main
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    restart: always
+    ports:
+      - '8080:8080'
+    networks:
+      - webapp-network
+
 volumes:
   mongo:
 networks:
