@@ -39,7 +39,7 @@
       <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#2C0585;">
         <div class="container">
 
-          <a href="/me" class="navbar-brand">Digital Professional Me™</a>
+          <a href="/#" class="navbar-brand">Digital Professional Me™</a>
 
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navContent"
             aria-controls="navContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,21 +50,32 @@
             <div class="collapse navbar-collapse" id="navContent">
               <ul class="navbar-nav mr-auto mb-3 mb-lg-0">
 
-                <li class="nav-item">
-                  <a href="/me" class="nav-link">Me</a>
-                </li>
 
-                <li class="nav-item">
-                  <a href="/about" class="nav-link">About us</a>
-                </li>
-
-                <li class="nav-item">
-                  <label for="avatar_upload" style="cursor: pointer;" class="nav-link">Upload avatar</label>
-                </li>
-
-                <li class="nav-item">
-                  <a href="/logout" class="nav-link">Logout</a>
-                </li>
+                <div class="dropdown nav-item">
+                  <button class="btn btn-primary dropdown-toggle nav-item" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                      <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                    </svg> Profile
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li class="dropdown-item">
+                      <a class="text-dark" href="/me" class="nav-link">Me</a>
+                    </li>
+    
+                    <li class="dropdown-item">
+                      <a  class="text-dark" href="/about">About us</a>
+                    </li>
+    
+                    <li class="dropdown-item">
+                      <label class="text-dark" for="avatar_upload" style="cursor: pointer;">Upload avatar</label>
+                    </li>
+    
+                    <li class="dropdown-item">
+                      <a href="/logout" class="text-dark">Logout</a>
+                    </li>
+                  </ul>
+                </div>
 
               </ul>
             </div>
@@ -113,7 +124,7 @@
                 <a data-modal href="#" id="addGoal" class="floating-button">Add a life goal</a>
               </div>
               <div class="skillsBlock" id="skillsBlock">
-                <p class="text-center">Skills <button data-modal id="addSkill" class="btn">Add Skill </button></p>
+                <p class="text-center">Skills <button data-modal id="addSkill" class="btn btn-primary">Add Skill </button></p>
                 <p><input type="checkbox" id="toggleDisabledSkills">Hide disabled skills</input></p>
                 <!-- JS request and append-->
               </div>
