@@ -111,31 +111,7 @@
     <script>
         const loginDiv = document.querySelector('#login');
         const registerDiv = document.querySelector('#register');
-        // const loginButton = document.querySelector('#loginButton');
-        // const registerButton = document.querySelector('#registerButton');
 
-        // loginButton.addEventListener('click', e => {
-        //     e.preventDefault();
-
-        //     let data = {};
-        //     data['email'] = document.querySelector('#emailLogin').value;
-        //     data['password'] = document.querySelector('#passwordLogin').value;
-        //     data['check'] = document.querySelector('#check').checked;
-
-        //     postData(`${baseUrl}/login`, data);
-        // });
-
-        // registerButton.addEventListener('click', e => {
-        //     e.preventDefault();
-
-        //     let data = {};
-        //     data['name'] = document.querySelector('#nameRegister').value;
-        //     data['email'] = document.querySelector('#emailRegister').value;
-        //     data['password'] = document.querySelector('#passwordRegister').value;
-        //     data['password2'] = document.querySelector('#passwordRepeatRegister').value;
-
-        //     postData(`${baseUrl}/register`, formData);
-        // });
 
         function showRegisterForm() {
             loginDiv.style.display = "none";
@@ -147,22 +123,6 @@
             registerDiv.style.display = "none";
         }
 
-        // async function postData(url = '', data = {}) {
-        //     console.log(data);
-        //     const response = await fetch(url, {
-        //         method: 'POST',
-        //         mode: 'cors',
-        //         cache: 'no-cache',
-        //         credentials: 'same-origin',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         redirect: 'follow',
-        //         referrerPolicy: 'no-referrer',
-        //         body: JSON.stringify(data)
-        //     });
-        //     return response;
-        // }
     </script>
 
 </body>

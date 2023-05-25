@@ -2,10 +2,10 @@ from certificateParser import parse_coursera_url, parse_stepik_url
 from bson import json_util
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from jsonConvert import json_convert, color_calc, timeline_parse
-from flask import Flask, request, jsonify, render_template, make_response, redirect, url_for, flash, session
+from flask import Flask, request, jsonify, render_template, make_response, redirect, url_for, flash, session, send_file
 from flask_cors import CORS
 from flask import send_from_directory
-from rchilli import rchilli_parse, skill_search, skill_autocomplete, job_autocomplete, job_search
+from rchilli import rchilli_parse, skill_search, skill_autocomplete, job_autocomplete, job_search, get_translate_text
 from mongodb import *
 from analytics import *
 import pdfkit
@@ -25,14 +25,14 @@ app.config['SECURITY_UNAUTHORIZED_VIEW'] = '/auth'
 app.config.from_object(__name__)
 CORS(app)
 
-client = MongoClient('mongodb://root:example@mongo', 27017)
+client = MongoClient(f'mongodb://root:example@{os.getenv("MONGO_MODE")}', 27017)
 db = client['DPM']
 client.server_info()
 collection_users = db['users']
 collection_dataset = db['Datasets']
 collection_skills_dataset = db['SkillsDataset']
 collection_feedback = db['Feedback']
-
+collection_admin_panel = db['AdminPanel']
 login_manager = LoginManager(app)
 login_manager.login_view = 'auth'
 
@@ -283,6 +283,21 @@ def show_input_options():
     return skill_autocomplete(request.get_json()['skillName'])
 
 
+@app.route('/translatedSkillInputAutocomplete', methods=['POST'])
+def show_translated_input_options():
+    print(request.get_json()['skillName'])
+    translated = get_translate_text(request.get_json()['skillName'])
+    print(translated)
+    return skill_autocomplete(translated)
+
+
+@app.route('/translatedJobInputAutocomplete', methods=['POST'])
+def show_translated_jobs():
+    translated = get_translate_text(request.get_json()['jobName'])
+    print(translated)
+    return job_autocomplete(translated)
+
+
 @app.route('/jobInputAutocomplete', methods=['POST'])
 def show_jobs():
     return job_autocomplete(request.get_json()['jobName'])
@@ -514,6 +529,33 @@ def find_jobs_by_skills():
 def handleRecommendationClick():
     update_recommendation_clicks(current_user.id)
     return '200'
+
+@app.route('/adminUni', methods=['GET', 'POST'])
+def adminUni():
+    return render_template('adminuni.html')
+
+@app.route('/getAdminPanelData', methods=['GET', 'POST'])
+def getAdminPanelData():
+    resp = get_admin_panel()
+    res = []
+    for i in resp:
+        i.pop('_id')
+        res.append(i)
+    print(res)
+    return jsonify(res)
+
+# @app.route('/getUniData', methods=['GET', 'POST'])
+# def getUniData():
+#     dataname = request.get_json()['dataname']
+#     print(dataname)
+#     print(os.path.join(app.root_path, f'static/data/universities/{dataname}'))
+#     with open(os.path.join(app.root_path, f'static/data/universities/{dataname}')) as file:
+#         json_data = json.load(file)
+#     print(json_data)
+#     #response = Response(json.dumps(json_data), mimetype='application/json')
+#     return jsonify(json_data)
+#
+#    # return send_file(os.path.join(app.root_path, f'static/data/universities/{dataname}'), mimetype='application/json', attachment_filename=dataname, as_attachment=True)
 
 
 if __name__ == '__main__':

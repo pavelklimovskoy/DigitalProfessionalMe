@@ -1,5 +1,7 @@
 import datetime
-from main import collection_users, collection_dataset, collection_skills_dataset
+import json
+
+from main import collection_users, collection_dataset, collection_skills_dataset, collection_admin_panel
 from flask_login import UserMixin
 import uuid
 
@@ -244,3 +246,12 @@ def get_skill_from_dataset(skill_name):
 def update_recommendation_clicks(user_id):
     count = collection_users.find_one({'id': user_id})['recommendationClickCounter']
     collection_users.find_one_and_update({'id': user_id}, {'$set': {"recommendationClickCounter": count + 1}})
+
+
+def get_admin_panel():
+    #print(dict(collection_admin_panel.find()))
+    cur = collection_admin_panel.find()
+    documents = [doc for doc in cur]
+
+    return documents
+

@@ -14,6 +14,21 @@ API_TAXONOMY_VERSION = '3.0'
 USER_KEY = os.getenv('RCHILLI_API_KEY')
 USER_NAME = 'Alexander Fedorov'
 
+def get_translate_text(text):
+    url = "https://google-translate1.p.rapidapi.com/language/translate/v2"
+
+    payload = "q=Hello%2C%20world!&target=es&source=en"
+    headers = {
+        "content-type": "application/x-www-form-urlencoded",
+        "Accept-Encoding": "application/gzip",
+        "X-RapidAPI-Key": "aa9a8aab23mshd0bac0de361bd74p19ca38jsn50395001c991",
+        "X-RapidAPI-Host": "google-translate1.p.rapidapi.com"
+    }
+
+    response = requests.request("POST", url, data=payload, headers=headers)
+
+    return response.text
+
 
 def rchilli_parse(file_name):
     file_path = f'./static/data/cv/{file_name}'

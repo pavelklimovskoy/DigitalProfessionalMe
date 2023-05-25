@@ -78,19 +78,6 @@ function createModalAddingSkill() {
   </form>
   `;
   element.classList.add('text-center');
-  // modalContent.innerHTML = '';
-
-  // const element = document.createElement('div');
-  // element.innerHTML = `
-  // <span data-close class="close">&times;</span>
-  // <form autocomplete="off" action="#">
-  //   <div style="width:300px;">
-  //     <input id="skillInput" type="text" name="skillName" placeholder="skillName">
-  //   </div>
-  //   <input id="addSkillButton" type="submit">
-  // </form>
-  // `;
-  // element.classList.add('text-center');
 
   modalContent.append(element);
 

@@ -224,7 +224,6 @@ function loadSkills(topSkills = '') {
     }
 }
 
-
 // Просчет веса скиллов
 function calcSkillsWeightAndShowIt() {
     const urlRequest = `${baseUrl}/getRchilliSkills`;

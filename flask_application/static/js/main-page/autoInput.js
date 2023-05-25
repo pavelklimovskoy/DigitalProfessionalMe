@@ -9,14 +9,12 @@ function autocompleteInput(inp, formUrl, searchKey) {
         //console.log(val);
 
         if (val.length > 2) {
-            //let urlRequest = `${baseUrl}/skillInputAutocomplete}?skillName=${val}`;
-            //let urlRequest = `${baseUrl}/${formUrl}?${searchKey}=${val}`;
             let urlRequest = `${baseUrl}/${formUrl}`, data;
             if (searchKey == 'skillName') {
                 data = { skillName: val };
             }
             else if (searchKey == 'jobName') {
-                data = { jobName: val }
+                data = { jobName: val };
             }
             //fetch(urlRequest)
             postData(urlRequest, data)
