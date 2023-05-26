@@ -1,7 +1,10 @@
-from certificateParser import parse_coursera_url, parse_stepik_url
+# -*- coding: utf-8 -*-
+
+
+from certificate_parser import parse_coursera_url, parse_stepik_url
 from bson import json_util
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from jsonConvert import json_convert, color_calc, timeline_parse
+from json_convert import json_convert, color_calc, timeline_parse
 from flask import Flask, request, jsonify, render_template, make_response, redirect, url_for, flash, session, send_file
 from flask_cors import CORS
 from flask import send_from_directory
@@ -14,6 +17,8 @@ import os
 import json
 import re
 from waitress import serve
+from ru_lang_version import *
+from en_lang_version import *
 
 # Flask config
 app = Flask(__name__)
@@ -25,6 +30,9 @@ app.config['SECURITY_UNAUTHORIZED_VIEW'] = '/auth'
 app.config.from_object(__name__)
 CORS(app)
 
+app.register_blueprint(ru_version)
+app.register_blueprint(en_version)
+
 client = MongoClient(f'mongodb://root:example@{os.getenv("MONGO_MODE")}', 27017)
 db = client['DPM']
 client.server_info()
@@ -34,7 +42,8 @@ collection_skills_dataset = db['SkillsDataset']
 collection_feedback = db['Feedback']
 collection_admin_panel = db['AdminPanel']
 login_manager = LoginManager(app)
-login_manager.login_view = 'auth'
+login_manager.login_view = 'select_language'
+
 
 @app.route('/favicon.ico')
 def favicon():
@@ -45,7 +54,10 @@ def favicon():
 @app.errorhandler(404)
 @app.errorhandler(401)
 def page_not_found(error):
-    return render_template('notfound.html')
+    if "ru" in request.accept_languages:
+        return render_template('/ru/notfound_ru.html')
+    else:
+        return render_template('/en/notfound_en.html')
 
 
 @login_manager.user_loader
@@ -77,7 +89,7 @@ def upload_avatar():
                 increment_image_count()
                 update_record('id', current_user.id, 'avatar', file_name)
 
-    return redirect(url_for('index'))
+    return redirect(url_for('ru_version.index_ru'))
 
 
 # Uploading CV in storage
@@ -121,25 +133,31 @@ def upload_file():
         except Exception as e:
             print(e)
 
-    return redirect(url_for('index'))
+    return redirect(url_for('ru_version.index_ru'))
 
 
-# Новая страница логинки
-@app.route('/auth')
-def auth():
-    return render_template('auth.html', title='Digital Professional Me')
+@app.route('/detect_lang')
+def select_language():
+    if "ru" in request.accept_languages:
+        return redirect(url_for('ru_version.auth_ru'))
+    else:
+        return redirect(url_for('auth_en'))
+
+
+
 
 
 # Основная страница
-#@app.route('/me')
+# @app.route('/me')
 @app.route('/')
 @login_required
 def index():
     if session is None:
         logout_user()
-        return redirect(url_for('auth'))
-    print(current_user.name)
-    return render_template('index.html', title='Digital Professional Me', userName=current_user.name)
+        return redirect(url_for('select_language'))
+
+    return render_template('/ru/index_ru.html', title='Digital Professional Me', userName=current_user.name)
+
 
 
 # Avatar
@@ -180,91 +198,6 @@ def get_rchilli_skills():
     except Exception as e:
         print(e)
         return '404'
-
-
-# About page
-@app.route('/about', methods=['POST', 'GET'])
-def about_us():
-    # return redirect('http://digitalprofessional.me')
-    return render_template('aboutus.html', title='About us')
-
-
-# Registration
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-
-    if request.method == "POST":
-        #json_data = request.get_json()
-        #name = json_data["name"]
-        #email = json_data["email"]
-        #password = json_data["password"]
-        #password2 = json_data["password2"]
-
-        name = request.form.get('name')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        password2 = request.form.get('password2')
-        user = find_record('email', email)
-
-        if user:
-            return redirect(url_for("auth"))
-        else:
-            if password2 == password:
-                #hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
-                hashed_password = password
-                new_user = create_record(name, email, hashed_password)
-                login_user(new_user, remember=True)
-                session["logged_in"] = True
-
-                return redirect(url_for("index"))
-            else:
-                return redirect(url_for("auth"))
-    else:
-        return redirect(url_for("auth"))
-
-
-# Авторизация
-@app.route('/login', methods=['POST', 'GET'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-
-    if request.method == "POST":
-        #json_data = request.get_json()
-        #email = json_data["email"]
-        #password = json_data["password"]
-        email = request.form.get('email')
-        password = request.form.get('password')
-        checkbox = True if request.form.get('check') else False
-
-        user = find_record('email', email)
-        if user:
-            print(f'User is found. Email={email}.')
-            hashed_password = user.password
-            if password == hashed_password:
-                print(f'User password is accepted. Email={email}.')
-                #checkbox = True if json_data["check"] else False
-                session["logged_in"] = True
-                login_user(user, remember=checkbox)
-                return redirect(url_for("index"))
-            else:
-                print(f'User password is rejected. Email={email}.')
-                return redirect(url_for("auth"))
-        else:
-            print(f'User is not found. Email={email}.')
-            return redirect(url_for("auth"))
-    else:
-        return redirect(url_for("auth"))
-
-# Деавторизация
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    session["logged_in"] = False
-    return redirect(url_for("auth"))
 
 
 def save_pdf(url, file_name):
@@ -512,11 +445,6 @@ def find_jobs_by_skills():
 
     courses = get_courses(set_different)
 
-    # print(courses)
-    # print(set_owned_skills)
-    # print(set_req_skills)
-    # print(set_different)
-
     return json.loads(json_util.dumps({
         'offeredCourses': courses,
         'gapSkills': set_different,
@@ -530,9 +458,7 @@ def handleRecommendationClick():
     update_recommendation_clicks(current_user.id)
     return '200'
 
-@app.route('/adminUni', methods=['GET', 'POST'])
-def adminUni():
-    return render_template('adminuni.html')
+
 
 @app.route('/getAdminPanelData', methods=['GET', 'POST'])
 def getAdminPanelData():
@@ -543,6 +469,7 @@ def getAdminPanelData():
         res.append(i)
     print(res)
     return jsonify(res)
+
 
 # @app.route('/getUniData', methods=['GET', 'POST'])
 # def getUniData():
@@ -564,5 +491,6 @@ if __name__ == '__main__':
         app.run(debug=True, port=5000, host='0.0.0.0')
     else:
         from werkzeug.middleware.proxy_fix import ProxyFix
+
         app.wsgi_app = ProxyFix(app.wsgi_app)
         serve(app, port=5000, host="0.0.0.0")

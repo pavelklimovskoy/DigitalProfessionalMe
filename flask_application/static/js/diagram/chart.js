@@ -218,7 +218,7 @@ function renderChart() {
         .level(0)
         .labels()
         .fontFamily('Verdana, sans-serif')
-        .format('<span style="font-size:14px; word-break: normal; word-wrap: break-word;"></span>');
+        .format('<span style="font-size:14px; word-break: normal; word-wrap: break-word; animation: visible 2s;"></span>');
 
       chart
         .level(1)
@@ -235,7 +235,13 @@ function renderChart() {
       chart
         .tooltip()
         .fontFamily('Verdana, sans-serif')
-        .format("<h5 style='font-size:16px; margin: 0.25rem 0;'>{%name}</h5><h6 style='font-size:14px; font-weight:400; margin: 0.2rem 0;'>Level: <b>{%value}{groupsSeparator:\\,}</b></h6><h6 style='font-size:14px; font-weight:400; margin: 0.2rem 0;'></b></h6>");
+        .format("<h5 style='font-size:16px;"+
+                "margin: 0.25rem 0;'>{%name}"+
+                "</h5>"+
+                "<h6 style='font-size:14px;"+
+                "font-weight:400; margin: 0.2rem 0;'>Level: "+
+                "<b>{%value}{groupsSeparator:\\,}</b></h6>"+
+                "<h6 style='font-size:14px; font-weight:400; margin: 0.2rem 0;'></b></h6>");
 
       // Set avatar
       fetch(`${baseUrl}/getAvatar`)
@@ -245,7 +251,9 @@ function renderChart() {
           mode: 'fit'
         }));
 
-      chart.labels().format("<span style='font-size:10px; word-break: normal; word-wrap: break-word;'>{%shortName}</span>");
+      chart.labels().format("<span style='font-size:10px; "+
+                            "word-break: normal;"+
+                            "word-wrap: break-word;'>{%shortName}</span>");
 
       chart.labels().position('circular');
       chart.container('chartid');
@@ -260,5 +268,9 @@ function renderChart() {
       calcSkillsWeightAndShowIt();
 
       disabledSkills.forEach(skill => disableSkill(skill.name));
+
+      // Удаление белого квадрата фокруг диаграммы
+      let layer = document.getElementById("ac_layer_4");
+      layer.remove();
     });
 }

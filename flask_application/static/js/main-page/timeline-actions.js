@@ -179,6 +179,7 @@ function createTimeline() {
 
       timeline = new vis.Timeline(container, items, groups, options);
       timeline.setOptions({ height: "400px" })
+  
 
       timeline.redraw()
 
@@ -193,7 +194,7 @@ function createTimeline() {
 // Ожидание загрузки DOM
 function waitForDOM() {
   if (timeline != null) {
-    timeline._redraw()
+    timeline._redraw();
     let view_date = new Date()
     view_date.setFullYear(view_date.getFullYear() - 2);
     timeline.moveTo(view_date);

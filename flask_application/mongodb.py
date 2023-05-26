@@ -1,9 +1,11 @@
-import datetime
-import json
+# -*- coding: utf-8 -*-
+
 
 from main import collection_users, collection_dataset, collection_skills_dataset, collection_admin_panel
 from flask_login import UserMixin
 import uuid
+import datetime
+import json
 
 
 class Users(UserMixin):
@@ -18,7 +20,8 @@ class Users(UserMixin):
     avatar = str()
     recommendation_click_counter = 0
 
-    def __init__(self, id, language, name, email, password, json_data, rchilli_data, timeline_events, avatar, recommendation_click_counter):
+    def __init__(self, id, language, name, email, password, json_data, rchilli_data, timeline_events, avatar,
+                 recommendation_click_counter):
         self.id = id
         self.name = name
         self.email = email
@@ -243,15 +246,15 @@ def add_skill_to_dataset(skill_name, jobs, courses, id):
 def get_skill_from_dataset(skill_name):
     return collection_skills_dataset.find_one({'skill': skill_name})
 
+
 def update_recommendation_clicks(user_id):
     count = collection_users.find_one({'id': user_id})['recommendationClickCounter']
     collection_users.find_one_and_update({'id': user_id}, {'$set': {"recommendationClickCounter": count + 1}})
 
 
 def get_admin_panel():
-    #print(dict(collection_admin_panel.find()))
+    # print(dict(collection_admin_panel.find()))
     cur = collection_admin_panel.find()
     documents = [doc for doc in cur]
 
     return documents
-

@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+
+
 from urllib.request import urlopen
-import requests
 from bs4 import BeautifulSoup
+import requests
 
 
 def parse_coursera_url(url):

@@ -5,11 +5,11 @@
 
 /* Main Frame style */
 .mainBlock {
-  background: #ffffff;
+  background: rgba(255,255,255, 0.85);
   height: auto;
   width: 96%;
 
-  opacity: 0.8;
+  /* opacity: 0.85; */
 
   border-radius: 16px;
 
@@ -19,6 +19,13 @@
   position: absolute;
   z-index: 9999;
 }
+
+.skillBlockHeader
+{
+   font-weight: bold;
+   font-size: larger;
+}
+
 
 .flash {
   text-align: center;
@@ -81,12 +88,18 @@
   border-top-right-radius: 16px;
 }
 
+
 /* Chart style */
 .chart {
+
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   width: auto;
   height: 400px;
   margin: 0 auto;
+
+  margin-top: 15% !important;
+
+  animation: visible 10s; 
 }
 
 /* Username-text style */
@@ -104,6 +117,15 @@
 }
 
 
+@keyframes visible {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+ }
+
 /* Skills frame style */
 .skillsBlock {
   font-size: larger;
@@ -113,6 +135,52 @@
   text-align: center;
   margin-bottom: 1%;
   margin-top: 1%;
+
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-right: 10px;
+  padding-bottom: 15px;
+
+  max-height: 1000px;
+  animation: visible 2s; 
+}
+
+.skillsBlock-ellapsed {
+  /* opacity: 1 !important; */
+  font-size: larger;
+  border-radius: 16px;
+  position: relative;
+  background-color: #76AAF2;
+  text-align: center;
+  margin-bottom: 1%;
+  margin-top: 1%;
+
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-right: 10px;
+  padding-bottom: 15px;
+
+  max-height: 1000px;
+  transition: max-height 0.9s cubic-bezier(1, 0, 1, 0);
+}
+
+.skillsBlock-collapsed {
+  /* opacity: 1 !important; */
+  font-size: larger;
+  border-radius: 16px;
+  position: relative;
+  background-color: #76AAF2;
+  text-align: center;
+  margin-bottom: 1%;
+  margin-top: 1%;
+
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-right: 10px;
+  padding-bottom: 15px;
+
+  max-height: 0;
+  transition: max-height 0.3s cubic-bezier(0, 1, 0, 1); 
 }
 
 /* Call to action block style */
