@@ -4,13 +4,13 @@
 from flask import Blueprint, render_template, abort, session
 from flask_login import login_required, logout_user
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from json_convert import json_convert, color_calc, timeline_parse
+from ..json_convert import json_convert, color_calc, timeline_parse
 from flask import Flask, request, jsonify, render_template, make_response, redirect, url_for, flash, session, send_file
 from flask_cors import CORS
 from flask import send_from_directory
 from jinja2 import TemplateNotFound
-from mongodb import *
-import mongodb
+from ..mongodb import *
+
 
 ru_version = Blueprint('ru_version', __name__, template_folder='templates')
 
@@ -41,7 +41,7 @@ def login_ru():
         password = request.form.get('password')
         checkbox = True if request.form.get('check') else False
 
-        user = mongodb.find_record('email', email)
+        user = find_record('email', email)
         if user:
             print(f'User is found. Email={email}.')
             hashed_password = user.password

@@ -1,24 +1,28 @@
 # -*- coding: utf-8 -*-
 
+from modules.certificate_parser import parse_coursera_url, parse_stepik_url
+from modules.json_convert import json_convert, color_calc, timeline_parse
+from modules.rchilli import *
+from modules.mongodb import *
+from modules.analytics import *
+from modules.languages_blueprints.ru_lang_version import *
+from modules.languages_blueprints.en_lang_version import *
+from modules.core_blueprints.core_routes import *
+from modules.service import *
 
-from certificate_parser import parse_coursera_url, parse_stepik_url
 from bson import json_util
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from json_convert import json_convert, color_calc, timeline_parse
 from flask import Flask, request, jsonify, render_template, make_response, redirect, url_for, flash, session, send_file
 from flask_cors import CORS
 from flask import send_from_directory
-from rchilli import rchilli_parse, skill_search, skill_autocomplete, job_autocomplete, job_search, get_translate_text
-from mongodb import *
-from analytics import *
+
 import pdfkit
 from werkzeug.utils import secure_filename
 import os
 import json
-import re
 from waitress import serve
-from ru_lang_version import *
-from en_lang_version import *
+
+check_python_version()
 
 # Flask config
 app = Flask(__name__)
@@ -32,6 +36,7 @@ CORS(app)
 
 app.register_blueprint(ru_version)
 app.register_blueprint(en_version)
+app.register_blueprint(core_route)
 
 client = MongoClient(f'mongodb://root:example@{os.getenv("MONGO_MODE")}', 27017)
 db = client['DPM']
@@ -43,21 +48,6 @@ collection_feedback = db['Feedback']
 collection_admin_panel = db['AdminPanel']
 login_manager = LoginManager(app)
 login_manager.login_view = 'select_language'
-
-
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static/image'),
-                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
-
-
-@app.errorhandler(404)
-@app.errorhandler(401)
-def page_not_found(error):
-    if "ru" in request.accept_languages:
-        return render_template('/ru/notfound_ru.html')
-    else:
-        return render_template('/en/notfound_en.html')
 
 
 @login_manager.user_loader
@@ -144,9 +134,6 @@ def select_language():
         return redirect(url_for('auth_en'))
 
 
-
-
-
 # Основная страница
 # @app.route('/me')
 @app.route('/')
@@ -157,7 +144,6 @@ def index():
         return redirect(url_for('select_language'))
 
     return render_template('/ru/index_ru.html', title='Digital Professional Me', userName=current_user.name)
-
 
 
 # Avatar
@@ -298,17 +284,17 @@ def find_skill():
     flag2 = False
     filling = ''
 
-    for grandParentSkillType in cur_user_data['children']:
-        if ontoloty.split('>')[0] == grandParentSkillType['name']:
+    for grand_parent_skill_type in cur_user_data['children']:
+        if ontoloty.split('>')[0] == grand_parent_skill_type['name']:
             flag1 = True
 
-            for parentSkillType in grandParentSkillType['children']:
-                if ontoloty.split('>')[1] == parentSkillType['name']:  # Найден Parent, GrandParent
+            for parent_skill_type in grand_parent_skill_type['children']:
+                if ontoloty.split('>')[1] == parent_skill_type['name']:  # Найден Parent, GrandParent
                     flag2 = True
 
-                    shortName = ontoloty.split('>')[-1]
-                    if len(shortName) > 6:
-                        shortName = f'{ontoloty.split(">")[-1][:6]}...'
+                    short_name = ontoloty.split('>')[-1]
+                    if len(short_name) > 6:
+                        short_name = f'{ontoloty.split(">")[-1][:6]}...'
 
                     if resp['type'] in soft_types:
                         filling = '#FFB240'
@@ -320,27 +306,27 @@ def find_skill():
                         'id': resp['type'],
                         'value': '1',
                         'enabled': True,
-                        'shortName': shortName,
+                        'short_name': short_name,
                         'fill': filling,
-                        'grandParent': grandParentSkillType['name'],
-                        'parent': parentSkillType['name']
+                        'grandParent': grand_parent_skill_type['name'],
+                        'parent': parent_skill_type['name']
                     }
-                    parentSkillType['children'].append(skill)
+                    parent_skill_type['children'].append(skill)
                     break
 
             if flag2 is False:  # Parent не найден, только GrandParent
-                parentSkillType = {
+                parent_skill_type = {
                     'name': ontoloty.split('>')[1],
                     'id': resp['type'],
                     'value': '1',
                     'fill': color_calc(1, resp['type']),
-                    'parent': grandParentSkillType['name'],
+                    'parent': grand_parent_skill_type['name'],
                     'children': []
                 }
 
-                shortName = ontoloty.split('>')[-1]
-                if len(shortName) > 6:
-                    shortName = f'{ontoloty.split(">")[-1][:6]}...'
+                short_name = ontoloty.split('>')[-1]
+                if len(short_name) > 6:
+                    short_name = f'{ontoloty.split(">")[-1][:6]}...'
 
                 if resp['type'] in soft_types:
                     filling = '#FFB240'
@@ -352,16 +338,16 @@ def find_skill():
                     'id': resp['type'],
                     'value': '1',
                     'enabled': True,
-                    'shortName': shortName,
+                    'short_name': short_name,
                     'fill': filling,
-                    'grandParent': grandParentSkillType['name'],
-                    'parent': parentSkillType['name']
+                    'grandParent': grand_parent_skill_type['name'],
+                    'parent': parent_skill_type['name']
                 }
-                parentSkillType['children'].append(skill)
-                grandParentSkillType['children'].append(parentSkillType)
+                parent_skill_type['children'].append(skill)
+                grand_parent_skill_type['children'].append(parent_skill_type)
 
     if flag1 is False:  # Не найдено ни GrandParent, ни Parent
-        grandParentSkillType = {
+        grand_parent_skill_type = {
             'name': ontoloty.split('>')[0],
             'id': resp['type'],
             'value': '1',
@@ -370,18 +356,18 @@ def find_skill():
             'children': []
         }
 
-        parentSkillType = {
+        parent_skill_type = {
             'name': ontoloty.split('>')[1],
             'id': resp['type'],
             'value': '1',
             'fill': color_calc(1, resp['type']),
-            'parent': grandParentSkillType['name'],
+            'parent': grand_parent_skill_type['name'],
             'children': []
         }
 
-        shortName = ontoloty.split('>')[-1]
-        if len(shortName) > 6:
-            shortName = f'{ontoloty.split(">")[-1][:6]}...'
+        short_name = ontoloty.split('>')[-1]
+        if len(short_name) > 6:
+            short_name = f'{ontoloty.split(">")[-1][:6]}...'
 
         if resp['type'] in soft_types:
             filling = '#FFB240'
@@ -393,15 +379,15 @@ def find_skill():
             'id': resp['type'],
             'value': '1',
             'enabled': True,
-            'shortName': shortName,
+            'short_name': short_name,
             'fill': filling,
-            'grandParent': grandParentSkillType['name'],
-            'parent': parentSkillType['name']
+            'grandParent': grand_parent_skill_type['name'],
+            'parent': parent_skill_type['name']
         }
 
-        parentSkillType['children'].append(skill)
-        grandParentSkillType['children'].append(parentSkillType)
-        cur_user_data['children'].append(grandParentSkillType)
+        parent_skill_type['children'].append(skill)
+        grand_parent_skill_type['children'].append(parent_skill_type)
+        cur_user_data['children'].append(grand_parent_skill_type)
 
     if filling != '':
         resp['filling'] = filling
@@ -454,14 +440,13 @@ def find_jobs_by_skills():
 
 @app.route('/handleRecommendationClick', methods=['GET', 'POST'])
 @login_required
-def handleRecommendationClick():
+def handle_recommendation_click():
     update_recommendation_clicks(current_user.id)
     return '200'
 
 
-
 @app.route('/getAdminPanelData', methods=['GET', 'POST'])
-def getAdminPanelData():
+def get_admin_panel_data():
     resp = get_admin_panel()
     res = []
     for i in resp:
@@ -482,7 +467,11 @@ def getAdminPanelData():
 #     #response = Response(json.dumps(json_data), mimetype='application/json')
 #     return jsonify(json_data)
 #
-#    # return send_file(os.path.join(app.root_path, f'static/data/universities/{dataname}'), mimetype='application/json', attachment_filename=dataname, as_attachment=True)
+    # return send_file(os.path.join(app.root_path,
+    #         f'static/data/universities/{dataname}'),
+    #         mimetype='application/json',
+    #         attachment_filename=dataname,
+    #         as_attachment=True)
 
 
 if __name__ == '__main__':
