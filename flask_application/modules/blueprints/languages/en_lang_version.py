@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 
+"""
+    Роуты для страниц на английском языке
 
-from flask import Blueprint, render_template, abort, session
-from flask_login import login_required, logout_user
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from ..json_convert import json_convert, color_calc, timeline_parse
-from flask import Flask, request, jsonify, render_template, make_response, redirect, url_for, flash, session, send_file
-from flask_cors import CORS
-from flask import send_from_directory
-from jinja2 import TemplateNotFound
-from ..mongodb import *
+"""
+
+from flask import Blueprint
+from flask_login import login_user, login_required, logout_user, current_user
+from flask import request, render_template, redirect, url_for, session
 
 en_version = Blueprint('en_version', __name__, template_folder='templates')
 
@@ -39,6 +37,7 @@ def about_us_en():
 # Registration
 @en_version.route("/en/register", methods=["GET", "POST"])
 def register_en():
+    from ...db_connector import DatabaseConnector
     if current_user.is_authenticated:
         return redirect(url_for('.index_en'))
 
@@ -47,7 +46,7 @@ def register_en():
         email = request.form.get('email')
         password = request.form.get('password')
         password2 = request.form.get('password2')
-        user = find_record('email', email)
+        user = DatabaseConnector().find_record('email', email)
 
         if user:
             return redirect(url_for("auth_en"))
@@ -55,7 +54,7 @@ def register_en():
             if password2 == password:
                 # hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
                 hashed_password = password
-                new_user = create_record(name, email, hashed_password)
+                new_user = DatabaseConnector().create_record(name, email, hashed_password)
                 login_user(new_user, remember=True)
                 session["logged_in"] = True
 
@@ -75,6 +74,7 @@ def admin_uni_en():
 # Авторизация
 @en_version.route('/en/login', methods=['POST', 'GET'])
 def login_en():
+    from ...db_connector import DatabaseConnector
     if current_user.is_authenticated:
         return redirect(url_for('.index_en'))
 
@@ -86,7 +86,7 @@ def login_en():
         password = request.form.get('password')
         checkbox = True if request.form.get('check') else False
 
-        user = find_record('email', email)
+        user = DatabaseConnector().find_record('email', email)
         if user:
             print(f'User is found. Email={email}.')
             hashed_password = user.password

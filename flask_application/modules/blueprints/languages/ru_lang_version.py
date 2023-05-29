@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 
+"""
+    Роуты для страниц на русском языке
+"""
 
-from flask import Blueprint, render_template, abort, session
-from flask_login import login_required, logout_user
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from ..json_convert import json_convert, color_calc, timeline_parse
-from flask import Flask, request, jsonify, render_template, make_response, redirect, url_for, flash, session, send_file
-from flask_cors import CORS
-from flask import send_from_directory
-from jinja2 import TemplateNotFound
-from ..mongodb import *
-
+from flask import Blueprint
+from flask_login import login_user, login_required, logout_user, current_user
+from flask import request, render_template, redirect, url_for, session
 
 ru_version = Blueprint('ru_version', __name__, template_folder='templates')
 
@@ -33,6 +29,7 @@ def index_ru():
 # Авторизация
 @ru_version.route('/ru/login', methods=['POST', 'GET'])
 def login_ru():
+    from ...db_connector import DatabaseConnector
     if current_user.is_authenticated:
         return redirect(url_for('.index_ru'))
 
@@ -41,7 +38,7 @@ def login_ru():
         password = request.form.get('password')
         checkbox = True if request.form.get('check') else False
 
-        user = find_record('email', email)
+        user = DatabaseConnector().find_record('email', email)
         if user:
             print(f'User is found. Email={email}.')
             hashed_password = user.password

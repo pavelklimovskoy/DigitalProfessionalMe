@@ -5,26 +5,25 @@
 
 """
 
-from pymongo import MongoClient
-
-client = MongoClient('mongodb://root:example@mongo', 27017)
-db = client['DPM']
-collection = db['Analytics']
+from db_connector import DatabaseConnector
 
 
 class Analytics:
-    image_count: int = 0
-    users_count: int = 0
-    cv_count: int = 0
-    type_of_record: str = ""
-    info: str = ""
+    __instance = None
 
     def __init__(self, image_count=0, users_count=0, cv_count=0, type_of_record="record", info=""):
-        self.image_count = image_count
-        self.users_count = users_count
-        self.cv_count = cv_count
-        self.type_of_record = type_of_record
-        self.info = info
+        if not Analytics.__instance:
+            self.image_count = image_count
+            self.users_count = users_count
+            self.cv_count = cv_count
+            self.type_of_record = type_of_record
+            self.info = info
+
+    @classmethod
+    def get_instance(cls):
+        if not cls.__instance:
+            cls.__instance = Analytics()
+        return cls.__instance
 
     def to_json(self):
         return {
@@ -35,35 +34,32 @@ class Analytics:
             "info": self.info
         }
 
+    def summary_info_is_exist(self) -> bool:
+        if DatabaseConnector().collection_analytics.find_one({"type_of_record": "summary"}) is None:
+            DatabaseConnector().collection_analytics.insert_one(Analytics(type_of_record="summary").to_json())
 
-def summary_info_is_exist() -> bool:
-    if collection.find_one({"type_of_record": "summary"}) is None:
-        collection.insert_one(Analytics(type_of_record="summary").to_json())
+        return True
 
-    return True
+    def summary_image_count(self) -> int:
+        if self.summary_info_is_exist() is True:
+            return DatabaseConnector().collection_analytics.find_one({"type_of_record": "summary"})["image_count"]
 
+        return -1
 
-def summary_image_count() -> int:
-    if summary_info_is_exist() is True:
-        return collection.find_one({"type_of_record": "summary"})["image_count"]
+    def increment_image_count(self):
+        if self.summary_info_is_exist() is True:
+            count = DatabaseConnector().collection_analytics.find_one({"type_of_record": "summary"})["image_count"]
+            DatabaseConnector().collection_analytics.find_one_and_update({"type_of_record": "summary"},
+                                                                         {'$set': {"image_count": count + 1}})
 
-    return -1
+    def summary_cv_count(self) -> int:
+        if self.summary_info_is_exist() is True:
+            return DatabaseConnector().collection_analytics.find_one({"type_of_record": "summary"})["cv_count"]
 
+        return -1
 
-def increment_image_count():
-    if summary_info_is_exist() is True:
-        count = collection.find_one({"type_of_record": "summary"})["image_count"]
-        collection.find_one_and_update({"type_of_record": "summary"}, {'$set': {"image_count": count + 1}})
-
-
-def summary_cv_count() -> int:
-    if summary_info_is_exist() is True:
-        return collection.find_one({"type_of_record": "summary"})["cv_count"]
-
-    return -1
-
-
-def increment_cv_count():
-    if summary_info_is_exist() is True:
-        count = collection.find_one({"type_of_record": "summary"})["cv_count"]
-        collection.find_one_and_update({"type_of_record": "summary"}, {'$set': {"cv_count": count + 1}})
+    def increment_cv_count(self):
+        if self.summary_info_is_exist() is True:
+            count = DatabaseConnector().collection_analytics.find_one({"type_of_record": "summary"})["cv_count"]
+            DatabaseConnector().collection_analytics.find_one_and_update({"type_of_record": "summary"},
+                                                                         {'$set': {"cv_count": count + 1}})
