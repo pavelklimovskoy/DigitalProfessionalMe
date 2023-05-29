@@ -45,12 +45,9 @@ app.register_blueprint(skills_routes)
 login_manager = LoginManager(app)
 login_manager.login_view = 'select_language'
 
-db_controller = DatabaseConnector()
-
-
 @login_manager.user_loader
 def load_user(user_id):
-    return db_controller.find_record('id', user_id)
+    return DatabaseConnector.get_instance().find_record('id', user_id)
 
 
 @app.after_request
@@ -97,12 +94,12 @@ def find_jobs():
     job_name = request.get_json()['jobName']
     job_deadline = request.get_json()['deadline']
     # print(job_name)
-    db_controller.add_timeline_evidence_event(current_user.id, job_name, job_deadline)
+    DatabaseConnector.get_instance().add_timeline_evidence_event(current_user.id, job_name, job_deadline)
     resp = RchilliConnector.get_instance().job_search(RchilliConnector.get_instance().job_autocomplete(job_name))['Skills']
 
     # print(resp)
 
-    owned_skills = db_controller.get_owned_skills(current_user.id)
+    owned_skills = DatabaseConnector.get_instance().get_owned_skills(current_user.id)
     req_skills = []
 
     for skill in resp:
@@ -116,7 +113,7 @@ def find_jobs():
     set_different = set_req_skills - set_owned_skills
     # print('skillGap', set_different)
 
-    courses = db_controller.get_courses(set_different)
+    courses = DatabaseConnector.get_instance().get_courses(set_different)
     # print(courses)
 
     return json.loads(json_util.dumps({
@@ -136,7 +133,7 @@ def parse_certificate():
     elif 'stepik.org' in url:
         resp = parse_stepik_url(url)
 
-    db_controller.add_certificate_event(current_user.id, resp['courseName'], resp['date'], resp['url'], resp['userName'])
+    DatabaseConnector.get_instance().add_certificate_event(current_user.id, resp['courseName'], resp['date'], resp['url'], resp['userName'])
     return resp
 
 
@@ -145,7 +142,7 @@ def parse_certificate():
 
 @app.route('/getAdminPanelData', methods=['GET', 'POST'])
 def get_admin_panel_data():
-    resp = db_controller.get_admin_panel()
+    resp = DatabaseConnector.get_instance().get_admin_panel()
     res = []
     for i in resp:
         i.pop('_id')
