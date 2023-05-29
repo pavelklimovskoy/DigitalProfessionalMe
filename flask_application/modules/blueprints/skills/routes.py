@@ -37,8 +37,9 @@ def show_translated_input_options():
 @skills_routes.route('/changeSkillState', methods=['POST', 'GET'])
 def change_skill_state():
     from ...rchilli import RchilliConnector
+    from ...db_connector import DatabaseConnector
     skill_name = request.get_json()['skill']
-    RchilliConnector.get_instance().disable_skill(current_user.id, skill_name)
+    DatabaseConnector.get_instance().disable_skill(current_user.id, skill_name)
     return '200'
 
 
