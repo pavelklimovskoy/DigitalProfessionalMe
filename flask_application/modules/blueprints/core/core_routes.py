@@ -14,7 +14,6 @@ from flask import current_app
 from werkzeug.utils import secure_filename
 import os
 
-
 core_route = Blueprint('core_routes', __name__, template_folder='templates')
 
 
@@ -116,7 +115,6 @@ def index():
     return render_template('/ru/index_ru.html', title='Digital Professional Me', userName=current_user.name)
 
 
-
 @core_route.route('/uploader', methods=['GET', 'POST'])
 @login_required
 def upload_file():
@@ -135,7 +133,7 @@ def upload_file():
             if cv_link != '':
                 try:
                     file_name = f'hhCv_{Analytics.get_instance().summary_cv_count()}.pdf'
-                    ServiceContainer.save_pdf(cv_link, file_name)
+                    ServiceContainer.get_instance().save_pdf(cv_link, file_name)
 
                     Analytics.get_instance().increment_cv_count()
                 except Exception as e:
@@ -153,11 +151,12 @@ def upload_file():
 
             if cur_user is not None:
                 rchilli_data = RchilliConnector.get_instance().rchilli_parse(file_name)
-                json_data, skills_array = RchilliConnector.get_instance().json_convert(rchilli_data)
-                timeline_events = RchilliConnector.get_instance().timeline_parse(rchilli_data)
+                json_data, skills_array = ServiceContainer.get_instance().json_convert(rchilli_data)
+                timeline_events = ServiceContainer.get_instance().timeline_parse(rchilli_data)
 
                 DatabaseConnector.get_instance().update_record('id', current_user.id, 'language',
-                              rchilli_data['ResumeParserData']['ResumeLanguage']['LanguageCode'])
+                                                               rchilli_data['ResumeParserData']['ResumeLanguage'][
+                                                                   'LanguageCode'])
                 DatabaseConnector.get_instance().update_record('id', current_user.id, 'jsondata', json_data)
                 DatabaseConnector.get_instance().update_record('id', current_user.id, 'rchillidata', rchilli_data)
                 DatabaseConnector.get_instance().update_record('id', current_user.id, 'timelineEvents', timeline_events)
@@ -166,7 +165,6 @@ def upload_file():
             print(e)
 
     return redirect(url_for('ru_version.index_ru'))
-
 
 
 @core_route.route('/handleRecommendationClick', methods=['GET', 'POST'])

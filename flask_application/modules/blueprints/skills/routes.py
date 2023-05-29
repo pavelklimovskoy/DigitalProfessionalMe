@@ -178,13 +178,15 @@ def find_skill():
 @login_required
 def find_jobs_by_skills():
     from ...rchilli import RchilliConnector
-    set_owned_skills = set(RchilliConnector.get_instance().get_owned_skills(current_user.id))
+    from ...db_connector import DatabaseConnector
+
+    set_owned_skills = set(DatabaseConnector.get_instance().get_owned_skills(current_user.id))
     related_jobs = dict()
     matched_job = str()
     mx = 0
 
     for skill in set_owned_skills:
-        skill_data = RchilliConnector.get_instance().get_skill_from_dataset(skill)
+        skill_data = DatabaseConnector.get_instance().get_skill_from_dataset(skill)
         if skill_data is not None:
             for job in skill_data['relatedJobs']:
                 if job in related_jobs.keys():
@@ -205,7 +207,7 @@ def find_jobs_by_skills():
     # set_different = set_req_skills - set_owned_skills
     set_different = set_owned_skills - set_req_skills
 
-    courses = RchilliConnector.get_instance().get_courses(set_different)
+    courses = DatabaseConnector.get_instance().get_courses(set_different)
 
     return json.loads(json_util.dumps({
         'offeredCourses': courses,
