@@ -38,7 +38,7 @@ def login_ru():
         password = request.form.get('password')
         checkbox = True if request.form.get('check') else False
 
-        user = DatabaseConnector().find_record('email', email)
+        user = DatabaseConnector.get_instance().find_record('email', email)
         if user:
             print(f'User is found. Email={email}.')
             hashed_password = user.password

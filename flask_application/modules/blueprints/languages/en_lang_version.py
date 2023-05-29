@@ -46,7 +46,7 @@ def register_en():
         email = request.form.get('email')
         password = request.form.get('password')
         password2 = request.form.get('password2')
-        user = DatabaseConnector().find_record('email', email)
+        user = DatabaseConnector.get_instance().find_record('email', email)
 
         if user:
             return redirect(url_for("auth_en"))
@@ -54,7 +54,7 @@ def register_en():
             if password2 == password:
                 # hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
                 hashed_password = password
-                new_user = DatabaseConnector().create_record(name, email, hashed_password)
+                new_user = DatabaseConnector.get_instance().create_record(name, email, hashed_password)
                 login_user(new_user, remember=True)
                 session["logged_in"] = True
 
@@ -86,7 +86,7 @@ def login_en():
         password = request.form.get('password')
         checkbox = True if request.form.get('check') else False
 
-        user = DatabaseConnector().find_record('email', email)
+        user = DatabaseConnector.get_instance().find_record('email', email)
         if user:
             print(f'User is found. Email={email}.')
             hashed_password = user.password

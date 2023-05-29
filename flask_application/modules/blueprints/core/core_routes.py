@@ -35,23 +35,23 @@ def select_language():
     :return:
     """
     if "ru" in request.accept_languages:
-        return redirect(url_for('ru_version.auth_ru'))
+        return redirect(url_for('ru_lang_version.auth_ru'))
     else:
-        return redirect(url_for('auth_en'))
+        return redirect(url_for('en_lang_version.auth_en'))
 
 
-@core_route.app_errorhandler(404)
-def page_not_found(error):
-    """
-    Обработка кода ошибки 404
-    :param error:
-    :return:
-    """
-    if "ru" in request.accept_languages:
-        return render_template('/ru/notfound_ru.html')
-    else:
-        return render_template('/en/401_en.html')
-
+# @core_route.app_errorhandler(404)
+# def page_not_found(error):
+#     """
+#     Обработка кода ошибки 404
+#     :param error:
+#     :return:
+#     """
+#     if "ru" in request.accept_languages:
+#         return render_template('/ru/401_ru.html')
+#     else:
+#         return render_template('/en/notfound_en.html')
+#
 
 @core_route.app_errorhandler(401)
 def unauthorized_error(error):
