@@ -5,7 +5,7 @@ import uuid
 import datetime
 import os
 from pymongo import MongoClient
-from user_db import User
+from .user_db import User
 
 
 class DatabaseConnector:
@@ -22,6 +22,8 @@ class DatabaseConnector:
             self.collection_feedback = self.db['Feedback']
             self.collection_admin_panel = self.db['AdminPanel']
             self.collection_analytics = self.db['Analytics']
+
+
 
     @classmethod
     def get_instance(cls):

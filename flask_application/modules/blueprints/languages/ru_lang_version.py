@@ -30,6 +30,7 @@ def index_ru():
 @ru_version.route('/ru/login', methods=['POST', 'GET'])
 def login_ru():
     from ...db_connector import DatabaseConnector
+
     if current_user.is_authenticated:
         return redirect(url_for('.index_ru'))
 

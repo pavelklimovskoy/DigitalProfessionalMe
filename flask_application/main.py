@@ -1,25 +1,24 @@
 # -*- coding: utf-8 -*-
 
-from certificate_parser import parse_coursera_url, parse_stepik_url
-from blueprints.languages.ru_lang_version import ru_version
-from blueprints.languages.en_lang_version import en_version
-from blueprints.core.core_routes import core_route
-from blueprints.rchilli.routes import rchilli_routes
-from blueprints.skills.routes import skills_routes
+from modules.certificate_parser import parse_coursera_url, parse_stepik_url
+from modules.blueprints.languages.ru_lang_version import ru_version
+from modules.blueprints.languages.en_lang_version import en_version
+from modules.blueprints.core.core_routes import core_route
+from modules.blueprints.rchilli.routes import rchilli_routes
+from modules.blueprints.skills.routes import skills_routes
 
 from bson import json_util
 from flask_login import LoginManager, login_required, current_user
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-from db_connector import DatabaseConnector
-from service import ServiceContainer
-from rchilli import RchilliConnector
+from modules.db_connector import DatabaseConnector
+from modules.service import ServiceContainer
+from modules.rchilli import RchilliConnector
 
 import os
 import json
 from waitress import serve
-
 
 # Проверка версии интерпретатора перед созданием Flask приложения
 # check_python_version()
