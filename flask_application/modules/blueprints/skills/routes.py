@@ -175,58 +175,100 @@ def find_skill():
     return resp
 
 
+# @skills_routes.route('/findJobsOptions', methods=['GET'])
+# @login_required
+# def find_jobs_by_skills():
+#     """
+#     Метод для рекомендации работы по навыками пользователся
+#     :return:
+#     """
+#     from ...rchilli import RchilliConnector
+#     from ...db_connector import DatabaseConnector
+#     from collections import defaultdict
+#     import operator
+#
+#     # Получение экземпляров одиночек
+#     db_instance = DatabaseConnector.get_instance()
+#     rchilli_instance = RchilliConnector.get_instance()
+#
+#     skills_current_user = db_instance.get_owned_skills(current_user.id)
+#     user_skills_set = set(skills_current_user)
+#
+#     related_jobs = defaultdict(lambda: 1)
+#
+#     matched_job = str()
+#     mx = 0
+#
+#
+#     # Перебираем все умения пользователя
+#     for current_skill in user_skills_set:
+#         # Получение списка работ и курсов для отдельного навыка
+#         skill_data = db_instance.skill_in_dataset(current_skill)
+#         if skill_data is None:
+#             continue
+#
+#         # Перебираем все работы для конкретного навыка и считаем их упоминания
+#         for job in skill_data['relatedJobs']:
+#             related_jobs[job] += 1
+#
+#             if related_jobs[job] > mx:
+#                 mx = related_jobs[job]
+#                 matched_job = job
+#
+#     # matched_job = max(related_jobs, key=related_jobs.get)
+#
+#     job_data = rchilli_instance.job_search(rchilli_instance.job_autocomplete(matched_job))['Skills']
+#     set_req_skills = set()
+#
+#     for skill in job_data:
+#         set_req_skills.add(skill['Skill'])
+#
+#     # set_different = set_req_skills - set_owned_skills
+#     set_different = user_skills_set - set_req_skills
+#
+#     courses = db_instance.get_courses(set_different)
+#
+#     return json.loads(json_util.dumps({
+#         'offeredCourses': courses,
+#         'gapSkills': set_different,
+#         'matchedJob': matched_job
+#     }))
+
+
 @skills_routes.route('/findJobsOptions', methods=['GET'])
 @login_required
 def find_jobs_by_skills():
-    """
-    Метод для рекомендации работы по навыками пользователся
-    :return:
-    """
     from ...rchilli import RchilliConnector
     from ...db_connector import DatabaseConnector
-    from collections import defaultdict
-    import operator
 
-    # Получение экземпляров одиночек
-    db_instance = DatabaseConnector.get_instance()
-    rchilli_instance = RchilliConnector.get_instance()
-
-    skills_current_user = db_instance.get_owned_skills(current_user.id)
-    user_skills_set = set(skills_current_user)
-
-    related_jobs = defaultdict(lambda: 1)
-
+    set_owned_skills = set(DatabaseConnector.get_instance().get_owned_skills(current_user.id))
+    related_jobs = dict()
     matched_job = str()
     mx = 0
 
+    for skill in set_owned_skills:
+        skill_data = DatabaseConnector.get_instance().get_skill_from_dataset(skill)
+        if skill_data is not None:
+            for job in skill_data['relatedJobs']:
+                if job in related_jobs.keys():
+                    related_jobs[job] += 1
+                else:
+                    related_jobs[job] = 1
 
-    # Перебираем все умения пользователя
-    for current_skill in user_skills_set:
-        # Получение списка работ и курсов для отдельного навыка
-        skill_data = db_instance.skill_in_dataset(current_skill)
-        if skill_data is None:
-            continue
+                if related_jobs[job] > mx:
+                    mx = related_jobs[job]
+                    matched_job = job
 
-        # Перебираем все работы для конкретного навыка и считаем их упоминания
-        for job in skill_data['relatedJobs']:
-            related_jobs[job] += 1
-
-            if related_jobs[job] > mx:
-                mx = related_jobs[job]
-                matched_job = job
-
-    # matched_job = max(related_jobs, key=related_jobs.get)
-
-    job_data = rchilli_instance.job_search(rchilli_instance.job_autocomplete(matched_job))['Skills']
+    job_data = RchilliConnector.get_instance().job_search(RchilliConnector.get_instance().job_autocomplete(matched_job))['Skills']
     set_req_skills = set()
 
     for skill in job_data:
         set_req_skills.add(skill['Skill'])
 
     # set_different = set_req_skills - set_owned_skills
-    set_different = user_skills_set - set_req_skills
+    set_different = set_owned_skills - set_req_skills
 
-    courses = db_instance.get_courses(set_different)
+    courses = DatabaseConnector.get_instance().get_courses(set_different)
 
     return json.loads(json_util.dumps({
         'offeredCourses': courses,

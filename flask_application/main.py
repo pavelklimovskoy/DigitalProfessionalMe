@@ -109,14 +109,14 @@ def find_jobs():
 
     set_owned_skills = set(owned_skills)
     set_req_skills = set(req_skills)
-    # print('owned skills', set_owned_skills)
-    # print('required skills', set_req_skills)
+    print('owned skills', set_owned_skills)
+    print('required skills', set_req_skills)
 
     set_different = set_req_skills - set_owned_skills
     # print('skillGap', set_different)
 
     courses = DatabaseConnector.get_instance().get_courses(set_different)
-    # print(courses)
+    print(courses)
 
     return json.loads(json_util.dumps({
         'offeredCourses': courses,
