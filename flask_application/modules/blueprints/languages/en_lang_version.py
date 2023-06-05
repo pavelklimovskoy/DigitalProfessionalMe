@@ -34,9 +34,13 @@ def about_us_en():
     return render_template('/en/aboutus_en.html', title='About us')
 
 
-# Registration
+
 @en_version.route("/en/register", methods=["GET", "POST"])
 def register_en():
+    """
+    Registration
+    :return:
+    """
     from ...db_connector import DatabaseConnector
     if current_user.is_authenticated:
         return redirect(url_for('.index_en'))

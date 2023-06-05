@@ -42,7 +42,7 @@ app.register_blueprint(skills_routes)
 
 
 login_manager = LoginManager(app)
-login_manager.login_view = 'select_language'
+login_manager.login_view = 'core_routes.select_language'
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -55,11 +55,14 @@ def apply_caching(response):
     return response
 
 
-# Json для Sunburst Chart
+
 @app.route('/getChartJson', methods=['GET', 'POST'])
 @login_required
 def get_chart_json():
-    # print(current_user.language)
+    """
+    Json для Sunburst Chart
+    :return:
+    """
     return jsonify(current_user.json_data)
 
 

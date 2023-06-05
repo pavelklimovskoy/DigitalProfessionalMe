@@ -11,9 +11,13 @@ from flask import request, render_template, redirect, url_for, session
 ru_version = Blueprint('ru_version', __name__, template_folder='templates')
 
 
-# Новая страница логинки
+
 @ru_version.route('/ru/auth')
 def auth_ru():
+    """
+    # Новая страница логинки
+    :return:
+    """
     return render_template('/ru/auth_ru.html', title='Digital Professional Me')
 
 # Основная страница
@@ -26,9 +30,13 @@ def index_ru():
     return render_template('/ru/index_ru.html', title='Digital Professional Me', userName=current_user.name)
 
 
-# Авторизация
+
 @ru_version.route('/ru/login', methods=['POST', 'GET'])
 def login_ru():
+    """
+    # Авторизация
+    :return:
+    """
     from ...db_connector import DatabaseConnector
 
     if current_user.is_authenticated:

@@ -22,15 +22,11 @@ class ServiceContainer:
             self.hard_colors = ['#4188D2', '#3272B5', '#235C97', '#144679', '#05305B']  # 1-2, 3-4, 5-6, 7-8, >= 9
             self.soft_colors = ['#FFB240', '#D99632', '#B27923', '#8C5C14', '#653F05']  # 1-2, 3-4, 5-6, 7-8, >= 9
 
-
     @classmethod
     def get_instance(cls):
         if not cls.__instance:
             cls.__instance = ServiceContainer()
         return cls.__instance
-
-
-
 
     # Определение цвета для сектора
     def color_calc(self, check, skill_type):
@@ -58,7 +54,6 @@ class ServiceContainer:
                 filling = self.hard_colors[4]
 
         return filling
-
 
     # Конвертация Json
     def json_convert(self, data):
@@ -148,7 +143,6 @@ class ServiceContainer:
 
         return [main_dict], skills_array
 
-
     def timeline_parse(self, data):
         qualification_events = []
         experience_events = []
@@ -181,7 +175,6 @@ class ServiceContainer:
 
         return main
 
-
     def check_python_version(self) -> None:
         """
         Функция для проверки версии интерпретатора Python
@@ -192,7 +185,6 @@ class ServiceContainer:
 
         if major < 3 or minor < 10:
             raise Exception("Неверная версия Python, необходима версия старше 3.10")
-
 
     def save_pdf(self, url: str, file_name: str) -> None:
         """

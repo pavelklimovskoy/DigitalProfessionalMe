@@ -34,9 +34,9 @@ def select_language():
     :return:
     """
     if "ru" in request.accept_languages:
-        return redirect(url_for('ru_lang_version.auth_ru'))
+        return redirect(url_for('ru_version.auth_ru'))
     else:
-        return redirect(url_for('en_lang_version.auth_en'))
+        return redirect(url_for('en_version.auth_en'))
 
 
 # @core_route.app_errorhandler(404)

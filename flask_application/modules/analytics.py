@@ -5,7 +5,7 @@
 
 """
 
-from db_connector import DatabaseConnector
+from .db_connector import DatabaseConnector
 
 
 class Analytics:
@@ -35,26 +35,30 @@ class Analytics:
         }
 
     def summary_info_is_exist(self) -> bool:
-        if DatabaseConnector.get_instance().collection_analytics.find_one({"type_of_record": "summary"}) is None:
-            DatabaseConnector.get_instance().collection_analytics.insert_one(Analytics(type_of_record="summary").to_json())
+        db_instance = DatabaseConnector.get_instance()
+        if db_instance.collection_analytics.find_one({"type_of_record": "summary"}) is None:
+            db_instance.collection_analytics.insert_one(Analytics(type_of_record="summary").to_json())
 
         return True
 
     def summary_image_count(self) -> int:
+        db_instance = DatabaseConnector.get_instance()
         if self.summary_info_is_exist() is True:
-            return DatabaseConnector.get_instance().collection_analytics.find_one({"type_of_record": "summary"})["image_count"]
+            return db_instance.collection_analytics.find_one({"type_of_record": "summary"})["image_count"]
 
         return -1
 
     def increment_image_count(self):
+        db_instance = DatabaseConnector.get_instance()
         if self.summary_info_is_exist() is True:
-            count = DatabaseConnector.get_instance().collection_analytics.find_one({"type_of_record": "summary"})["image_count"]
-            DatabaseConnector.get_instance().collection_analytics.find_one_and_update({"type_of_record": "summary"},
+            count = db_instance.collection_analytics.find_one({"type_of_record": "summary"})["image_count"]
+            db_instance.collection_analytics.find_one_and_update({"type_of_record": "summary"},
                                                                          {'$set': {"image_count": count + 1}})
 
     def summary_cv_count(self) -> int:
+        db_instance = DatabaseConnector.get_instance()
         if self.summary_info_is_exist() is True:
-            return DatabaseConnector.get_instance().collection_analytics.find_one({"type_of_record": "summary"})["cv_count"]
+            return db_instance.collection_analytics.find_one({"type_of_record": "summary"})["cv_count"]
 
         return -1
 

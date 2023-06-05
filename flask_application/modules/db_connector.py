@@ -205,7 +205,7 @@ class DatabaseConnector:
             'relatedCourses': courses
         })
 
-    def get_skill_from_dataset(self, skill_name):
+    def skill_in_dataset(self, skill_name):
         return self.collection_skills_dataset.find_one({'skill': skill_name})
 
     def update_recommendation_clicks(self, user_id):

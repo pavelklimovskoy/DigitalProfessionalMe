@@ -219,7 +219,7 @@ window.addEventListener('resize', function (event) {
 function addLifeGoal() {
   let inputDate = document.getElementById("goalDateInput").value;
   let dateEntered = new Date(inputDate);
-  console.log(dateEntered);
+  //console.log(dateEntered);
   let planeName = document.getElementById("goalJDInput").value;
 
   itemId++;
@@ -234,7 +234,7 @@ function addLifeGoal() {
   };
 
   timeline.itemsData.add(newItem);
-  console.log(itemId);
+  //console.log(itemId);
 }
 
 // Добавление нового Сертификата
