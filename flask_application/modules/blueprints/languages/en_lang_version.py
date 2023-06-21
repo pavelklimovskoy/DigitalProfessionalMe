@@ -5,9 +5,8 @@
 
 """
 
-from flask import Blueprint
-from flask_login import login_user, login_required, logout_user, current_user
-from flask import request, render_template, redirect, url_for, session
+from flask import (Blueprint, redirect, render_template, request, session, url_for)
+from flask_login import current_user, login_required, login_user, logout_user
 
 en_version = Blueprint('en_version', __name__, template_folder='templates')
 
@@ -92,19 +91,19 @@ def login_en():
 
         user = DatabaseConnector.get_instance().find_record('email', email)
         if user:
-            print(f'User is found. Email={email}.')
+            # print(f'User is found. Email={email}.')
             hashed_password = user.password
             if password == hashed_password:
-                print(f'User password is accepted. Email={email}.')
+                # print(f'User password is accepted. Email={email}.')
                 # checkbox = True if json_data["check"] else False
                 session["logged_in"] = True
                 login_user(user, remember=checkbox)
                 return redirect(url_for(".index_en"))
             else:
-                print(f'User password is rejected. Email={email}.')
+                # print(f'User password is rejected. Email={email}.')
                 return redirect(url_for(".auth_en"))
         else:
-            print(f'User is not found. Email={email}.')
+            # print(f'User is not found. Email={email}.')
             return redirect(url_for(".auth_en"))
     else:
         return redirect(url_for(".auth_en"))

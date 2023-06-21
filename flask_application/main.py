@@ -26,6 +26,8 @@ from waitress import serve
 # Создание и конфигурация Flask приложения
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY')
+app.config['RCHILLI_API_KEY'] = os.getenv('RCHILLI_API_KEY')
+app.config['MONGO_MODE'] = os.getenv('MONGO_MODE')
 app.config.from_pyfile('configs/base.cfg')
 app.config.from_pyfile('configs/local.cfg')
 CORS(app)
@@ -72,23 +74,23 @@ def get_timeline_json():
 
 @app.route('/translatedSkillInputAutocomplete', methods=['POST'])
 def show_translated_input_options():
-    RCHILLI_API_KEY = current_app.config['RCHILLI_API_KEY']
-    translated = RchilliConnector.get_instance(RCHILLI_API_KEY).get_translate_text(request.get_json()['skillName'])
-    return RchilliConnector.get_instance(RCHILLI_API_KEY).skill_autocomplete(translated)
+    
+    translated = RchilliConnector.get_instance().get_translate_text(request.get_json()['skillName'])
+    return RchilliConnector.get_instance().skill_autocomplete(translated)
 
 
 @app.route('/translatedJobInputAutocomplete', methods=['POST'])
 def show_translated_jobs():
-    RCHILLI_API_KEY = current_app.config['RCHILLI_API_KEY']
-    translated = RchilliConnector.get_instance(RCHILLI_API_KEY).get_translate_text(request.get_json()['jobName'])
+    
+    translated = RchilliConnector.get_instance().get_translate_text(request.get_json()['jobName'])
     print(translated)
-    return RchilliConnector.get_instance(RCHILLI_API_KEY).job_autocomplete(translated)
+    return RchilliConnector.get_instance().job_autocomplete(translated)
 
 
 @app.route('/jobInputAutocomplete', methods=['POST'])
 def show_jobs():
-    RCHILLI_API_KEY = current_app.config['RCHILLI_API_KEY']
-    return RchilliConnector.get_instance(RCHILLI_API_KEY).job_autocomplete(request.get_json()['jobName'])
+    
+    return RchilliConnector.get_instance().job_autocomplete(request.get_json()['jobName'])
 
 
 @app.route('/findJob', methods=['POST'])
@@ -96,9 +98,9 @@ def find_jobs():
     job_name = request.get_json()['jobName']
     job_deadline = request.get_json()['deadline']
     # print(job_name)
-    RCHILLI_API_KEY = current_app.config['RCHILLI_API_KEY']
+    
     DatabaseConnector.get_instance().add_timeline_evidence_event(current_user.id, job_name, job_deadline)
-    resp = RchilliConnector.get_instance(RCHILLI_API_KEY).job_search(RchilliConnector.get_instance(RCHILLI_API_KEY).job_autocomplete(job_name))['Skills']
+    resp = RchilliConnector.get_instance().job_search(RchilliConnector.get_instance().job_autocomplete(job_name))['Skills']
 
     # print(resp)
 

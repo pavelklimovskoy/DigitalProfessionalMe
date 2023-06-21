@@ -5,14 +5,15 @@
 
 """
 
-from flask import Blueprint, render_template, abort, session
-from flask_login import login_required, logout_user
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from flask import Flask, request, jsonify, render_template, make_response, redirect, url_for, flash, session, send_file
-from flask_cors import CORS
-from flask import send_from_directory
-from jinja2 import TemplateNotFound
 import os
+
+from flask import (Blueprint, Flask, abort, flash, jsonify, make_response,
+                   redirect, render_template, request, send_file,
+                   send_from_directory, session, url_for)
+from flask_cors import CORS
+from flask_login import (LoginManager, current_user, login_required,
+                         login_user, logout_user)
+from jinja2 import TemplateNotFound
 
 rchilli_routes = Blueprint('rchilli_routes', __name__, template_folder='templates')
 

@@ -5,14 +5,12 @@
 
 """
 
-from flask import Blueprint
-from flask_login import login_required, logout_user, current_user
-from flask import request, render_template, redirect, url_for, session
-from flask import send_from_directory
-
-from flask import current_app
-from werkzeug.utils import secure_filename
 import os
+
+from flask import (Blueprint, current_app, redirect, render_template, request,
+                   send_from_directory, session, url_for)
+from flask_login import current_user, login_required, logout_user
+from werkzeug.utils import secure_filename
 
 core_route = Blueprint('core_routes', __name__, template_folder='templates')
 
@@ -118,10 +116,10 @@ def index():
 @core_route.route('/uploader', methods=['GET', 'POST'])
 @login_required
 def upload_file():
+    from ...analytics import Analytics
     from ...db_connector import DatabaseConnector
     from ...rchilli import RchilliConnector
     from ...service import ServiceContainer
-    from ...analytics import Analytics
     """
     Uploading CV in storage
     :return:
@@ -150,8 +148,8 @@ def upload_file():
             cur_user = DatabaseConnector.get_instance().find_record('id', current_user.id)
 
             if cur_user is not None:
-                RCHILLI_API_KEY = current_app.config['RCHILLI_API_KEY']
-                rchilli_data = RchilliConnector.get_instance(RCHILLI_API_KEY).rchilli_parse(file_name)
+                
+                rchilli_data = RchilliConnector.get_instance().rchilli_parse(file_name)
                 json_data, skills_array = ServiceContainer.get_instance().json_convert(rchilli_data)
                 timeline_events = ServiceContainer.get_instance().timeline_parse(rchilli_data)
 

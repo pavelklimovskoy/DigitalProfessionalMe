@@ -19,14 +19,14 @@ window.SuperParticles = window.SuperParticles || class SuperParticles {
                 backgroundCssRule: "linear-gradient(0deg, rgba(24,74,110,1) 0%, rgba(20,116,180,1) 100%)" // css or null (null: don't modify container background)
             },
             pixiApp: { // these are documented here: http://pixijs.download/release/docs/PIXI.Application.html#Application
-                antialias: true,
+                antialias: false,
                 transparent: true,
                 forceFXAA: false,
                 powerPreference: 'high-performance',
-                resolution: 1.0
+                resolution: 0.9
             },
             particles: {
-                amount: 100, // unit: particles
+                amount: 50, // unit: particles
                 radius: 2, // unit: pixels
                 velocity : 15, // unit: pixels/second
                 color: "0xFFFFFF", // unit: rgb hex color

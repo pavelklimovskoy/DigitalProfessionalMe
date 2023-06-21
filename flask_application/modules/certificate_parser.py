@@ -2,8 +2,9 @@
 
 
 from urllib.request import urlopen
-from bs4 import BeautifulSoup
+
 import requests
+from bs4 import BeautifulSoup
 
 
 def parse_coursera_url(url):
