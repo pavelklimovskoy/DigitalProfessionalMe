@@ -98,7 +98,7 @@ def find_jobs():
     # print(job_name)
     RCHILLI_API_KEY = current_app.config['RCHILLI_API_KEY']
     DatabaseConnector.get_instance().add_timeline_evidence_event(current_user.id, job_name, job_deadline)
-    resp = RchilliConnector.get_instance(RCHILLI_API_KEY).job_search(RchilliConnector.get_instance().job_autocomplete(job_name))['Skills']
+    resp = RchilliConnector.get_instance(RCHILLI_API_KEY).job_search(RchilliConnector.get_instance(RCHILLI_API_KEY).job_autocomplete(job_name))['Skills']
 
     # print(resp)
 

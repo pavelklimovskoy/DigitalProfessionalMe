@@ -150,7 +150,8 @@ def upload_file():
             cur_user = DatabaseConnector.get_instance().find_record('id', current_user.id)
 
             if cur_user is not None:
-                rchilli_data = RchilliConnector.get_instance().rchilli_parse(file_name)
+                RCHILLI_API_KEY = current_app.config['RCHILLI_API_KEY']
+                rchilli_data = RchilliConnector.get_instance(RCHILLI_API_KEY).rchilli_parse(file_name)
                 json_data, skills_array = ServiceContainer.get_instance().json_convert(rchilli_data)
                 timeline_events = ServiceContainer.get_instance().timeline_parse(rchilli_data)
 
