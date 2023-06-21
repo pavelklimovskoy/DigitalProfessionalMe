@@ -10,7 +10,9 @@ import os
 class RchilliConnector:
     __instance = None
 
-    def __init__(self):
+    def __init__(self, RCHILLI_API_KEY = None):
+        if not RCHILLI_API_KEY:
+            RCHILLI_API_KEY = os.getenv('RCHILLI_API_KEY')
         if not RchilliConnector.__instance:
             # Rchilli API config
             self.API_PARSE_RESUME_URL = 'https://rest.rchilli.com/RChilliParser/Rchilli/parseResumeBinary'
@@ -20,13 +22,13 @@ class RchilliConnector:
             self.API_JOB_AUTOCOMPLETE_URL = 'https://taxonomy3.rchilli.com/taxonomy/autocompletejobprofile'
             self.API_RESUME_VERSION = '8.0.0'
             self.API_TAXONOMY_VERSION = '3.0'
-            self.USER_KEY = os.getenv('RCHILLI_API_KEY')
+            self.USER_KEY = RCHILLI_API_KEY
             self.USER_NAME = 'Alexander Fedorov'
 
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls, RCHILLI_API_KEY):
         if not cls.__instance:
-            cls.__instance = RchilliConnector()
+            cls.__instance = RchilliConnector(RCHILLI_API_KEY)
         return cls.__instance
 
     def get_translate_text(self, text):

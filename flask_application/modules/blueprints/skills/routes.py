@@ -5,7 +5,7 @@
 
 """
 
-from flask import Blueprint
+from flask import Blueprint, current_app
 from flask_login import login_required,  current_user
 from flask import request
 
@@ -22,16 +22,19 @@ skills_routes = Blueprint('skills_routes', __name__, template_folder='templates'
 @skills_routes.route('/skillInputAutocomplete', methods=['POST'])
 def show_input_options():
     from ...rchilli import RchilliConnector
-    return RchilliConnector.get_instance().skill_autocomplete(request.get_json()['skillName'])
+    RCHILLI_API_KEY = current_app.config['RCHILLI_API_KEY']
+    return RchilliConnector.get_instance(RCHILLI_API_KEY).skill_autocomplete(request.get_json()['skillName'])
 
 
 @skills_routes.route('/translatedSkillInputAutocomplete', methods=['POST'])
 def show_translated_input_options():
     from ...rchilli import RchilliConnector
     # print(request.get_json()['skillName'])
-    translated = RchilliConnector.get_instance().get_translate_text(request.get_json()['skillName'])
+    RCHILLI_API_KEY = current_app.config['RCHILLI_API_KEY']
+    
+    translated = RchilliConnector.get_instance(RCHILLI_API_KEY).get_translate_text(request.get_json()['skillName'])
     # print(translated)
-    return RchilliConnector.get_instance().skill_autocomplete(translated)
+    return RchilliConnector.get_instance(RCHILLI_API_KEY).skill_autocomplete(translated)
 
 
 @skills_routes.route('/changeSkillState', methods=['POST', 'GET'])
@@ -52,8 +55,8 @@ def find_skill():
 
     skill_name = request.get_json()['skill']
     cur_user_data = DatabaseConnector.get_instance().find_record('id', current_user.id).json_data[0]
-
-    resp = RchilliConnector.get_instance().skill_search(skill_name)
+    RCHILLI_API_KEY = current_app.config['RCHILLI_API_KEY']
+    resp = RchilliConnector.get_instance(RCHILLI_API_KEY).skill_search(skill_name)
     ontoloty = resp['ontology']
 
     flag1 = False
@@ -258,8 +261,9 @@ def find_jobs_by_skills():
                 if related_jobs[job] > mx:
                     mx = related_jobs[job]
                     matched_job = job
-
-    job_data = RchilliConnector.get_instance().job_search(RchilliConnector.get_instance().job_autocomplete(matched_job))['Skills']
+    
+    RCHILLI_API_KEY = current_app.config['RCHILLI_API_KEY']
+    job_data = RchilliConnector.get_instance(RCHILLI_API_KEY).job_search(RchilliConnector.get_instance(RCHILLI_API_KEY).job_autocomplete(matched_job))['Skills']
     set_req_skills = set()
 
     for skill in job_data:
