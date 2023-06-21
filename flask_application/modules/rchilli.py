@@ -2,9 +2,13 @@
 
 
 import base64
-import requests
 import json
 import os
+
+import requests
+
+
+from flask import current_app
 
 
 class RchilliConnector:
@@ -20,7 +24,7 @@ class RchilliConnector:
             self.API_JOB_AUTOCOMPLETE_URL = 'https://taxonomy3.rchilli.com/taxonomy/autocompletejobprofile'
             self.API_RESUME_VERSION = '8.0.0'
             self.API_TAXONOMY_VERSION = '3.0'
-            self.USER_KEY = os.getenv('RCHILLI_API_KEY')
+            self.USER_KEY = current_app.config["RCHILLI_API_KEY"]
             self.USER_NAME = 'Alexander Fedorov'
 
     @classmethod

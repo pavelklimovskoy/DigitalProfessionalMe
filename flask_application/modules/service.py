@@ -7,6 +7,7 @@
 """
 
 import sys
+
 import pdfkit
 
 
@@ -28,8 +29,14 @@ class ServiceContainer:
             cls.__instance = ServiceContainer()
         return cls.__instance
 
-    # Определение цвета для сектора
     def color_calc(self, check, skill_type):
+        """
+        Определение цвета для сектора
+
+        :param check:
+        :param skill_type:
+        :return:
+        """
         if skill_type in self.soft_types:
             if check == 1:
                 filling = self.soft_colors[0]
@@ -55,8 +62,12 @@ class ServiceContainer:
 
         return filling
 
-    # Конвертация Json
     def json_convert(self, data):
+        """
+        Конвертация Json
+        :param data:
+        :return:
+        """
         # Массив названий навыков для удаления дублей
         skills_array = []
 

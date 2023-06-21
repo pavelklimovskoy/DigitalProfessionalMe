@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
 
 
-import uuid
 import datetime
 import os
+import uuid
+
 from pymongo import MongoClient
+
 from .user_db import User
 
+from flask import current_app
 
 class DatabaseConnector:
     __instance = None
 
     def __init__(self):
         if not DatabaseConnector.__instance:
-            self.client = MongoClient(f'mongodb://root:example@{os.getenv("MONGO_MODE")}', 27017)
+            self.client = MongoClient(f'mongodb://root:example@{current_app.config["MONGO_MODE"]}', 27017)
             self.db = self.client['DPM']
             self.client.server_info()
             self.collection_users = self.db['users']
@@ -22,8 +25,6 @@ class DatabaseConnector:
             self.collection_feedback = self.db['Feedback']
             self.collection_admin_panel = self.db['AdminPanel']
             self.collection_analytics = self.db['Analytics']
-
-
 
     @classmethod
     def get_instance(cls):
@@ -107,7 +108,7 @@ class DatabaseConnector:
         })
 
         new_user = self.find_record("email", email)
-        print(new_user)
+        # print(new_user)
         return new_user
 
     def find_record(self, key, value):
@@ -186,7 +187,10 @@ class DatabaseConnector:
     def get_courses(self, req_skills):
         courses = []
 
+        # print(self.collection_dataset.find())
+
         for course in self.collection_dataset.find():
+            # print(course)
             course_skills = set(course['skills'])
             skills_union = course_skills & req_skills
 
@@ -195,6 +199,7 @@ class DatabaseConnector:
                 courses.append({'courseData': course,
                                 'gapLength': len(skills_union),
                                 'gapSkills': skills_union})
+
         return sorted(courses, key=lambda d: d['gapLength'], reverse=True)
 
     def add_skill_to_dataset(self, skill_name, jobs, courses, id):
@@ -206,6 +211,9 @@ class DatabaseConnector:
         })
 
     def skill_in_dataset(self, skill_name):
+        return self.collection_skills_dataset.find_one({'skill': skill_name})
+
+    def get_skill_from_dataset(self, skill_name):
         return self.collection_skills_dataset.find_one({'skill': skill_name})
 
     def update_recommendation_clicks(self, user_id):

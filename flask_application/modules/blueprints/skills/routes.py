@@ -5,7 +5,7 @@
 
 """
 
-from flask import Blueprint
+from flask import Blueprint, current_app
 from flask_login import login_required,  current_user
 from flask import request
 
@@ -22,6 +22,7 @@ skills_routes = Blueprint('skills_routes', __name__, template_folder='templates'
 @skills_routes.route('/skillInputAutocomplete', methods=['POST'])
 def show_input_options():
     from ...rchilli import RchilliConnector
+    
     return RchilliConnector.get_instance().skill_autocomplete(request.get_json()['skillName'])
 
 
@@ -29,6 +30,8 @@ def show_input_options():
 def show_translated_input_options():
     from ...rchilli import RchilliConnector
     # print(request.get_json()['skillName'])
+    
+    
     translated = RchilliConnector.get_instance().get_translate_text(request.get_json()['skillName'])
     # print(translated)
     return RchilliConnector.get_instance().skill_autocomplete(translated)
@@ -52,7 +55,7 @@ def find_skill():
 
     skill_name = request.get_json()['skill']
     cur_user_data = DatabaseConnector.get_instance().find_record('id', current_user.id).json_data[0]
-
+    
     resp = RchilliConnector.get_instance().skill_search(skill_name)
     ontoloty = resp['ontology']
 
@@ -258,7 +261,8 @@ def find_jobs_by_skills():
                 if related_jobs[job] > mx:
                     mx = related_jobs[job]
                     matched_job = job
-
+    
+    
     job_data = RchilliConnector.get_instance().job_search(RchilliConnector.get_instance().job_autocomplete(matched_job))['Skills']
     set_req_skills = set()
 
