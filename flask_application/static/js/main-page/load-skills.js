@@ -182,15 +182,15 @@ function addSkill(skill, i) {
 
 // Загрузка скиллов
 function loadSkills(topSkills = '') {
-    console.log(skillList);
+    //console.log(skillList);
 
     let enabled = skillList.filter(skill => skill.enabled),
         disabled = skillList.filter(skill => (skill.enabled === false));
 
-    console.log(disabled);
-
-    console.log(enabled);
-    console.log(topSkills);
+    // console.log(disabled);
+    //
+    // console.log(enabled);
+    // console.log(topSkills);
 
     if (topSkills && localStorage.getItem('isCVUploadedFirstly') == 'true') {
         topSkills.forEach(skill => {
@@ -232,7 +232,7 @@ function calcSkillsWeightAndShowIt() {
             return response.json();
         })
         .then(data => {
-            console.log(data);
+            //console.log(data);
             if (data != 404) {
                 let skillsSize = data.length;
                 let skillsWeights = {};
@@ -252,7 +252,7 @@ function calcSkillsWeightAndShowIt() {
                     }
                 });
 
-                console.log('Количество вхождений: ', skillsIn);
+                //console.log('Количество вхождений: ', skillsIn);
 
                 data.map(skill => {
                     const skillName = skill.FormattedName;
@@ -330,9 +330,9 @@ function calcSkillsWeightAndShowIt() {
                     }
                 }
 
-                console.log('Минимальная разница текущей даты и последней даты использования скилла: ', skillsLastUsed);
-                console.log('Максимальное количество месяцев использования скилла: ', skillsExp);
-                console.log('Веса: ', skillsWeights);
+                //console.log('Минимальная разница текущей даты и последней даты использования скилла: ', skillsLastUsed);
+                //console.log('Максимальное количество месяцев использования скилла: ', skillsExp);
+                //console.log('Веса: ', skillsWeights);
 
                 let topSkills = Object.keys(skillsWeights).map(function (key) {
                     return [key, skillsWeights[key]];

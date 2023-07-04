@@ -74,7 +74,7 @@ function createTimeline() {
           });
 
           //timeline.itemsData.add(newItem);
-          console.log(itemId);
+          //console.log(itemId);
 
           itemId++;
         }

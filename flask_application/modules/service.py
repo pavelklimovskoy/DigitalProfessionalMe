@@ -131,10 +131,10 @@ class ServiceContainer:
             if len(child_main['children']) > 0:
                 main_dict['children'].append(child_main)
 
-        for type in main_dict['children']:
+        for skill_type in main_dict['children']:
             skill_counter = 0
 
-            for sub_type in type['children']:
+            for sub_type in skill_type['children']:
                 filling = self.color_calc(len(sub_type['children']), sub_type['id'])
 
                 sub_type['fill'] = filling
@@ -148,9 +148,9 @@ class ServiceContainer:
                         filling = '#4188D2'
                     skill['fill'] = filling
 
-            filling = self.color_calc(skill_counter, type['id'])
+            filling = self.color_calc(skill_counter, skill_type['id'])
 
-            type['fill'] = filling
+            skill_type['fill'] = filling
 
         return [main_dict], skills_array
 
@@ -197,7 +197,8 @@ class ServiceContainer:
         if major < 3 or minor < 10:
             raise Exception("Неверная версия Python, необходима версия старше 3.10")
 
-    def save_pdf(self, url: str, file_name: str) -> None:
+    @staticmethod
+    def save_pdf(url: str, file_name: str) -> None:
         """
         Сохранение pdf
         :param url:
