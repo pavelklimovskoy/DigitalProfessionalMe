@@ -25,6 +25,8 @@ services:
       - '5000:5000'
     networks:
       - webapp-network
+    volumes:
+      - '~/main:/app/static/data/cv/'
 
   nginx:
     depends_on:
