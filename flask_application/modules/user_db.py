@@ -15,8 +15,19 @@ class User(UserMixin):
     avatar = str()
     recommendation_click_counter = 0
 
-    def __init__(self, id, language, name, email, password, json_data, rchilli_data, timeline_events, avatar,
-                 recommendation_click_counter):
+    def __init__(
+        self,
+        id,
+        language,
+        name,
+        email,
+        password,
+        json_data,
+        rchilli_data,
+        timeline_events,
+        avatar,
+        recommendation_click_counter,
+    ):
         self.id = id
         self.name = name
         self.email = email
@@ -39,7 +50,7 @@ class User(UserMixin):
             "rchillidata": self.rchilli_data,
             "timelineEvents": self.timeline_events,
             "avatar": self.avatar,
-            "recommendationClickCounter": self.recommendation_click_counter
+            "recommendationClickCounter": self.recommendation_click_counter,
         }
 
     def get_id(self):

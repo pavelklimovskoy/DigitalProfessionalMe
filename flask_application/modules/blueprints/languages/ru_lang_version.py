@@ -4,11 +4,11 @@
     Роуты для страниц на русском языке
 """
 
-from flask import (Blueprint, redirect, render_template, request, session, url_for)
+from flask import (Blueprint, redirect, render_template, request, session,
+                   url_for)
 from flask_login import current_user, login_required, login_user, logout_user
 
 ru_version = Blueprint('ru_version', __name__, template_folder='templates')
-
 
 
 @ru_version.route('/ru/auth')

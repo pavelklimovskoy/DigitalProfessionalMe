@@ -6,7 +6,7 @@ window.onload = function () {
   });
 
   if (localStorage.getItem('hideDisabledSkills') !== null) {
-    document.querySelector('#toggleDisabledSkills').checked = (localStorage.getItem('hideDisabledSkills') == 'true');
+    document.querySelector('#toggleDisabledSkills').checked = (localStorage.getItem('hideDisabledSkills') === 'true');
   }
   else {
     localStorage.setItem('hideDisabledSkills', 'true');
@@ -48,13 +48,13 @@ function closeModal() {
 // Функция открытия модального окна 
 function openModal(e) {
   const eId = e.target.id;
-  if (eId == 'parseCV') {
+  if (eId === 'parseCV') {
     createModalCv();
-  } else if (eId == 'parseEvidence') {
+  } else if (eId === 'parseEvidence') {
     createModalEvidence();
-  } else if (eId == 'addSkill') {
+  } else if (eId === 'addSkill') {
     createModalAddingSkill();
-  } else if (eId == 'addGoal') {
+  } else if (eId === 'addGoal') {
     createModalGoal();
   }
 
@@ -252,21 +252,21 @@ modalTrigger.forEach(item => {
 
 // Закрытие модального окна по клику за его область
 modal.addEventListener('click', (e) => {
-  if (e.target === modal || e.target.getAttribute('data-close') == '') {
+  if (e.target === modal || e.target.getAttribute('data-close') === '') {
     closeModal();
   }
 });
 
 // Закрытие модального окна по клику на ESC
 document.addEventListener('keydown', (e) => {
-  if (e.code === 'Escape' && modal.style.display == 'block') {
+  if (e.code === 'Escape' && modal.style.display === 'block') {
     closeModal();
   }
 });
 
 try {
   document.querySelector('#toggleDisabledSkills').addEventListener('click', () => {
-    if (document.querySelector('#toggleDisabledSkills').checked == true) {
+    if (document.querySelector('#toggleDisabledSkills').checked === true) {
       hideDisabledSkills();
       localStorage.setItem('hideDisabledSkills', 'true');
     } else {
