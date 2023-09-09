@@ -85,3 +85,40 @@ def admin_uni_ru():
 @ru_version.route('/ru/about', methods=['POST', 'GET'])
 def about_us_ru():
     return render_template('/ru/aboutus_ru.html', title='About us')
+
+
+@ru_version.route("/ru/register", methods=["GET", "POST"])
+def register_ru():
+    """
+    Registration
+    :return:
+    """
+    from ...db_connector import DatabaseConnector
+
+    if current_user.is_authenticated:
+        return redirect(url_for(".index_ru"))
+
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        password = request.form.get("password")
+        password2 = request.form.get("password2")
+        user = DatabaseConnector.get_instance().find_record("email", email)
+
+        if user:
+            return redirect(url_for("auth_ru"))
+        else:
+            if password2 == password:
+                # hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+                hashed_password = password
+                new_user = DatabaseConnector.get_instance().create_record(
+                    name, email, hashed_password
+                )
+                login_user(new_user, remember=True)
+                session["logged_in"] = True
+
+                return redirect(url_for(".index_ru"))
+            else:
+                return redirect(url_for(".auth_ru"))
+    else:
+        return redirect(url_for(".auth_ru"))
