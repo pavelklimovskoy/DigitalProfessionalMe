@@ -5,11 +5,10 @@
 
 """
 
-
 import json
 
 from bson import json_util
-from flask import Blueprint, current_app, request
+from flask import Blueprint, request
 from flask_login import current_user, login_required
 
 skills_routes = Blueprint("skills_routes", __name__, template_folder="templates")
@@ -40,7 +39,6 @@ def show_translated_input_options():
 @skills_routes.route("/changeSkillState", methods=["POST", "GET"])
 def change_skill_state():
     from ...db_connector import DatabaseConnector
-    from ...rchilli import RchilliConnector
 
     skill_name = request.get_json()["skill"]
     DatabaseConnector.get_instance().disable_skill(current_user.id, skill_name)
@@ -73,7 +71,7 @@ def find_skill():
 
             for parent_skill_type in grand_parent_skill_type["children"]:
                 if (
-                    ontoloty.split(">")[1] == parent_skill_type["name"]
+                        ontoloty.split(">")[1] == parent_skill_type["name"]
                 ):  # Найден Parent, GrandParent
                     flag2 = True
 

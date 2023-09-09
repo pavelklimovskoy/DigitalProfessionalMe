@@ -19,6 +19,7 @@ def auth_ru():
     """
     return render_template('/ru/auth_ru.html', title='Digital Professional Me')
 
+
 # Основная страница
 @ru_version.route('/ru/')
 @login_required
@@ -27,7 +28,6 @@ def index_ru():
         logout_user()
         return redirect(".auth_ru")
     return render_template('/ru/index_ru.html', title='Digital Professional Me', userName=current_user.name)
-
 
 
 @ru_version.route('/ru/login', methods=['POST', 'GET'])

@@ -4,7 +4,7 @@ import json
 import os
 
 from bson import json_util
-from flask import Flask, current_app, jsonify, request
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_login import LoginManager, current_user, login_required
 from waitress import serve
@@ -17,7 +17,6 @@ from modules.blueprints.skills.routes import skills_routes
 from modules.certificate_parser import parse_coursera_url, parse_stepik_url
 from modules.db_connector import DatabaseConnector
 from modules.rchilli import RchilliConnector
-from modules.service import ServiceContainer
 
 # Проверка версии интерпретатора перед созданием Flask приложения
 # check_python_version()
@@ -37,7 +36,6 @@ app.register_blueprint(en_version)
 app.register_blueprint(core_route)
 app.register_blueprint(rchilli_routes)
 app.register_blueprint(skills_routes)
-
 
 login_manager = LoginManager(app)
 login_manager.login_view = "core_routes.select_language"

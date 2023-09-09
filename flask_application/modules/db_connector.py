@@ -2,7 +2,6 @@
 
 
 import datetime
-import os
 import uuid
 
 from flask import current_app

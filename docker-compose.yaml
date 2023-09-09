@@ -25,8 +25,6 @@ services:
       - '5000:5000'
     networks:
       - webapp-network
-    volumes:
-      - '~/main:/app/static/data/cv/'
 
   nginx:
     depends_on:
@@ -36,12 +34,16 @@ services:
       dockerfile: Dockerfile.nginx
     restart: always
     ports:
-      - '8080:8080'
+      - '80:80'
+      - '443:443'
     networks:
       - webapp-network
+    volumes:
+      - '/var/www/httpd-cert/webmaster:/certificates/:ro'
+
 
 volumes:
   mongo:
 networks:
   webapp-network:
-    driver: bridge  
+    driver: bridge

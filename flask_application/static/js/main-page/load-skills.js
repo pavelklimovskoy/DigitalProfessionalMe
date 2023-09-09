@@ -15,7 +15,7 @@ function changeSkillState(skillId) {
             }
         }
 
-        if (skillClass != 'disabled-skill') {
+        if (skillClass !== 'disabled-skill') {
             skill.remove();
 
             skill.classList.remove(skillClass);
@@ -24,7 +24,7 @@ function changeSkillState(skillId) {
             console.log(skill);
             skill.childNodes[1].childNodes[0].src = '../static/icons/button-off.png';
 
-            if (localStorage.getItem('hideDisabledSkills') == 'false') {
+            if (localStorage.getItem('hideDisabledSkills') === 'false') {
                 skillBlock.append(skill);
             }
 

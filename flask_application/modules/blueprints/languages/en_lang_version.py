@@ -5,8 +5,8 @@
 
 """
 
-
-from flask import Blueprint, redirect, render_template, request, session, url_for
+from flask import (Blueprint, redirect, render_template, request, session,
+                   url_for)
 from flask_login import current_user, login_required, login_user, logout_user
 
 en_version = Blueprint("en_version", __name__, template_folder="templates")

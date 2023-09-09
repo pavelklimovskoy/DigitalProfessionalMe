@@ -2,19 +2,6 @@ let debugTimeline = false;
 var timeline;
 var itemId = 0;
 
-// Вывод отладочной информации
-function showControllers() {
-  fetch('../templates/snippets/debug-form-timeline.html')
-    .then(response => response.text())
-    .then(text => {
-      let divControl = document.getElementById("debugTimeline");
-
-      if (divControl != null) {
-        divControl.innerHTML = text;
-      }
-    });
-}
-
 // Содание Timeline
 function createTimeline() {
   if (debugTimeline == true) {

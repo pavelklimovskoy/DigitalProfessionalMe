@@ -16,17 +16,17 @@ class User(UserMixin):
     recommendation_click_counter = 0
 
     def __init__(
-        self,
-        id,
-        language,
-        name,
-        email,
-        password,
-        json_data,
-        rchilli_data,
-        timeline_events,
-        avatar,
-        recommendation_click_counter,
+            self,
+            id,
+            language,
+            name,
+            email,
+            password,
+            json_data,
+            rchilli_data,
+            timeline_events,
+            avatar,
+            recommendation_click_counter,
     ):
         self.id = id
         self.name = name
