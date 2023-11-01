@@ -12,6 +12,7 @@ services:
       - webapp-network
     volumes:
       - '~/mongo:/data/db'
+    restart: always
 
   main:
     depends_on:
@@ -25,6 +26,7 @@ services:
       - '5000:5000'
     networks:
       - webapp-network
+    restart: always
 
   nginx:
     depends_on:
