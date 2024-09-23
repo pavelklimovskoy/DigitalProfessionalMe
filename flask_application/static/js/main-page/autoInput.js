@@ -10,10 +10,10 @@ function autocompleteInput(inp, formUrl, searchKey) {
 
         if (val.length > 2) {
             let urlRequest = `${baseUrl}/${formUrl}`, data;
-            if (searchKey == 'skillName') {
+            if (searchKey === 'skillName') {
                 data = { skillName: val };
             }
-            else if (searchKey == 'jobName') {
+            else if (searchKey === 'jobName') {
                 data = { jobName: val };
             }
             //fetch(urlRequest)
@@ -35,7 +35,7 @@ function autocompleteInput(inp, formUrl, searchKey) {
                     /*for each item in the array...*/
                     for (let i = 0; i < arr.length; i++) {
                         /*check if the item starts with the same letters as the text field value:*/
-                        if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                        if (arr[i].substr(0, val.length).toUpperCase() === val.toUpperCase()) {
                             /*create a DIV element for each matching element:*/
                             let b = document.createElement("DIV");
                             /*make the matching letters bold:*/
@@ -62,19 +62,19 @@ function autocompleteInput(inp, formUrl, searchKey) {
     inp.addEventListener("keydown", function (e) {
         let x = document.getElementById(this.id + "autocomplete-list");
         if (x) x = x.getElementsByTagName("div");
-        if (e.keyCode == 40) {
+        if (e.keyCode === 40) {
             /*If the arrow DOWN key is pressed,
             increase the currentFocus variable:*/
             currentFocus++;
             /*and and make the current item more visible:*/
             addActive(x);
-        } else if (e.keyCode == 38) { //up
+        } else if (e.keyCode === 38) { //up
             /*If the arrow UP key is pressed,
             decrease the currentFocus variable:*/
             currentFocus--;
             /*and and make the current item more visible:*/
             addActive(x);
-        } else if (e.keyCode == 13) {
+        } else if (e.keyCode === 13) {
             /*If the ENTER key is pressed, prevent the form from being submitted,*/
             e.preventDefault();
             if (currentFocus > -1) {
@@ -107,7 +107,7 @@ function autocompleteInput(inp, formUrl, searchKey) {
         except the one passed as an argument:*/
         let x = document.getElementsByClassName("autocomplete-items");
         for (let i = 0; i < x.length; i++) {
-            if (elmnt != x[i] && elmnt != inp) {
+            if (elmnt !== x[i] && elmnt !== inp) {
                 x[i].parentNode.removeChild(x[i]);
             }
         }
