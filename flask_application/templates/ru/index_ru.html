@@ -37,6 +37,14 @@
             background-color: white;
             border-radius: 0 0 20px 20px;
         }
+
+        @media (max-width: 768px) {
+            .start_app_logo {
+                > img {
+                    width: 100% !important;
+                }
+            }
+        }
     </style>
 </head>
 
@@ -158,9 +166,11 @@
         </div>
     </div>
 
-    <div class="container-fluid start_app_logo">
-        <img src="../static/start_app.png" alt="" height="100px">
-    </div>
+    <a href="https://fasie.ru/">
+        <div class="container-fluid start_app_logo">
+            <img src="../static/start_app.png" alt="" height="100px">
+        </div>
+    </a>
 
     <!-- Debug form for Timeline-->
     <div id="debugTimeline"></div>
