@@ -29,12 +29,13 @@
         .start_app_logo {
             display: grid;
             place-items: center;
+            width: 100%;
+            background-color: white;
+            border-radius: 0 0 20px 20px;
         }
     </style>
 </head>
-
 <body>
-
 <!-- Canvas with main content -->
 <div class="mainBlock">
     <!-- Header -->
@@ -42,7 +43,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#2C0585;">
             <div class="container">
 
-                <a href="/#" class="navbar-brand">Digital Professional Me™</a>
+                <a href="/" class="navbar-brand">Digital Professional Me™</a>
 
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navContent"
                         aria-controls="navContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,8 +53,6 @@
                 <div class=".float-right">
                     <div class="collapse navbar-collapse" id="navContent">
                         <ul class="navbar-nav mr-auto mb-3 mb-lg-0">
-
-
                             <div class="dropdown nav-item">
                                 <button class="btn btn-primary dropdown-toggle nav-item" type="button"
                                         id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -162,10 +161,8 @@
         </div>
     </div>
 
-    <div class="container-fluid">
-        <div class="start_app_logo">
-            <img src="../static/start_app.png" alt="" height="100px">
-        </div>
+    <div class="container-fluid start_app_logo">
+        <img src="../static/start_app.png" alt="" height="100px">
     </div>
 
     <!-- Drag'n'Drop -->
