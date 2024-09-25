@@ -284,9 +284,9 @@
   height: 50px;
 }
 
-.btn:hover {
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-}
+/*.btn:hover {*/
+/*  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);*/
+/*}*/
 
 /* The Close Button */
 .close {

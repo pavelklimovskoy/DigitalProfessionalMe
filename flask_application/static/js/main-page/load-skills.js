@@ -148,14 +148,14 @@ function addSkill(skill, i) {
     delButton.id = i;
 
     // Кнопка становится красной при наведении мыши
-    delButton.addEventListener('mouseover', (e) => {
-        e.currentTarget.setAttribute('style', 'background-color: red');
-    });
+    // delButton.addEventListener('mouseover', (e) => {
+    //     e.currentTarget.setAttribute('style', 'background-color: red');
+    // });
 
     // Кнопка становится прозрачной при отведении мыши или нажатия на неё 
-    delButton.addEventListener('mouseout', (e) => {
-        e.currentTarget.setAttribute('style', '');
-    });
+    // delButton.addEventListener('mouseout', (e) => {
+    //     e.currentTarget.setAttribute('style', '');
+    // });
 
     // Переключение состояния скиллов
     delButton.addEventListener('click', (e) => {
