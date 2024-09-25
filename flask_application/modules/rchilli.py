@@ -92,7 +92,7 @@ class RchilliConnector:
                 "Version": self.API_TAXONOMY_VERSION,
                 "Language": "ENG",
                 "Locale": "US",
-                "CustomValues": "",
+                "CustomValues": "{}",
                 "Keyword": skill_name,
             }
         )
