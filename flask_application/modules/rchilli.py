@@ -143,7 +143,7 @@ class RchilliConnector:
                 "Version": self.API_TAXONOMY_VERSION,
                 "Language": "ENG",
                 "Locale": "US",
-                "CustomValues": "",
+                "CustomValues": "{}",
                 "Keyword": job_name,
             }
         )
@@ -154,6 +154,7 @@ class RchilliConnector:
             "POST", self.API_JOB_SEARCH_URL, headers=headers, data=payload
         )
         resp = response.json()["JobProfile"]["JobProfileData"]
+
 
         return resp
 

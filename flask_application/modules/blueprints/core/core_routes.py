@@ -199,7 +199,7 @@ def upload_file():
         except Exception as e:
             print(e)
 
-    return redirect(url_for("en_version.index_ru"))
+    return redirect(url_for("ru_version.index_ru"))
 
 
 @core_route.route("/handleRecommendationClick", methods=["GET", "POST"])
