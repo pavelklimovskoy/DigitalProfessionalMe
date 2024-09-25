@@ -64,17 +64,17 @@ class RchilliConnector:
         data64 = encoded_string.decode("unicode_escape")
         headers = {"content-type": "application/json"}
         body = (
-            """{"filedata":\""""
-            + data64
-            + """\","filename":\""""
-            + file_name
-            + """\","userkey":\""""
-            + self.USER_KEY
-            + """\",\"version\":\""""
-            + self.API_RESUME_VERSION
-            + """\",\"subuserid\":\""""
-            + self.USER_NAME
-            + """\"}"""
+                """{"filedata":\""""
+                + data64
+                + """\","filename":\""""
+                + file_name
+                + """\","userkey":\""""
+                + self.USER_KEY
+                + """\",\"version\":\""""
+                + self.API_RESUME_VERSION
+                + """\",\"subuserid\":\""""
+                + self.USER_NAME
+                + """\"}"""
         )
         response = requests.post(self.API_PARSE_RESUME_URL, data=body, headers=headers)
         resp = json.loads(response.text)
@@ -120,7 +120,7 @@ class RchilliConnector:
                 "Version": self.API_TAXONOMY_VERSION,
                 "Language": "ENG",
                 "Locale": "US",
-                "CustomValues": "",
+                "CustomValues": "{}",
                 "Keyword": skill_name,
             }
         )
@@ -157,14 +157,14 @@ class RchilliConnector:
 
         return resp
 
-    def job_autocomplete(self, job_name):
+    def job_autocomplete(self, job_name: str):
         payload = json.dumps(
             {
                 "ApiKey": self.USER_KEY,
                 "Version": self.API_TAXONOMY_VERSION,
                 "Language": "ENG",
                 "Locale": "US",
-                "CustomValues": "",
+                "CustomValues": "{}",
                 "Keyword": job_name,
             }
         )
@@ -176,6 +176,8 @@ class RchilliConnector:
                 "POST", self.API_JOB_AUTOCOMPLETE_URL, headers=headers, data=payload
             )
             resp = response.json()
-            return {"options": resp["JobProfileAutoComplete"]}
+            return {
+                "options": resp["JobProfileAutoComplete"]
+            }
         except Exception as e:
             print(e)

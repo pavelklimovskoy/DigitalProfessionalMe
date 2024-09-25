@@ -89,7 +89,7 @@ def show_translated_jobs():
 @app.route("/jobInputAutocomplete", methods=["POST"])
 def show_jobs():
     return RchilliConnector.get_instance().job_autocomplete(
-        request.get_json()["jobName"]
+        job_name=request.get_json()["jobName"]
     )
 
 
